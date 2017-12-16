@@ -1,0 +1,47 @@
+@import url('https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed');
+
+$nav-height: 45px;
+$nav-border-width: 1px;
+
+body {
+    font-family: 'Barlow Semi Condensed', sans-serif;
+    margin: 0;
+    color: rgb(30, 20, 20);
+}
+
+nav {
+    border-bottom: $nav-border-width rgb(200, 200, 200) solid;
+    background-color: rgba(245, 245, 245, 150);
+    text-align: center;
+    position: fixed;
+    top: 0;
+    width: 100%;
+
+    a {
+        width: 10%;
+        text-align: center;
+        display: inline-block;
+        transition: all 0.6s;
+        text-decoration: none;
+        height: $nav-height - $nav-border-width;
+        line-height: $nav-height - $nav-border-width;
+
+        span {
+            display: inline-block;
+            vertical-align: middle;
+            line-height: normal;
+        }
+    }
+
+    a:visited {
+        color: inherit;
+    }
+
+    a:hover {
+        background-color: rgba(230, 230, 230, 150);
+    }
+}
+
+.content {
+    padding-top: $nav-height;
+}
