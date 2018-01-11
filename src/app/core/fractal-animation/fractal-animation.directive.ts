@@ -167,7 +167,7 @@ export class FractalAnimationDirective implements OnInit {
             return {
                 xEnd: xStart + lengthToDraw * Math.sin(fromAngle + angle),
                 yEnd: yStart + lengthToDraw * Math.cos(fromAngle + angle),
-                angle
+                angle: fromAngle + angle
             }
         })
 
