@@ -133,7 +133,7 @@ export class FractalAnimationDirective implements OnInit {
                         fullLengthYEnd,
                         this.initialLineLength / 2,
                         angleOfFirstLine,
-                        [angleOfFirstLine - angleChange, angleOfFirstLine, angleOfFirstLine + angleChange],
+                        [-angleChange, 0, angleChange],
                         this.startLineWidth - this.lineWidthChangePerFractalIteration,
                         this.lineWidthChangePerFractalIteration,
                         this.startAlpha - this.alphaChangePerFractalIteration,
