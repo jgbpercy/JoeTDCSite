@@ -133,7 +133,7 @@ export class FractalAnimationDirective implements OnInit {
                         fullLengthYEnd,
                         this.initialLineLength / 2,
                         angleOfFirstLine,
-                        angleChange,
+                        [angleOfFirstLine - angleChange, angleOfFirstLine, angleOfFirstLine + angleChange],
                         this.startLineWidth - this.lineWidthChangePerFractalIteration,
                         this.lineWidthChangePerFractalIteration,
                         this.startAlpha - this.alphaChangePerFractalIteration,
@@ -152,7 +152,7 @@ export class FractalAnimationDirective implements OnInit {
         yStart : number,
         length : number,
         fromAngle : number,
-        angleChange : number,
+        drawLinesAtAngles : number[],
         lineWidth : number,
         lineWidthChange : number,
         alpha : number,
@@ -163,70 +163,42 @@ export class FractalAnimationDirective implements OnInit {
         const drawWholeLength = lengthToDraw >= length
         lengthToDraw = drawWholeLength ? length : lengthToDraw
 
-        const rightXEnd = xStart + lengthToDraw * Math.sin(fromAngle - angleChange)
-        const rightYEnd = yStart + lengthToDraw * Math.cos(fromAngle - angleChange)
-
-        const straightXEnd = xStart + lengthToDraw * Math.sin(fromAngle)
-        const straighYEnd = yStart + lengthToDraw * Math.cos(fromAngle)
-
-        const leftXEnd = xStart + lengthToDraw * Math.sin(fromAngle + angleChange)
-        const leftYEnd = yStart + lengthToDraw * Math.cos(fromAngle + angleChange)
+        const linesToDraw = drawLinesAtAngles.map(angle => {
+            return {
+                xEnd: xStart + lengthToDraw * Math.sin(fromAngle + angle),
+                yEnd: yStart + lengthToDraw * Math.cos(fromAngle + angle),
+                angle
+            }
+        })
 
         context.lineWidth = lineWidth
         context.strokeStyle = `rgba(60, 40, 40, ${alpha})`
 
-        this.drawLine(context, xStart, yStart, rightXEnd, rightYEnd)
-        this.drawLine(context, xStart, yStart, straightXEnd, straighYEnd)
-        this.drawLine(context, xStart, yStart, leftXEnd, leftYEnd)
+        linesToDraw.forEach(line => {
+            this.drawLine(context, xStart, yStart, line.xEnd, line.yEnd)
+        })
 
         const nextLineWidth = lineWidth - lineWidthChange
         const newAlpha = alpha - alphaChange
 
         if (nextLineWidth > 0 && drawWholeLength) {
-            this.drawFractalSplit(
-                context,
-                lineLengthIncreasePerFrame,
-                iteration - 1 / (lineLengthIncreasePerFrame / length),
-                rightXEnd,
-                rightYEnd,
-                length / 2,
-                fromAngle - angleChange,
-                angleChange,
-                nextLineWidth,
-                lineWidthChange,
-                newAlpha,
-                alphaChange
-            )
 
-            this.drawFractalSplit(
-                context,
-                lineLengthIncreasePerFrame,
-                iteration - 1 / (lineLengthIncreasePerFrame / length),
-                straightXEnd,
-                straighYEnd,
-                length / 2,
-                fromAngle,
-                angleChange,
-                nextLineWidth,
-                lineWidthChange,
-                newAlpha,
-                alphaChange
-            )
-
-            this.drawFractalSplit(
-                context,
-                lineLengthIncreasePerFrame,
-                iteration - 1 / (lineLengthIncreasePerFrame / length),
-                leftXEnd,
-                leftYEnd,
-                length / 2,
-                fromAngle + angleChange,
-                angleChange,
-                nextLineWidth,
-                lineWidthChange,
-                newAlpha,
-                alphaChange
-            )
+            linesToDraw.forEach(line => {
+                this.drawFractalSplit(
+                    context,
+                    lineLengthIncreasePerFrame,
+                    iteration - 1 / (lineLengthIncreasePerFrame / length),
+                    line.xEnd,
+                    line.yEnd,
+                    length / 2,
+                    line.angle,
+                    drawLinesAtAngles,
+                    nextLineWidth,
+                    lineWidthChange,
+                    newAlpha,
+                    alphaChange
+                )
+            })
         }
     }
 
