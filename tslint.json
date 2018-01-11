@@ -78,7 +78,6 @@
             true,
             "ignore-params"
         ],
-        "no-magic-numbers": true,
         "no-misused-new": true,
         "no-non-null-assertion": true,
         "no-null-keyword": true,
