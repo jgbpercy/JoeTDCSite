@@ -24,55 +24,98 @@ class Color {
     }
 }
 
-class SnowFlake {
+class Fractal {
 
     public startLineWidth : number
-    public lineWidthChangePerFractalIteration = 0.5
+    public lineWidthChangePerFractalIteration : number
 
-    public startAlpha = 200
-    public alphaChangePerFractalIteration = 10
+    public alphaChangePerFractalIteration : number
 
     public initialLineLength : number
-
-    public speed : number
-
-    public rotationSpeed = 0.05
 
     public xPos : number
     public yPos : number
 
     public fromAngle : number
 
-    public branches : number
     public drawLinesAtAngles : number[]
 
     public removeThisFrame : boolean
 
     public color : Color
+}
+
+class Star extends Fractal {
+
+    public constructor(canvasWidth : number, canvasHeight : number) {
+
+        super()
+
+        this.initialLineLength = lodash.random(5, 10, false)
+
+        this.alphaChangePerFractalIteration = 0
+
+        this.yPos = lodash.random(0, 3 * canvasHeight / 4, true)
+        this.xPos = lodash.random(0, canvasWidth, true)
+
+        this.fromAngle = 0
+
+        this.color = {
+            r: lodash.random(100, 120, false),
+            g: 100,
+            b: lodash.random(80, 100, false),
+            a: (0.7 + 0.3 * lodash.random(0, 1, true)) * (canvasHeight - this.yPos) / canvasHeight,
+        }
+
+        this.startLineWidth = 3
+        this.lineWidthChangePerFractalIteration = 1.3
+
+        this.drawLinesAtAngles = [
+            0,
+            Math.PI / 2,
+            Math.PI,
+            3 * Math.PI / 2,
+        ]
+    }
+}
+
+class SnowFlake extends Fractal {
+
+    public speed : number
+
+    public rotationSpeed : number
 
     public constructor(canvasWidth : number) {
+
+        super()
 
         this.initialLineLength = lodash.random(8, 16, false)
 
         this.speed = (1 + lodash.random(0.3)) * this.initialLineLength / 4
 
+        this.rotationSpeed = 0.05
+
+        this.alphaChangePerFractalIteration = 15
+
         this.yPos = -this.initialLineLength * 2
-        this.xPos = Math.random() * canvasWidth
+        this.xPos = lodash.random(0, canvasWidth, true)
         this.fromAngle = 0
         this.removeThisFrame = false
 
         this.color = {
-            r: lodash.random(20, 30, false),
-            g: lodash.random(20, 30, false),
-            b: lodash.random(30, 40, false),
+            r: lodash.random(120, 130, false),
+            g: lodash.random(120, 130, false),
+            b: lodash.random(130, 155, false),
             a: 200,
         }
 
-        this.branches = lodash.random(4, 6, false)
-        this.branches = this.branches === 4 ? 3 : this.branches
+        let branches = lodash.random(4, 6, false)
+        branches = branches === 4 ? 3 : branches
+
+        this.lineWidthChangePerFractalIteration = 0.5
 
         //TODO: this can be factored with stuff below
-        if (this.branches === 3) {
+        if (branches === 3) {
 
             this.startLineWidth = 2
 
@@ -82,7 +125,7 @@ class SnowFlake {
                 2 * Math.PI / 3,
             ]
 
-        } else if (this.branches === 5) {
+        } else if (branches === 5) {
 
             this.startLineWidth = 1.5
 
@@ -94,7 +137,7 @@ class SnowFlake {
                 4 * Math.PI / 5,
             ]
 
-        } else if (this.branches === 6) {
+        } else if (branches === 6) {
 
             this.startLineWidth = 1.5
 
@@ -133,6 +176,9 @@ export class FractalAnimationDirective implements OnInit {
     private timeBeforeInitialLineRetracts = 2
     private timeBeforeSpawningSnowFlakes = 4
     private timeBetweenSnowFlakeSpawns = 0.4
+    private timeBetweenStarSpawns = 0.05
+
+    private numberOfStars = 50
 
     private lineWidthChangePerFractalIteration = 0.5
 
@@ -144,6 +190,7 @@ export class FractalAnimationDirective implements OnInit {
     private targetFPS = 30
 
     private snowFlakes : SnowFlake[] = new Array<SnowFlake>()
+    private stars : Star[] = new Array<Star>()
 
     constructor(private element : ElementRef) {
 
@@ -155,11 +202,11 @@ export class FractalAnimationDirective implements OnInit {
         const context = this.canvas.getContext('2d')
 
         const boundingRect = this.canvas.getBoundingClientRect()
-        const width = boundingRect.width
-        const height = boundingRect.height
+        const canvasWidth = boundingRect.width
+        const canvasHeight = boundingRect.height
 
-        this.canvas.width = width
-        this.canvas.height = height
+        this.canvas.width = canvasWidth
+        this.canvas.height = canvasHeight
 
         context.lineCap = 'round'
         context.lineJoin = 'round'
@@ -233,19 +280,23 @@ export class FractalAnimationDirective implements OnInit {
         const framesBeforeInitialLineRetraction = this.targetFPS * this.timeBeforeInitialLineRetracts
         const framesBeforeSpawningSnowFlakes = this.targetFPS * this.timeBeforeSpawningSnowFlakes
         const framesBetweenSnowFlakeSpawns = this.targetFPS * this.timeBetweenSnowFlakeSpawns
+        const framesBetweenStarSpawns = this.targetFPS * this.timeBetweenStarSpawns
+
         let framesSinceLastSnowFlakeSpawn = framesBetweenSnowFlakeSpawns
+        let framesSinceLastStarSpawned = framesBetweenStarSpawns
+        let starsCreated = false
 
         const totalFrames = framesOfTreeGrowth + framesOfRotation
 
         const framesOfInitialLineRetraction = totalFrames - framesBeforeInitialLineRetraction
 
-        const lineLengthIncreasePerFrame = (this.initialLineLength * 2) / framesOfTreeGrowth
+        const lineLengthDrawnIncreasePerFrame = (this.initialLineLength * 2) / framesOfTreeGrowth
 
         interval(1000 / this.targetFPS).pipe( map(zeroIndexedFrame => zeroIndexedFrame + 1))
         .subscribe(
             frame => {
 
-                context.fillRect(0, 0, width, height)
+                context.fillRect(0, 0, canvasWidth, canvasHeight)
 
                 const unboundedFractionTreeGrowthDone = frame / framesOfTreeGrowth
                 const fractionTreeGrowthDone = unboundedFractionTreeGrowthDone > 1 ? 1 : unboundedFractionTreeGrowthDone
@@ -266,7 +317,7 @@ export class FractalAnimationDirective implements OnInit {
 
                 const angleOfFirstLine = easing(fractionRotationDone) * -Math.PI
 
-                let lengthToDraw = lineLengthIncreasePerFrame * frame
+                let lengthToDraw = lineLengthDrawnIncreasePerFrame * frame
                 const drawWholeInitialLine = lengthToDraw > this.initialLineLength
                 lengthToDraw = drawWholeInitialLine ? this.initialLineLength : lengthToDraw
 
@@ -274,10 +325,10 @@ export class FractalAnimationDirective implements OnInit {
                 let fullLengthYEnd : number
 
                 if (!treeGrowthDone) {
-                    fullLengthXEnd = width * 0.5
+                    fullLengthXEnd = canvasWidth * 0.5
                     fullLengthYEnd = this.initialLineLength
                 } else {
-                    fullLengthXEnd = width * 0.5
+                    fullLengthXEnd = canvasWidth * 0.5
                     fullLengthYEnd = this.initialLineLength + easing(fractionRotationDone) * 200
                 }
 
@@ -300,6 +351,74 @@ export class FractalAnimationDirective implements OnInit {
                     yEnd = fullLengthYEnd
                 }
 
+                if (frame > framesBeforeSpawningSnowFlakes) {
+
+                    if (framesSinceLastSnowFlakeSpawn >= framesBetweenSnowFlakeSpawns) {
+                        this.snowFlakes.push(new SnowFlake(canvasWidth))
+                        framesSinceLastSnowFlakeSpawn = 0
+                    } else {
+                        framesSinceLastSnowFlakeSpawn += 1
+                    }
+
+                    this.snowFlakes.forEach(snowFlake => {
+
+                        if (snowFlake.yPos > canvasHeight - 2 * snowFlake.initialLineLength) {
+                            snowFlake.removeThisFrame = true
+                        }
+
+                        this.drawFractalSplit(
+                            context,
+                            true,
+                            frame,
+                            lineLengthDrawnIncreasePerFrame,
+                            snowFlake.xPos,
+                            snowFlake.yPos,
+                            snowFlake.initialLineLength,
+                            snowFlake.fromAngle,
+                            snowFlake.drawLinesAtAngles,
+                            snowFlake.startLineWidth,
+                            snowFlake.lineWidthChangePerFractalIteration,
+                            snowFlake.color,
+                            snowFlake.alphaChangePerFractalIteration,
+                        )
+
+                        snowFlake.move()
+                    })
+
+                    this.snowFlakes = this.snowFlakes.filter(snowFlake => !snowFlake.removeThisFrame)
+
+                    if (!starsCreated) {
+                        if (framesSinceLastStarSpawned >= framesBetweenStarSpawns) {
+                            this.stars.push(new Star(canvasWidth, canvasHeight))
+                            framesSinceLastStarSpawned = 0
+                        } else {
+                            framesSinceLastStarSpawned += 1
+                        }
+
+                        if (this.stars.length >= this.numberOfStars) {
+                            starsCreated = true
+                        }
+                    }
+
+                    this.stars.forEach(star => {
+                        this.drawFractalSplit(
+                            context,
+                            true,
+                            frame,
+                            lineLengthDrawnIncreasePerFrame,
+                            star.xPos,
+                            star.yPos,
+                            star.initialLineLength,
+                            star.fromAngle,
+                            star.drawLinesAtAngles,
+                            star.startLineWidth,
+                            star.lineWidthChangePerFractalIteration,
+                            star.color,
+                            star.alphaChangePerFractalIteration,
+                        )
+                    })
+                }
+
                 context.lineWidth = treeStartLineWidth
                 context.strokeStyle = `rgba(60, 40, 40, ${this.startAlpha})`
 
@@ -309,8 +428,8 @@ export class FractalAnimationDirective implements OnInit {
                     this.drawFractalSplit(
                         context,
                         false,
-                        frame - 1 / (lineLengthIncreasePerFrame / this.initialLineLength),
-                        lineLengthIncreasePerFrame,
+                        frame - 1 / (lineLengthDrawnIncreasePerFrame / this.initialLineLength),
+                        lineLengthDrawnIncreasePerFrame,
                         fullLengthXEnd,
                         fullLengthYEnd,
                         this.initialLineLength / 2,
@@ -323,41 +442,6 @@ export class FractalAnimationDirective implements OnInit {
                     )
                 }
 
-                if (frame > framesBeforeSpawningSnowFlakes) {
-                    if (framesSinceLastSnowFlakeSpawn >= framesBetweenSnowFlakeSpawns) {
-                        this.snowFlakes.push(new SnowFlake(width))
-                        framesSinceLastSnowFlakeSpawn = 0
-                    } else {
-                        framesSinceLastSnowFlakeSpawn += 1
-                    }
-
-                    this.snowFlakes.forEach(snowFlake => {
-
-                        if (snowFlake.yPos > height - 2 * snowFlake.initialLineLength) {
-                            snowFlake.removeThisFrame = true
-                        }
-
-                        this.drawFractalSplit(
-                            context,
-                            true,
-                            frame,
-                            lineLengthIncreasePerFrame,
-                            snowFlake.xPos,
-                            snowFlake.yPos,
-                            snowFlake.initialLineLength,
-                            snowFlake.fromAngle,
-                            snowFlake.drawLinesAtAngles,
-                            snowFlake.startLineWidth,
-                            snowFlake.lineWidthChangePerFractalIteration,
-                            snowFlake.color,
-                            snowFlake.alphaChangePerFractalIteration
-                        )
-
-                        snowFlake.move()
-                    })
-
-                    this.snowFlakes = this.snowFlakes.filter(snowFlake => !snowFlake.removeThisFrame)
-                }
             }
         )
     }
@@ -366,7 +450,7 @@ export class FractalAnimationDirective implements OnInit {
         context : CanvasRenderingContext2D,
         drawAll : boolean,
         frame : number,
-        lineLengthIncreasePerFrame : number,
+        lineLengthDrawnIncreasePerFrame : number,
         xStart : number,
         yStart : number,
         length : number,
@@ -384,7 +468,7 @@ export class FractalAnimationDirective implements OnInit {
             lengthToDraw = length
             drawWholeLength = true
         } else {
-            lengthToDraw = lineLengthIncreasePerFrame * frame
+            lengthToDraw = lineLengthDrawnIncreasePerFrame * frame
             drawWholeLength = lengthToDraw >= length
             lengthToDraw = drawWholeLength ? length : lengthToDraw
         }
@@ -413,8 +497,8 @@ export class FractalAnimationDirective implements OnInit {
                 this.drawFractalSplit(
                     context,
                     drawAll,
-                    lineLengthIncreasePerFrame,
-                    frame - 1 / (lineLengthIncreasePerFrame / length),
+                    lineLengthDrawnIncreasePerFrame,
+                    frame - 1 / (lineLengthDrawnIncreasePerFrame / length),
                     line.xEnd,
                     line.yEnd,
                     length / 2,
