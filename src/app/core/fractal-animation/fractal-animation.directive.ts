@@ -10,17 +10,31 @@ import { take } from 'rxjs/operators/take'
 import * as bezier from 'bezier-easing'
 import * as lodash from 'lodash'
 
+class Color {
+    public r : number
+    public g : number
+    public b : number
+    public a : number
+
+    constructor(r : number, g : number, b : number, a : number) {
+        this.r = r
+        this.g = g
+        this.b = b
+        this.a = a
+    }
+}
+
 class SnowFlake {
 
-    public startLineWidth = 2
+    public startLineWidth : number
     public lineWidthChangePerFractalIteration = 0.5
 
     public startAlpha = 200
     public alphaChangePerFractalIteration = 10
 
-    public initialLineLength = 15
+    public initialLineLength : number
 
-    public speed = 4
+    public speed : number
 
     public rotationSpeed = 0.05
 
@@ -29,13 +43,71 @@ class SnowFlake {
 
     public fromAngle : number
 
+    public branches : number
+    public drawLinesAtAngles : number[]
+
     public removeThisFrame : boolean
 
+    public color : Color
+
     public constructor(canvasWidth : number) {
+
+        this.initialLineLength = lodash.random(8, 16, false)
+
+        this.speed = (1 + lodash.random(0.3)) * this.initialLineLength / 4
+
         this.yPos = -this.initialLineLength * 2
         this.xPos = Math.random() * canvasWidth
         this.fromAngle = 0
         this.removeThisFrame = false
+
+        this.color = {
+            r: lodash.random(20, 30, false),
+            g: lodash.random(20, 30, false),
+            b: lodash.random(30, 40, false),
+            a: 200,
+        }
+
+        this.branches = lodash.random(4, 6, false)
+        this.branches = this.branches === 4 ? 3 : this.branches
+
+        //TODO: this can be factored with stuff below
+        if (this.branches === 3) {
+
+            this.startLineWidth = 2
+
+            this.drawLinesAtAngles = [
+                -2 * Math.PI / 3,
+                0,
+                2 * Math.PI / 3,
+            ]
+
+        } else if (this.branches === 5) {
+
+            this.startLineWidth = 1.5
+
+            this.drawLinesAtAngles = [
+                -4 * Math.PI / 5,
+                -2 * Math.PI / 5,
+                0,
+                2 * Math.PI / 5,
+                4 * Math.PI / 5,
+            ]
+
+        } else if (this.branches === 6) {
+
+            this.startLineWidth = 1.5
+
+            this.drawLinesAtAngles = [
+                -2 * Math.PI / 3,
+                -1 * Math.PI / 3,
+                0,
+                1 * Math.PI / 3,
+                2 * Math.PI / 3,
+                Math.PI,
+            ]
+
+        }
     }
 
     public move() {
@@ -103,7 +175,7 @@ export class FractalAnimationDirective implements OnInit {
 
             treeStartLineWidth = 4
 
-            startAngleChangePerFractalIteration = Math.PI / lodash.random(4.5, 7.5)
+            startAngleChangePerFractalIteration = Math.PI / lodash.random(4.5, 7.5, true)
             getTreeDrawLinesAtAngles = angleChangePerFractalIteration => [
                 -angleChangePerFractalIteration,
                 0,
@@ -114,7 +186,7 @@ export class FractalAnimationDirective implements OnInit {
 
             treeStartLineWidth = 3.5
 
-            startAngleChangePerFractalIteration = Math.PI / lodash.random(5, 7.5)
+            startAngleChangePerFractalIteration = Math.PI / lodash.random(5, 7.5, true)
             getTreeDrawLinesAtAngles = angleChangePerFractalIteration => [
                 -1.5 * angleChangePerFractalIteration,
                 -0.5 * angleChangePerFractalIteration,
@@ -126,7 +198,7 @@ export class FractalAnimationDirective implements OnInit {
 
             treeStartLineWidth = 3
 
-            startAngleChangePerFractalIteration = Math.PI / lodash.random(5.5, 8)
+            startAngleChangePerFractalIteration = Math.PI / lodash.random(5.5, 8, true)
             getTreeDrawLinesAtAngles = angleChangePerFractalIteration => [
                 -2 * angleChangePerFractalIteration,
                 -angleChangePerFractalIteration,
@@ -153,7 +225,7 @@ export class FractalAnimationDirective implements OnInit {
             console.error('mainTreeBranches was an unexpected number: ' + mainTreeBranches)
         }
 
-        const endAngleChangePerFractalIteration = 2 * Math.PI / lodash.random(3, 8, false)
+        const endAngleChangePerFractalIteration = 2 * Math.PI / lodash.random(3, 7, false)
 
         const totalTime = this.timeForTreeGrowth + this.timeToRotate
         const framesOfTreeGrowth = this.targetFPS * this.timeForTreeGrowth
@@ -246,7 +318,7 @@ export class FractalAnimationDirective implements OnInit {
                         getTreeDrawLinesAtAngles(angleChangePerFractalIteration),
                         treeStartLineWidth - this.lineWidthChangePerFractalIteration,
                         this.lineWidthChangePerFractalIteration,
-                        this.startAlpha - this.alphaChangePerFractalIteration,
+                        new Color(60, 40, 40, this.startAlpha),
                         this.alphaChangePerFractalIteration
                     )
                 }
@@ -274,10 +346,10 @@ export class FractalAnimationDirective implements OnInit {
                             snowFlake.yPos,
                             snowFlake.initialLineLength,
                             snowFlake.fromAngle,
-                            [-2 * Math.PI / 3, 0, 2 * Math.PI / 3],
+                            snowFlake.drawLinesAtAngles,
                             snowFlake.startLineWidth,
                             snowFlake.lineWidthChangePerFractalIteration,
-                            snowFlake.startAlpha,
+                            snowFlake.color,
                             snowFlake.alphaChangePerFractalIteration
                         )
 
@@ -302,7 +374,7 @@ export class FractalAnimationDirective implements OnInit {
         drawLinesAtAngles : number[],
         lineWidth : number,
         lineWidthChange : number,
-        alpha : number,
+        color : Color,
         alphaChange : number
     ) : void {
 
@@ -326,14 +398,14 @@ export class FractalAnimationDirective implements OnInit {
         })
 
         context.lineWidth = lineWidth
-        context.strokeStyle = `rgba(60, 40, 40, ${alpha})`
+        context.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
 
         linesToDraw.forEach(line => {
             this.drawLine(context, xStart, yStart, line.xEnd, line.yEnd)
         })
 
         const nextLineWidth = lineWidth - lineWidthChange
-        const newAlpha = alpha - alphaChange
+        const newAlpha = color.a - alphaChange
 
         if (nextLineWidth > 0 && drawWholeLength) {
 
@@ -350,7 +422,7 @@ export class FractalAnimationDirective implements OnInit {
                     drawLinesAtAngles,
                     nextLineWidth,
                     lineWidthChange,
-                    newAlpha,
+                    new Color(color.r, color.g, color.b, newAlpha),
                     alphaChange
                 )
             })
