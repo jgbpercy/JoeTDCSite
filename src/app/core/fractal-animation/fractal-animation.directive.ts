@@ -47,16 +47,55 @@ class Fractal {
 
 class Star extends Fractal {
 
-    public constructor(canvasWidth : number, canvasHeight : number) {
+    private timeToFadeIn = 0.7
+    private framesToFadeIn : number
+    private fadeInFramesElapsed = 0
+
+    private timeToTwinkle = 0.1
+    private framesToHalfTwinkle : number
+    private twinkleFramesElapsed = 0
+
+    private twinkleChancePerSecond = 0.1
+    private twinkleChancePerFrame : number
+
+    private normalAlpha : number
+
+    public constructor(
+        canvasWidth : number,
+        canvasHeight : number,
+        targetFrameRate : number,
+        mainFractalCenterX : number,
+        mainFractalCenterY : number,
+        mainFractalExclusionLength : number,
+    ) {
 
         super()
 
-        this.initialLineLength = lodash.random(5, 10, false)
+        this.framesToFadeIn = this.timeToFadeIn * targetFrameRate
+        this.framesToHalfTwinkle = this.timeToTwinkle * targetFrameRate
+
+        this.fadeInFramesElapsed = 0
+
+        this.initialLineLength = lodash.random(3, 7, false)
 
         this.alphaChangePerFractalIteration = 0
 
-        this.yPos = lodash.random(0, 3 * canvasHeight / 4, true)
-        this.xPos = lodash.random(0, canvasWidth, true)
+        let foundPos = false
+        let iteration = 0
+        while (!foundPos && iteration < 10) {
+
+            this.yPos = lodash.random(0, 3 * canvasHeight / 4, true)
+            this.xPos = lodash.random(0, canvasWidth, true)
+
+            const xFromMainFractalCenter = this.xPos - mainFractalCenterX
+            const yFromMainFractalCenter = this.yPos - mainFractalCenterY
+
+            if (Math.pow(xFromMainFractalCenter, 2) + Math.pow(yFromMainFractalCenter, 2) > Math.pow(mainFractalExclusionLength, 2)) {
+                foundPos = true
+            } else {
+                iteration += 1
+            }
+        }
 
         this.fromAngle = 0
 
@@ -64,11 +103,13 @@ class Star extends Fractal {
             r: lodash.random(100, 120, false),
             g: 100,
             b: lodash.random(80, 100, false),
-            a: (0.7 + 0.3 * lodash.random(0, 1, true)) * (canvasHeight - this.yPos) / canvasHeight,
+            a: 0,
         }
 
-        this.startLineWidth = 3
-        this.lineWidthChangePerFractalIteration = 1.3
+        this.normalAlpha = ((0.9 + 0.1 * lodash.random(0, 1, true)) * (canvasHeight - this.yPos) / canvasHeight)
+
+        this.startLineWidth = 1.5
+        this.lineWidthChangePerFractalIteration = 0.5
 
         this.drawLinesAtAngles = [
             0,
@@ -76,6 +117,39 @@ class Star extends Fractal {
             Math.PI,
             3 * Math.PI / 2,
         ]
+
+        this.twinkleChancePerFrame = 1 - Math.pow(1 - this.twinkleChancePerSecond, 1 / targetFrameRate)
+    }
+
+    public update() {
+
+        if (this.fadeInFramesElapsed <= this.framesToFadeIn) {
+
+            this.color.a = this.normalAlpha * this.fadeInFramesElapsed / this.framesToFadeIn
+            this.fadeInFramesElapsed += 1
+
+        } else if (this.twinkleFramesElapsed > 0) {
+
+            if (this.twinkleFramesElapsed === this.framesToHalfTwinkle * 2) {
+                this.color.a = this.normalAlpha
+                this.twinkleFramesElapsed = 0
+            } else {
+
+                if (this.twinkleFramesElapsed <= this.framesToHalfTwinkle) {
+                    this.color.a = this.normalAlpha
+                        + (this.twinkleFramesElapsed / this.framesToHalfTwinkle) * (1 - this.normalAlpha)
+                } else {
+                    this.color.a = this.normalAlpha
+                        + ((2 * this.framesToHalfTwinkle - this.twinkleFramesElapsed) / this.framesToHalfTwinkle) * (1 - this.normalAlpha)
+                }
+
+                this.twinkleFramesElapsed += 1
+            }
+        } else {
+            if (lodash.random(0, 1, true) < this.twinkleChancePerFrame) {
+                this.twinkleFramesElapsed = 1
+            }
+        }
     }
 }
 
@@ -93,9 +167,11 @@ class SnowFlake extends Fractal {
 
         this.speed = (1 + lodash.random(0.3)) * this.initialLineLength / 4
 
-        this.rotationSpeed = 0.05
+        this.rotationSpeed = lodash.random(0.03, 0.1, true)
+        const rotationDirection = lodash.random(0, 1, true) > 0.5 ? -1 : 1
+        this.rotationSpeed *= rotationDirection
 
-        this.alphaChangePerFractalIteration = 15
+        this.alphaChangePerFractalIteration = 0.05
 
         this.yPos = -this.initialLineLength * 2
         this.xPos = lodash.random(0, canvasWidth, true)
@@ -106,7 +182,7 @@ class SnowFlake extends Fractal {
             r: lodash.random(120, 130, false),
             g: lodash.random(120, 130, false),
             b: lodash.random(130, 155, false),
-            a: 200,
+            a: 0.5,
         }
 
         let branches = lodash.random(4, 6, false)
@@ -171,19 +247,21 @@ export class FractalAnimationDirective implements OnInit {
 
     private canvas : HTMLCanvasElement
 
+    private mainFractalEndYCoord = 200
+
     private timeForTreeGrowth = 3
     private timeToRotate = 3
     private timeBeforeInitialLineRetracts = 2
     private timeBeforeSpawningSnowFlakes = 4
-    private timeBetweenSnowFlakeSpawns = 0.4
-    private timeBetweenStarSpawns = 0.05
+    private timeBetweenSnowFlakeSpawns = 0.5
+    private timeBetweenStarSpawns = 0.01
 
-    private numberOfStars = 50
+    private numberOfStars = 20
 
     private lineWidthChangePerFractalIteration = 0.5
 
-    private startAlpha = 200
-    private alphaChangePerFractalIteration = 10
+    private startAlpha = 0.9
+    private alphaChangePerFractalIteration = 0.075
 
     private initialLineLength = 250
 
@@ -329,7 +407,7 @@ export class FractalAnimationDirective implements OnInit {
                     fullLengthYEnd = this.initialLineLength
                 } else {
                     fullLengthXEnd = canvasWidth * 0.5
-                    fullLengthYEnd = this.initialLineLength + easing(fractionRotationDone) * 200
+                    fullLengthYEnd = this.initialLineLength + easing(fractionRotationDone) * this.mainFractalEndYCoord
                 }
 
                 const retractedLength = this.initialLineLength * easing(1 - fractionInitialLineRetractionDone)
@@ -389,8 +467,18 @@ export class FractalAnimationDirective implements OnInit {
 
                     if (!starsCreated) {
                         if (framesSinceLastStarSpawned >= framesBetweenStarSpawns) {
-                            this.stars.push(new Star(canvasWidth, canvasHeight))
+
+                            this.stars.push(new Star(
+                                canvasWidth,
+                                canvasHeight,
+                                this.targetFPS,
+                                canvasWidth * 0.5,
+                                this.mainFractalEndYCoord + this.initialLineLength,
+                                this.initialLineLength,
+                            ))
+
                             framesSinceLastStarSpawned = 0
+
                         } else {
                             framesSinceLastStarSpawned += 1
                         }
@@ -416,7 +504,10 @@ export class FractalAnimationDirective implements OnInit {
                             star.color,
                             star.alphaChangePerFractalIteration,
                         )
+
+                        star.update()
                     })
+
                 }
 
                 context.lineWidth = treeStartLineWidth
