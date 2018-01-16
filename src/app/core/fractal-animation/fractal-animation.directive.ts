@@ -250,13 +250,13 @@ export class FractalAnimationDirective implements OnInit {
     private mainFractalEndYCoord = 200
 
     private timeForTreeGrowth = 3
-    private timeToRotate = 3
+    private timeToRotate = 20
     private timeBeforeInitialLineRetracts = 2
     private timeBeforeSpawningSnowFlakes = 4
-    private timeBetweenSnowFlakeSpawns = 0.5
+    private timeBetweenSnowFlakeSpawns = 0.4
     private timeBetweenStarSpawns = 0.01
 
-    private numberOfStars = 20
+    private numberOfStars = 40
 
     private lineWidthChangePerFractalIteration = 0.5
 
@@ -513,7 +513,10 @@ export class FractalAnimationDirective implements OnInit {
                 context.lineWidth = treeStartLineWidth
                 context.strokeStyle = `rgba(60, 40, 40, ${this.startAlpha})`
 
-                this.drawLine(context, xStart, yStart, xEnd, yEnd)
+                context.beginPath()
+                context.moveTo(xStart, yStart)
+                context.lineTo(xEnd, yEnd)
+                context.stroke()
 
                 if (drawWholeInitialLine) {
                     this.drawFractalSplit(
@@ -572,12 +575,19 @@ export class FractalAnimationDirective implements OnInit {
             }
         })
 
-        context.lineWidth = lineWidth
-        context.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
+        const path = new Path2D()
+
+        path.moveTo(xStart, yStart)
 
         linesToDraw.forEach(line => {
-            this.drawLine(context, xStart, yStart, line.xEnd, line.yEnd)
+            path.lineTo(line.xEnd, line.yEnd)
+            path.lineTo(xStart, yStart)
         })
+
+        context.lineWidth = lineWidth
+        context.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
+        
+        context.stroke(path)
 
         const nextLineWidth = lineWidth - lineWidthChange
         const newAlpha = color.a - alphaChange
@@ -602,20 +612,5 @@ export class FractalAnimationDirective implements OnInit {
                 )
             })
         }
-    }
-
-    private drawLine(
-        context : CanvasRenderingContext2D,
-        xStart : number,
-        yStart : number,
-        xEnd : number,
-        yEnd : number,
-    ) : void {
-
-        context.beginPath()
-        context.moveTo(xStart, yStart)
-
-        context.lineTo(xEnd, yEnd)
-        context.stroke()
     }
 }
