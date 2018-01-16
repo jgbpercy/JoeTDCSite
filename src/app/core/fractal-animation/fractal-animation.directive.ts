@@ -83,8 +83,7 @@ class Star extends Fractal {
         this.alphaChangePerFractalIteration = 0
 
         let foundPos = false
-        let iteration = 0
-        while (!foundPos && iteration < 10) {
+        while (!foundPos) {
 
             this.yPos = lodash.random(0, 3 * canvasHeight / 4, true)
             this.xPos = lodash.random(0, canvasWidth, true)
@@ -97,8 +96,6 @@ class Star extends Fractal {
 
                 foundPos = true
 
-            } else {
-                iteration += 1
             }
         }
 
@@ -163,12 +160,14 @@ class SnowFlake extends Fractal {
 
     public constructor(
         canvasWidth : number,
+        mainFractalCenterX : number,
+        mainFractalExclusionLength : number,
     ) {
         super()
 
-        this.initialLineLength = lodash.random(3, 15, false)
+        this.initialLineLength = lodash.random(4, 15, false)
 
-        this.speed = (1 + lodash.random(0.3)) * this.initialLineLength / 4
+        this.speed = (1.2 + lodash.random(0.3)) * this.initialLineLength / 4
 
         this.rotationSpeed = lodash.random(0.03, 0.1, true)
         const rotationDirection = lodash.random(0, 1, true) > 0.5 ? -1 : 1
@@ -177,7 +176,19 @@ class SnowFlake extends Fractal {
         this.alphaChangePerFractalIteration = 0.05
 
         this.yPos = -this.initialLineLength * 2
-        this.xPos = lodash.random(0, canvasWidth, true)
+
+        let foundPos = false
+        while (!foundPos) {
+
+            this.xPos = lodash.random(0, canvasWidth, true)
+    
+            const xFromMainFractalCenter = Math.abs(this.xPos - mainFractalCenterX)
+
+            if (xFromMainFractalCenter > mainFractalExclusionLength + this.initialLineLength * 2)  {
+                foundPos = true
+            }
+        }
+
         this.fromAngle = 0
         this.removeThisFrame = false
 
@@ -196,7 +207,7 @@ class SnowFlake extends Fractal {
         //TODO: this can be factored with stuff below
         if (branches === 3) {
 
-            this.startLineWidth = this.initialLineLength < 7 ? 1 : 2
+            this.startLineWidth = this.initialLineLength < 8 ? 1 : 2
 
             this.drawLinesAtAngles = [
                 -2 * Math.PI / 3,
@@ -206,7 +217,7 @@ class SnowFlake extends Fractal {
 
         } else if (branches === 5) {
 
-            this.startLineWidth = this.initialLineLength < 7 ? 1 : 1.5
+            this.startLineWidth = this.initialLineLength < 8 ? 1 : 1.5
 
             this.drawLinesAtAngles = [
                 -4 * Math.PI / 5,
@@ -218,7 +229,7 @@ class SnowFlake extends Fractal {
 
         } else if (branches === 6) {
 
-            this.startLineWidth = this.initialLineLength < 7 ? 1 : 1.5
+            this.startLineWidth = this.initialLineLength < 8 ? 1 : 1.5
 
             this.drawLinesAtAngles = [
                 -2 * Math.PI / 3,
@@ -255,10 +266,10 @@ export class FractalAnimationDirective implements OnInit {
     private timeToRotate = 4
     private timeBeforeInitialLineRetracts = 2
     private timeBeforeSpawningSnowFlakes = 4
-    private timeBetweenSnowFlakeSpawns = 0.4
+    private timeBetweenSnowFlakeSpawns = 0.2
     private timeBetweenStarSpawns = 0.01
 
-    private numberOfStars = 40
+    private numberOfStars = 100
 
     private treeInitialLineWidth : number
     private treeLineWidthChangePerFractalIteration = 0.4
@@ -268,7 +279,7 @@ export class FractalAnimationDirective implements OnInit {
 
     private initialLineLength = 250
 
-    private targetFPS = 30
+    private targetFPS = 60
 
     private snowFlakes : SnowFlake[] = new Array<SnowFlake>()
     private stars : Star[] = new Array<Star>()
@@ -396,8 +407,6 @@ export class FractalAnimationDirective implements OnInit {
         .subscribe(
             frame => {
 
-                context.drawImage(maskCanvas, 0, 0)
-
                 const unboundedFractionTreeGrowthDone = frame / framesOfTreeGrowth
                 const fractionTreeGrowthDone = unboundedFractionTreeGrowthDone > 1 ? 1 : unboundedFractionTreeGrowthDone
                 const treeGrowthDone = fractionTreeGrowthDone === 1
@@ -405,6 +414,7 @@ export class FractalAnimationDirective implements OnInit {
                 const unboundedFractionRotationDone = (frame - framesOfTreeGrowth) / framesOfRotation
                 const fractionRotationDone = unboundedFractionRotationDone < 0 ? 0 :
                     (unboundedFractionRotationDone > 1 ? 1 : unboundedFractionRotationDone)
+                const rotationDoneAndDrawn = frame > framesOfRotation + framesOfTreeGrowth
 
                 const unboundedFractionInitialLineRetractionDone =
                     (frame - framesBeforeInitialLineRetraction) / framesOfInitialLineRetraction
@@ -451,10 +461,35 @@ export class FractalAnimationDirective implements OnInit {
                     yEnd = fullLengthYEnd
                 }
 
+                if (!rotationDoneAndDrawn) {
+                    context.fillRect(0, 0, canvasWidth, canvasHeight)
+                } else {
+                    context.drawImage(maskCanvas, 0, 0)
+                }
+
+                if (drawWholeInitialLine && !rotationDoneAndDrawn) {
+
+                    this.drawFractalSplit(
+                        context,
+                        false,
+                        frame - 1 / (lineLengthDrawnIncreasePerFrame / this.initialLineLength),
+                        lineLengthDrawnIncreasePerFrame,
+                        fullLengthXEnd,
+                        fullLengthYEnd,
+                        this.initialLineLength / 2,
+                        angleOfFirstLine,
+                        getTreeDrawLinesAtAngles(angleChangePerFractalIteration),
+                        this.treeInitialLineWidth - this.treeLineWidthChangePerFractalIteration,
+                        this.treeLineWidthChangePerFractalIteration,
+                        new Color(60, 40, 40, this.startAlpha),
+                        this.alphaChangePerFractalIteration
+                    )
+                }
+
                 if (frame > framesBeforeSpawningSnowFlakes) {
 
                     if (framesSinceLastSnowFlakeSpawn >= framesBetweenSnowFlakeSpawns) {
-                        this.snowFlakes.push(new SnowFlake(canvasWidth))
+                        this.snowFlakes.push(new SnowFlake(canvasWidth, canvasWidth / 2, this.initialLineLength))
                         framesSinceLastSnowFlakeSpawn = 0
                     } else {
                         framesSinceLastSnowFlakeSpawn += 1
@@ -539,24 +574,6 @@ export class FractalAnimationDirective implements OnInit {
                 context.moveTo(xStart, yStart)
                 context.lineTo(xEnd, yEnd)
                 context.stroke()
-
-                if (drawWholeInitialLine) {
-                    this.drawFractalSplit(
-                        context,
-                        false,
-                        frame - 1 / (lineLengthDrawnIncreasePerFrame / this.initialLineLength),
-                        lineLengthDrawnIncreasePerFrame,
-                        fullLengthXEnd,
-                        fullLengthYEnd,
-                        this.initialLineLength / 2,
-                        angleOfFirstLine,
-                        getTreeDrawLinesAtAngles(angleChangePerFractalIteration),
-                        this.treeInitialLineWidth - this.treeLineWidthChangePerFractalIteration,
-                        this.treeLineWidthChangePerFractalIteration,
-                        new Color(60, 40, 40, this.startAlpha),
-                        this.alphaChangePerFractalIteration
-                    )
-                }
             }
         )
     }
