@@ -15,9 +15,11 @@ export class SnowFlake extends Fractal {
     ) {
         super();
 
-        this.initialLineLength = lodash.random(4, 15, false);
+        this.lineLength = lodash.random(5, 16, false);
 
-        this.speed = (1.2 + lodash.random(0.3)) * this.initialLineLength / 4;
+        this.totalDrawLength = this.lineLength * 2.2;
+
+        this.speed = (40 + lodash.random(10, true)) * this.lineLength / 4;
 
         this.rotationSpeed = lodash.random(0.03, 0.1, true);
         const rotationDirection = lodash.random(0, 1, true) > 0.5 ? -1 : 1;
@@ -25,16 +27,16 @@ export class SnowFlake extends Fractal {
 
         this.alphaChangePerFractalIteration = 0.05;
 
-        this.yPos = -this.initialLineLength * 2;
+        this.position.y = -this.lineLength * 2;
 
         let foundPos = false;
         while (!foundPos) {
 
-            this.xPos = lodash.random(0, canvasWidth, true);
+            this.position.x = lodash.random(0, canvasWidth, true);
     
-            const xFromMainFractalCenter = Math.abs(this.xPos - mainFractalCenterX);
+            const xFromMainFractalCenter = Math.abs(this.position.x - mainFractalCenterX);
 
-            if (xFromMainFractalCenter > mainFractalExclusionLength + this.initialLineLength * 2)  {
+            if (xFromMainFractalCenter > mainFractalExclusionLength + this.lineLength * 2)  {
                 foundPos = true;
             }
         }
@@ -57,7 +59,7 @@ export class SnowFlake extends Fractal {
         //TODO: this can be factored with stuff below
         if (branches === 3) {
 
-            this.startLineWidth = this.initialLineLength < 8 ? 1 : 2;
+            this.initialLineWidth = this.lineLength < 9 ? 1.5 : 2;
 
             this.drawLinesAtAngles = [
                 -2 * Math.PI / 3,
@@ -67,7 +69,7 @@ export class SnowFlake extends Fractal {
 
         } else if (branches === 5) {
 
-            this.startLineWidth = this.initialLineLength < 8 ? 1 : 1.5;
+            this.initialLineWidth = this.lineLength < 9 ? 1 : 1.5;
 
             this.drawLinesAtAngles = [
                 -4 * Math.PI / 5,
@@ -79,7 +81,7 @@ export class SnowFlake extends Fractal {
 
         } else if (branches === 6) {
 
-            this.startLineWidth = this.initialLineLength < 8 ? 1 : 1.5;
+            this.initialLineWidth = this.lineLength < 10 ? 1 : 1.5;
 
             this.drawLinesAtAngles = [
                 -2 * Math.PI / 3,
@@ -92,13 +94,20 @@ export class SnowFlake extends Fractal {
         }
     }
 
-    public move() {
-        this.yPos += this.speed;
+    public update(deltaTime : number, canvasHeight : number) {
+
+        this.position.y += this.speed * deltaTime;
+
         this.fromAngle += this.rotationSpeed;
+
         if (this.fromAngle > 2 * Math.PI) {
             this.fromAngle -= 2 * Math.PI;
         } else if (this.fromAngle < 0) {
             this.fromAngle += 2 * Math.PI;
+        }
+
+        if (this.position.y > canvasHeight - 2 * this.lineLength) {
+            this.removeThisFrame = true;
         }
     }
 }

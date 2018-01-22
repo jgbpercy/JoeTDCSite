@@ -5,22 +5,20 @@ import { Fractal } from './fractal';
 export class Star extends Fractal {
 
     private timeToFadeIn = 0.7;
-    private framesToFadeIn : number;
-    private fadeInFramesElapsed = 0;
+    private fadeInTimePassed = 0;
 
     private timeToTwinkle = 0.1;
-    private framesToHalfTwinkle : number;
-    private twinkleFramesElapsed = 0;
+    private twinkleTimePassed = 0;
+
+    private twinkling = false;
 
     private twinkleChancePerSecond = 0.1;
-    private twinkleChancePerFrame : number;
 
     private normalAlpha : number;
 
     public constructor(
         canvasWidth : number,
         canvasHeight : number,
-        targetFrameRate : number,
         mainFractalCenterX : number,
         mainFractalCenterY : number,
         mainFractalExclusionLength : number,
@@ -28,35 +26,30 @@ export class Star extends Fractal {
         super();
 
         this.lineWidthChangePerFractalIteration = 0.1;
-        this.startLineWidth = this.lineWidthChangePerFractalIteration * 3;
+        this.initialLineWidth = this.lineWidthChangePerFractalIteration * 3;
 
-        this.framesToFadeIn = this.timeToFadeIn * targetFrameRate;
-        this.framesToHalfTwinkle = this.timeToTwinkle * targetFrameRate;
-
-        this.fadeInFramesElapsed = 0;
-
-        this.initialLineLength = lodash.random(3, 7, false);
+        this.lineLength = lodash.random(3, 7, false);
+        this.totalDrawLength = this.lineLength * 2.2;
 
         this.alphaChangePerFractalIteration = 0;
 
         let foundPos = false;
         while (!foundPos) {
 
-            this.yPos = lodash.random(0, 3 * canvasHeight / 4, true);
-            this.xPos = lodash.random(0, canvasWidth, true);
+            this.position.x = lodash.random(0, canvasWidth, true);
+            this.position.y = lodash.random(0, 3 * canvasHeight / 4, true);
 
-            const xFromMainFractalCenter = this.xPos - mainFractalCenterX;
-            const yFromMainFractalCenter = this.yPos - mainFractalCenterY;
+            const xFromMainFractalCenter = this.position.x - mainFractalCenterX;
+            const yFromMainFractalCenter = this.position.y - mainFractalCenterY;
 
             if (Math.pow(xFromMainFractalCenter, 2) + Math.pow(yFromMainFractalCenter, 2) 
-                > Math.pow(mainFractalExclusionLength + this.initialLineLength * 2, 2)) {
+                > Math.pow(mainFractalExclusionLength + this.lineLength * 2, 2)) {
 
                 foundPos = true;
-
             }
         }
 
-        this.fromAngle = 0
+        this.fromAngle = 0;
 
         this.color = {
             r: lodash.random(100, 120, false),
@@ -65,7 +58,7 @@ export class Star extends Fractal {
             a: 0,
         };
 
-        this.normalAlpha = ((0.9 + 0.1 * lodash.random(0, 1, true)) * (canvasHeight - this.yPos) / canvasHeight);
+        this.normalAlpha = ((0.9 + 0.1 * lodash.random(0, 1, true)) * (canvasHeight - this.position.y) / canvasHeight);
 
         this.drawLinesAtAngles = [
             0,
@@ -73,37 +66,37 @@ export class Star extends Fractal {
             Math.PI,
             3 * Math.PI / 2,
         ];
-
-        this.twinkleChancePerFrame = 1 - Math.pow(1 - this.twinkleChancePerSecond, 1 / targetFrameRate);
     }
 
-    public update() {
+    public update(deltaTime : number) {
 
-        if (this.fadeInFramesElapsed <= this.framesToFadeIn) {
+        if (this.fadeInTimePassed <= this.timeToFadeIn) {
 
-            this.color.a = this.normalAlpha * this.fadeInFramesElapsed / this.framesToFadeIn;
-            this.fadeInFramesElapsed += 1;
+            this.color.a = this.normalAlpha * this.fadeInTimePassed / this.timeToFadeIn;
+            this.fadeInTimePassed += deltaTime;
 
-        } else if (this.twinkleFramesElapsed > 0) {
+        } else if (this.twinkling) {
 
-            if (this.twinkleFramesElapsed === this.framesToHalfTwinkle * 2) {
+            if (this.twinkleTimePassed > this.timeToTwinkle) {
                 this.color.a = this.normalAlpha;
-                this.twinkleFramesElapsed = 0;
+                this.twinkling = false;
             } else {
 
-                if (this.twinkleFramesElapsed <= this.framesToHalfTwinkle) {
+                if (this.twinkleTimePassed <= this.timeToTwinkle / 2) {
                     this.color.a = this.normalAlpha
-                        + (this.twinkleFramesElapsed / this.framesToHalfTwinkle) * (1 - this.normalAlpha);
+                        + (this.twinkleTimePassed / (this.timeToTwinkle / 2)) * (1 - this.normalAlpha);
                 } else {
                     this.color.a = this.normalAlpha
-                        + ((2 * this.framesToHalfTwinkle - this.twinkleFramesElapsed) / this.framesToHalfTwinkle) * (1 - this.normalAlpha);
+                        + ((this.timeToTwinkle - this.twinkleTimePassed) / (this.timeToTwinkle / 2)) * (1 - this.normalAlpha);
                 }
 
-                this.twinkleFramesElapsed += 1;
+                this.twinkleTimePassed += deltaTime;
             }
         } else {
-            if (lodash.random(0, 1, true) < this.twinkleChancePerFrame) {
-                this.twinkleFramesElapsed = 1;
+            const twinkleChangeInDeltaTime = 1 - Math.pow(1 - this.twinkleChancePerSecond, deltaTime);
+
+            if (lodash.random(0, 1, true) < twinkleChangeInDeltaTime) {
+                this.twinkling = true;
             }
         }
     }
