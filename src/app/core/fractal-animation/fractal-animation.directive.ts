@@ -2,138 +2,140 @@ import {
     Directive,
     ElementRef,
     OnInit,
-} from '@angular/core'
-import { interval } from 'rxjs/observable/interval'
-import { map } from 'rxjs/operators/map'
-import { take } from 'rxjs/operators/take'
+} from '@angular/core';
+import { interval } from 'rxjs/observable/interval';
+import { map } from 'rxjs/operators/map';
+import { take } from 'rxjs/operators/take';
 
-import * as bezier from 'bezier-easing'
-import * as lodash from 'lodash'
+import * as bezier from 'bezier-easing';
+import * as lodash from 'lodash';
 
 import { 
     Color,
     Fractal,
     SnowFlake,
     Star,
-} from './models'
+} from './models';
 
 @Directive({
     selector: '[jtdcFractalAnimation]'
 })
 export class FractalAnimationDirective implements OnInit {
 
-    private canvas : HTMLCanvasElement
+    private canvas : HTMLCanvasElement;
 
-    private mainFractalEndYCoord = 200
+    private currentTimeStamp = 0;
 
-    private timeForTreeGrowth = 3
-    private timeToRotate = 4
-    private timeBeforeInitialLineRetracts = 2
-    private timeBeforeSpawningSnowFlakes = 4
-    private timeBetweenSnowFlakeSpawns = 0.2
-    private timeBetweenStarSpawns = 0.01
+    private mainFractalEndYCoord = 200;
 
-    private numberOfStars = 100
+    private timeForTreeGrowth = 3;
+    private timeToRotate = 4;
+    private timeBeforeInitialLineRetracts = 2;
+    private timeBeforeSpawningSnowFlakes = 4;
+    private timeBetweenSnowFlakeSpawns = 0.2;
+    private timeBetweenStarSpawns = 0.01;
 
-    private treeInitialLineWidth : number
-    private treeLineWidthChangePerFractalIteration = 0.4
+    private numberOfStars = 100;
 
-    private startAlpha = 0.9
-    private alphaChangePerFractalIteration = 0.075
+    private treeInitialLineWidth : number;
+    private treeLineWidthChangePerFractalIteration = 0.4;
 
-    private initialLineLength = 250
+    private startAlpha = 0.9;
+    private alphaChangePerFractalIteration = 0.075;
 
-    private targetFPS = 60
+    private initialLineLength = 250;
 
-    private snowFlakes : SnowFlake[] = new Array<SnowFlake>()
-    private stars : Star[] = new Array<Star>()
+    private targetFPS = 60;
+
+    private snowFlakes : SnowFlake[] = new Array<SnowFlake>();
+    private stars : Star[] = new Array<Star>();
 
     constructor(private element : ElementRef) {
 
-        this.canvas = this.element.nativeElement as HTMLCanvasElement
+        this.canvas = this.element.nativeElement as HTMLCanvasElement;
     }
 
     public ngOnInit() : void {
 
-        const context = this.canvas.getContext('2d')
+        const context = this.canvas.getContext('2d');
 
-        const boundingRect = this.canvas.getBoundingClientRect()
-        const canvasWidth = boundingRect.width
-        const canvasHeight = boundingRect.height
+        const boundingRect = this.canvas.getBoundingClientRect();
+        const canvasWidth = boundingRect.width;
+        const canvasHeight = boundingRect.height;
         
-        this.canvas.width = canvasWidth
-        this.canvas.height = canvasHeight
+        this.canvas.width = canvasWidth;
+        this.canvas.height = canvasHeight;
         
-        const maskCanvas = document.createElement('canvas')
-        maskCanvas.width = this.canvas.width
-        maskCanvas.height = this.canvas.height
+        const maskCanvas = document.createElement('canvas');
+        maskCanvas.width = this.canvas.width;
+        maskCanvas.height = this.canvas.height;
 
-        const maskContext = maskCanvas.getContext('2d')
+        const maskContext = maskCanvas.getContext('2d');
 
-        maskContext.fillStyle = 'black'
-        maskContext.fillRect(0, 0, maskCanvas.width, maskCanvas.height)
-        maskContext.globalCompositeOperation = 'xor'
-        maskContext.beginPath()
-        maskContext.moveTo(canvasWidth / 2, this.mainFractalEndYCoord)
+        maskContext.fillStyle = 'black';
+        maskContext.fillRect(0, 0, maskCanvas.width, maskCanvas.height);
+        maskContext.globalCompositeOperation = 'xor';
+        maskContext.beginPath();
+        maskContext.moveTo(canvasWidth / 2, this.mainFractalEndYCoord);
         maskContext.arc(
             canvasWidth / 2,
             this.mainFractalEndYCoord + this.initialLineLength,
             this.initialLineLength,
             0,
             Math.PI * 2,
-        )
-        maskContext.fill()
+        );
+        maskContext.fill();
 
-        context.lineCap = 'round'
-        context.lineJoin = 'round'
+        context.lineCap = 'round';
+        context.lineJoin = 'round';
 
-        const easing = bezier(0.8, 0.2, 0.45, 0.8)
+        const easing = bezier(0.8, 0.2, 0.45, 0.8);
 
-        const mainTreeBranches = lodash.random(3, 6, false)
-        let getTreeDrawLinesAtAngles : (angleChangePerFractalIteration : number) => number[]
-        let startAngleChangePerFractalIteration
+        const mainTreeBranches = lodash.random(3, 6, false);
+        let getTreeDrawLinesAtAngles : (angleChangePerFractalIteration : number) => number[];
+        let startAngleChangePerFractalIteration;
 
         if (mainTreeBranches === 3) {
 
-            this.treeInitialLineWidth = this.treeLineWidthChangePerFractalIteration * 8
+            this.treeInitialLineWidth = this.treeLineWidthChangePerFractalIteration * 8;
 
-            startAngleChangePerFractalIteration = Math.PI / lodash.random(4.5, 7.5, true)
+            startAngleChangePerFractalIteration = Math.PI / lodash.random(4.5, 7.5, true);
             getTreeDrawLinesAtAngles = angleChangePerFractalIteration => [
                 -angleChangePerFractalIteration,
                 0,
                 angleChangePerFractalIteration,
-            ]
+            ];
 
         } else if (mainTreeBranches === 4) {
 
-            this.treeInitialLineWidth = this.treeLineWidthChangePerFractalIteration * 7
+            this.treeInitialLineWidth = this.treeLineWidthChangePerFractalIteration * 7;
 
-            startAngleChangePerFractalIteration = Math.PI / lodash.random(5, 7.5, true)
+            startAngleChangePerFractalIteration = Math.PI / lodash.random(5, 7.5, true);
             getTreeDrawLinesAtAngles = angleChangePerFractalIteration => [
                 -1.5 * angleChangePerFractalIteration,
                 -0.5 * angleChangePerFractalIteration,
                 0.5 * angleChangePerFractalIteration,
                 1.5 * angleChangePerFractalIteration,
-            ]
+            ];
 
         } else if (mainTreeBranches === 5) {
 
-            this.treeInitialLineWidth = this.treeLineWidthChangePerFractalIteration * 6
+            this.treeInitialLineWidth = this.treeLineWidthChangePerFractalIteration * 6;
 
-            startAngleChangePerFractalIteration = Math.PI / lodash.random(5.5, 8, true)
+            startAngleChangePerFractalIteration = Math.PI / lodash.random(5.5, 8, true);
             getTreeDrawLinesAtAngles = angleChangePerFractalIteration => [
                 -2 * angleChangePerFractalIteration,
                 -angleChangePerFractalIteration,
                 0,
                 angleChangePerFractalIteration,
                 2 * angleChangePerFractalIteration
-            ]
+            ];
 
         } else if (mainTreeBranches === 6) {
 
-            this.treeInitialLineWidth = this.treeLineWidthChangePerFractalIteration * 6
+            this.treeInitialLineWidth = this.treeLineWidthChangePerFractalIteration * 6;
 
-            startAngleChangePerFractalIteration = Math.PI / lodash.random(6, 8, true)
+            startAngleChangePerFractalIteration = Math.PI / lodash.random(6, 8, true);
             getTreeDrawLinesAtAngles = angleChangePerFractalIteration => [
                 -2.5 * angleChangePerFractalIteration,
                 -1.5 * angleChangePerFractalIteration,
@@ -141,94 +143,110 @@ export class FractalAnimationDirective implements OnInit {
                 0.5 * angleChangePerFractalIteration,
                 1.5 * angleChangePerFractalIteration,
                 2.5 * angleChangePerFractalIteration
-            ]
+            ];
 
         } else {
-            console.error('mainTreeBranches was an unexpected number: ' + mainTreeBranches)
+            console.error('mainTreeBranches was an unexpected number: ' + mainTreeBranches);
         }
 
-        const endAngleChangePerFractalIteration = 2 * Math.PI / lodash.random(3, 7, false)
+        const endAngleChangePerFractalIteration = 2 * Math.PI / lodash.random(3, 7, false);
 
-        const totalTime = this.timeForTreeGrowth + this.timeToRotate
-        const framesOfTreeGrowth = this.targetFPS * this.timeForTreeGrowth
-        const framesOfRotation = this.targetFPS * this.timeToRotate
-        const framesBeforeInitialLineRetraction = this.targetFPS * this.timeBeforeInitialLineRetracts
-        const framesBeforeSpawningSnowFlakes = this.targetFPS * this.timeBeforeSpawningSnowFlakes
-        const framesBetweenSnowFlakeSpawns = this.targetFPS * this.timeBetweenSnowFlakeSpawns
-        const framesBetweenStarSpawns = this.targetFPS * this.timeBetweenStarSpawns
+        const totalTime = this.timeForTreeGrowth + this.timeToRotate;
+        const framesOfTreeGrowth = this.targetFPS * this.timeForTreeGrowth;
+        const framesOfRotation = this.targetFPS * this.timeToRotate;
+        const framesBeforeInitialLineRetraction = this.targetFPS * this.timeBeforeInitialLineRetracts;
+        const framesBeforeSpawningSnowFlakes = this.targetFPS * this.timeBeforeSpawningSnowFlakes;
+        const framesBetweenSnowFlakeSpawns = this.targetFPS * this.timeBetweenSnowFlakeSpawns;
+        const framesBetweenStarSpawns = this.targetFPS * this.timeBetweenStarSpawns;
 
-        let framesSinceLastSnowFlakeSpawn = framesBetweenSnowFlakeSpawns
-        let framesSinceLastStarSpawned = framesBetweenStarSpawns
-        let starsCreated = false
+        let framesSinceLastSnowFlakeSpawn = framesBetweenSnowFlakeSpawns;
+        let framesSinceLastStarSpawned = framesBetweenStarSpawns;
+        let starsCreated = false;
 
-        const totalFrames = framesOfTreeGrowth + framesOfRotation
+        const totalFrames = framesOfTreeGrowth + framesOfRotation;
 
-        const framesOfInitialLineRetraction = totalFrames - framesBeforeInitialLineRetraction
+        const framesOfInitialLineRetraction = totalFrames - framesBeforeInitialLineRetraction;
 
-        const lineLengthDrawnIncreasePerFrame = (this.initialLineLength * 2) / framesOfTreeGrowth
+        const lineLengthDrawnIncreasePerFrame = (this.initialLineLength * 2) / framesOfTreeGrowth;
+
+        const doFrame = (timeStamp : number) => {
+
+            let deltaTime : number;
+    
+            if (this.currentTimeStamp === 0) {
+                this.currentTimeStamp = timeStamp;
+            } else {
+                deltaTime = timeStamp - this.currentTimeStamp;
+                this.currentTimeStamp = timeStamp;
+            }
+
+            window.requestAnimationFrame(doFrame);
+        };
+
+        window.requestAnimationFrame(doFrame.bind(this));
         
         interval(1000 / this.targetFPS).pipe(map(zeroIndexedFrame => zeroIndexedFrame + 1))
         .subscribe(
             frame => {
 
-                const unboundedFractionTreeGrowthDone = frame / framesOfTreeGrowth
-                const fractionTreeGrowthDone = unboundedFractionTreeGrowthDone > 1 ? 1 : unboundedFractionTreeGrowthDone
-                const treeGrowthDone = fractionTreeGrowthDone === 1
+                const unboundedFractionTreeGrowthDone = frame / framesOfTreeGrowth;
+                const fractionTreeGrowthDone = unboundedFractionTreeGrowthDone > 1 ? 1 : unboundedFractionTreeGrowthDone;
+                const treeGrowthDone = fractionTreeGrowthDone === 1;
 
-                const unboundedFractionRotationDone = (frame - framesOfTreeGrowth) / framesOfRotation
+                const unboundedFractionRotationDone = (frame - framesOfTreeGrowth) / framesOfRotation;
                 const fractionRotationDone = unboundedFractionRotationDone < 0 ? 0 :
-                    (unboundedFractionRotationDone > 1 ? 1 : unboundedFractionRotationDone)
-                const rotationDoneAndDrawn = frame > framesOfRotation + framesOfTreeGrowth
+                    (unboundedFractionRotationDone > 1 ? 1 : unboundedFractionRotationDone);
+                const rotationDoneAndDrawn = frame > framesOfRotation + framesOfTreeGrowth;
 
                 const unboundedFractionInitialLineRetractionDone =
-                    (frame - framesBeforeInitialLineRetraction) / framesOfInitialLineRetraction
+                    (frame - framesBeforeInitialLineRetraction) / framesOfInitialLineRetraction;
                 const fractionInitialLineRetractionDone = unboundedFractionInitialLineRetractionDone < 0 ? 0 :
-                    (unboundedFractionInitialLineRetractionDone > 1 ? 1 : unboundedFractionInitialLineRetractionDone)
+                    (unboundedFractionInitialLineRetractionDone > 1 ? 1 : unboundedFractionInitialLineRetractionDone);
 
                 const angleChangePerFractalIteration = startAngleChangePerFractalIteration
                     + (endAngleChangePerFractalIteration - startAngleChangePerFractalIteration)
-                    * Math.pow(fractionRotationDone, 6)
+                    * Math.pow(fractionRotationDone, 6);
 
-                const angleOfFirstLine = easing(fractionRotationDone) * -Math.PI
+                const angleOfFirstLine = easing(fractionRotationDone) * -Math.PI;
 
-                let lengthToDraw = lineLengthDrawnIncreasePerFrame * frame
-                const drawWholeInitialLine = lengthToDraw > this.initialLineLength
-                lengthToDraw = drawWholeInitialLine ? this.initialLineLength : lengthToDraw
+                let lengthToDraw = lineLengthDrawnIncreasePerFrame * frame;
+                const drawWholeInitialLine = lengthToDraw > this.initialLineLength;
+                lengthToDraw = drawWholeInitialLine ? this.initialLineLength : lengthToDraw;
 
-                let fullLengthXEnd : number
-                let fullLengthYEnd : number
+                let fullLengthXEnd : number;
+                let fullLengthYEnd : number;
 
                 if (!treeGrowthDone) {
-                    fullLengthXEnd = canvasWidth * 0.5
-                    fullLengthYEnd = this.initialLineLength
+                    fullLengthXEnd = canvasWidth * 0.5;
+                    fullLengthYEnd = this.initialLineLength;
                 } else {
-                    fullLengthXEnd = canvasWidth * 0.5
-                    fullLengthYEnd = this.initialLineLength + easing(fractionRotationDone) * this.mainFractalEndYCoord
+                    fullLengthXEnd = canvasWidth * 0.5;
+                    fullLengthYEnd = this.initialLineLength + easing(fractionRotationDone) * this.mainFractalEndYCoord;
                 }
 
-                const retractedLength = this.initialLineLength * easing(1 - fractionInitialLineRetractionDone)
+                const retractedLength = this.initialLineLength * easing(1 - fractionInitialLineRetractionDone);
 
-                let xStart : number
-                let yStart : number
+                let xStart : number;
+                let yStart : number;
 
-                let xEnd : number
-                let yEnd : number
+                let xEnd : number;
+                let yEnd : number;
 
-                xStart = fullLengthXEnd - retractedLength * Math.sin(angleOfFirstLine)
-                yStart = fullLengthYEnd - retractedLength * Math.cos(angleOfFirstLine)
+                xStart = fullLengthXEnd - retractedLength * Math.sin(angleOfFirstLine);
+                yStart = fullLengthYEnd - retractedLength * Math.cos(angleOfFirstLine);
 
                 if (!drawWholeInitialLine) {
-                    xEnd = xStart + lengthToDraw * Math.sin(angleOfFirstLine)
-                    yEnd = yStart + lengthToDraw * Math.cos(angleOfFirstLine)
+                    xEnd = xStart + lengthToDraw * Math.sin(angleOfFirstLine);
+                    yEnd = yStart + lengthToDraw * Math.cos(angleOfFirstLine);
                 } else {
-                    xEnd = fullLengthXEnd
-                    yEnd = fullLengthYEnd
+                    xEnd = fullLengthXEnd;
+                    yEnd = fullLengthYEnd;
                 }
 
                 if (!rotationDoneAndDrawn) {
-                    context.fillRect(0, 0, canvasWidth, canvasHeight)
+                    context.fillRect(0, 0, canvasWidth, canvasHeight);
                 } else {
-                    context.drawImage(maskCanvas, 0, 0)
+                    context.drawImage(maskCanvas, 0, 0);
                 }
 
                 if (drawWholeInitialLine && !rotationDoneAndDrawn) {
@@ -247,22 +265,22 @@ export class FractalAnimationDirective implements OnInit {
                         this.treeLineWidthChangePerFractalIteration,
                         new Color(60, 40, 40, this.startAlpha),
                         this.alphaChangePerFractalIteration
-                    )
+                    );
                 }
 
                 if (frame > framesBeforeSpawningSnowFlakes) {
 
                     if (framesSinceLastSnowFlakeSpawn >= framesBetweenSnowFlakeSpawns) {
-                        this.snowFlakes.push(new SnowFlake(canvasWidth, canvasWidth / 2, this.initialLineLength))
-                        framesSinceLastSnowFlakeSpawn = 0
+                        this.snowFlakes.push(new SnowFlake(canvasWidth, canvasWidth / 2, this.initialLineLength));
+                        framesSinceLastSnowFlakeSpawn = 0;
                     } else {
-                        framesSinceLastSnowFlakeSpawn += 1
+                        framesSinceLastSnowFlakeSpawn += 1;
                     }
 
                     this.snowFlakes.forEach(snowFlake => {
 
                         if (snowFlake.yPos > canvasHeight - 2 * snowFlake.initialLineLength) {
-                            snowFlake.removeThisFrame = true
+                            snowFlake.removeThisFrame = true;
                         }
 
                         this.drawFractalSplit(
@@ -279,12 +297,12 @@ export class FractalAnimationDirective implements OnInit {
                             snowFlake.lineWidthChangePerFractalIteration,
                             snowFlake.color,
                             snowFlake.alphaChangePerFractalIteration,
-                        )
+                        );
 
-                        snowFlake.move()
-                    })
+                        snowFlake.move();
+                    });
 
-                    this.snowFlakes = this.snowFlakes.filter(snowFlake => !snowFlake.removeThisFrame)
+                    this.snowFlakes = this.snowFlakes.filter(snowFlake => !snowFlake.removeThisFrame);
 
                     if (!starsCreated) {
                         if (framesSinceLastStarSpawned >= framesBetweenStarSpawns) {
@@ -296,16 +314,16 @@ export class FractalAnimationDirective implements OnInit {
                                 canvasWidth * 0.5,
                                 this.mainFractalEndYCoord + this.initialLineLength,
                                 this.initialLineLength,
-                            ))
+                            ));
 
-                            framesSinceLastStarSpawned = 0
+                            framesSinceLastStarSpawned = 0;
 
                         } else {
-                            framesSinceLastStarSpawned += 1
+                            framesSinceLastStarSpawned += 1;
                         }
 
                         if (this.stars.length >= this.numberOfStars) {
-                            starsCreated = true
+                            starsCreated = true;
                         }
                     }
 
@@ -324,22 +342,22 @@ export class FractalAnimationDirective implements OnInit {
                             star.lineWidthChangePerFractalIteration,
                             star.color,
                             star.alphaChangePerFractalIteration,
-                        )
+                        );
 
-                        star.update()
-                    })
+                        star.update();
+                    });
 
                 }
 
-                context.lineWidth = this.treeInitialLineWidth
-                context.strokeStyle = `rgba(60, 40, 40, ${this.startAlpha})`
+                context.lineWidth = this.treeInitialLineWidth;
+                context.strokeStyle = `rgba(60, 40, 40, ${this.startAlpha})`;
 
-                context.beginPath()
-                context.moveTo(xStart, yStart)
-                context.lineTo(xEnd, yEnd)
-                context.stroke()
+                context.beginPath();
+                context.moveTo(xStart, yStart);
+                context.lineTo(xEnd, yEnd);
+                context.stroke();
             }
-        )
+        );
     }
 
     private drawFractalSplit(
@@ -358,15 +376,15 @@ export class FractalAnimationDirective implements OnInit {
         alphaChange : number
     ) : void {
 
-        let lengthToDraw : number
-        let drawWholeLength : boolean
+        let lengthToDraw : number;
+        let drawWholeLength : boolean;
         if (drawAll) {
-            lengthToDraw = length
-            drawWholeLength = true
+            lengthToDraw = length;
+            drawWholeLength = true;
         } else {
-            lengthToDraw = lineLengthDrawnIncreasePerFrame * frame
-            drawWholeLength = lengthToDraw >= length
-            lengthToDraw = drawWholeLength ? length : lengthToDraw
+            lengthToDraw = lineLengthDrawnIncreasePerFrame * frame;
+            drawWholeLength = lengthToDraw >= length;
+            lengthToDraw = drawWholeLength ? length : lengthToDraw;
         }
 
         const linesToDraw = drawLinesAtAngles.map(angle => {
@@ -374,26 +392,26 @@ export class FractalAnimationDirective implements OnInit {
                 xEnd: xStart + lengthToDraw * Math.sin(fromAngle + angle),
                 yEnd: yStart + lengthToDraw * Math.cos(fromAngle + angle),
                 angle: fromAngle + angle
-            }
-        })
+            };
+        });
 
-        const path = new Path2D()
+        const path = new Path2D();
 
-        path.moveTo(xStart, yStart)
+        path.moveTo(xStart, yStart);
 
         linesToDraw.forEach(line => {
-            path.lineTo(line.xEnd, line.yEnd)
-            path.lineTo(xStart, yStart)
-        })
+            path.lineTo(line.xEnd, line.yEnd);
+            path.lineTo(xStart, yStart);
+        });
 
         //TODO: Experiment with context state stack save / restore here?
-        context.lineWidth = lineWidth
-        context.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`
+        context.lineWidth = lineWidth;
+        context.strokeStyle = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
         
-        context.stroke(path)
+        context.stroke(path);
 
-        const nextLineWidth = lineWidth - lineWidthChange
-        const newAlpha = color.a - alphaChange
+        const nextLineWidth = lineWidth - lineWidthChange;
+        const newAlpha = color.a - alphaChange;
 
         if (nextLineWidth > 0.01 && drawWholeLength) {
 
@@ -412,8 +430,8 @@ export class FractalAnimationDirective implements OnInit {
                     lineWidthChange,
                     new Color(color.r, color.g, color.b, newAlpha),
                     alphaChange
-                )
-            })
+                );
+            });
         }
     }
 }
