@@ -1,6 +1,7 @@
 import * as lodash from 'lodash';
 
 import { Fractal } from './fractal';
+import { Vector2 } from './vector-2';
 import { WindTargetBuffer } from './wind-target-buffer';
 
 export class SpawnInterval {
@@ -11,11 +12,14 @@ export class SpawnInterval {
 export class Tree extends Fractal {
 
     private normalDrawLinesAtAngles : number[];
+    private normalFromAngle : number;
+    private normalPosition : Vector2 = new Vector2();
 
     private currentWind = 0;
     
-    private windLerpFactor = 2;
-    private windNoiseFactorDuringLerp = 0.02;
+    private windLerpFactor = 1.7;
+    private windLerpFactorVariance = 0.1;
+    private windNoise = 0.04;
 
     public constructor(
         spawnInterval : SpawnInterval,
@@ -37,10 +41,14 @@ export class Tree extends Fractal {
             this.position.y -= this.lineLength * 2;
         }
         this.position.x = lodash.random(spawnInterval.min, spawnInterval.max, true);
+
+        this.normalPosition.x = this.position.x;
+        this.normalPosition.y = this.normalPosition.y;
         
         this.alphaChangePerFractalIteration = 0.05;
 
         this.fromAngle = Math.PI;
+        this.normalFromAngle = this.fromAngle;
 
         this.removeThisFrame = false;
 
@@ -109,15 +117,25 @@ export class Tree extends Fractal {
         this.drawLinesAtAngles = this.normalDrawLinesAtAngles;
     }
 
-    public update(deltaTime : number, windTargetBuffer : WindTargetBuffer) {
+    public update(deltaTime : number, windTargetBuffer : WindTargetBuffer, canvasHeight : number) {
 
-        const windTarget = windTargetBuffer.getCurrentWindTargetAtPosition(this.position.x);
+        const windNoise = lodash.random(-this.windNoise, this.windNoise, true);
+
+        const windTarget = windTargetBuffer.getCurrentWindTargetAtPosition(this.position.x) + windNoise;
+
+        const lerpFactor = this.windLerpFactor + lodash.random(-this.windLerpFactorVariance, this.windLerpFactorVariance, true);
 
         this.currentWind = this.currentWind + (windTarget - this.currentWind) * this.windLerpFactor * deltaTime;
 
         this.drawLinesAtAngles = this.normalDrawLinesAtAngles.map(angle => {
-            return angle - (this.currentWind + lodash.random(0, this.windNoiseFactorDuringLerp * this.currentWind, true));
+            return angle - this.currentWind;
         });
+
+        this.fromAngle = this.normalFromAngle - (this.currentWind / 2);
+
+        this.position.x = this.normalPosition.x + (this.lineLength * 2) * Math.sin(this.fromAngle);
+        this.position.y = canvasHeight + (this.lineLength * 2) * Math.cos(this.fromAngle);
+
     }
 
     public drawInitialLine(context : CanvasRenderingContext2D, canvasHeight : number) {
@@ -126,7 +144,7 @@ export class Tree extends Fractal {
         context.strokeStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
 
         context.beginPath();
-        context.moveTo(this.position.x, canvasHeight);
+        context.moveTo(this.normalPosition.x, canvasHeight);
         context.lineTo(this.position.x, this.position.y);
         context.stroke();
     }

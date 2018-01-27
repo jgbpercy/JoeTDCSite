@@ -35,7 +35,7 @@ export class FractalAnimationDirective implements OnInit {
     private timeBetweenStarSpawns = 0.01;
 
     private numberOfStarsToSpawn = 20;
-    private numberOfTreesToSpawnPer1000X = 4.5;
+    private numberOfTreesToSpawnPer1000X = 8;
     private treeSpawnBufferZoneProportion = 0.1;
     private numberOfBushesToSpawnPer1000X = 30;
     private bushSpawnBufferZoneProportion = 0.1;
@@ -191,7 +191,7 @@ export class FractalAnimationDirective implements OnInit {
             });
 
             this.trees.forEach(tree => {
-                tree.update(deltaTime, windTargetBuffer);
+                tree.update(deltaTime, windTargetBuffer, canvasHeight);
                 tree.drawInitialLine(context, canvasHeight);
                 tree.draw(context);
             });
