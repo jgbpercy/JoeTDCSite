@@ -50,13 +50,13 @@ export class MainFractal extends Fractal {
         this.lineWidthChangePerFractalIteration = 0.4;
 
         this.color = {
-            r: 60,
-            g: 40,
-            b: 40,
+            r: 130,
+            g: 55,
+            b: 45,
             a: 0.9,
         };
 
-        this.alphaChangePerFractalIteration = 0.05;
+        this.alphaChangePerFractalIteration = 0.1;
 
         this.endAngleChangePerFractalIteration = 2 * Math.PI / lodash.random(3, 7, false);
         

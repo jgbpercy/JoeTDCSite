@@ -17,6 +17,7 @@ import {
 } from './models';
 import { MainFractal } from './models/main-fractal';
 import { SpawnInterval, Tree } from './models/tree';
+import { WindTargetBuffer } from './models/wind-target-buffer';
 
 @Directive({
     selector: '[jtdcFractalAnimation]'
@@ -30,14 +31,16 @@ export class FractalAnimationDirective implements OnInit {
     private mainFractalInitialLineLength = 250;
 
     private timeBeforeSpawningSnowFlakesAndStars = 5;
-    private timeBetweenSnowFlakeSpawns = 0.4;
+    private timeBetweenSnowFlakeSpawns = 1;
     private timeBetweenStarSpawns = 0.01;
 
-    private numberOfStarsToSpawn = 70;
-    private numberOfTreesToSpawnPer1000X = 6;
+    private numberOfStarsToSpawn = 20;
+    private numberOfTreesToSpawnPer1000X = 4.5;
     private treeSpawnBufferZoneProportion = 0.1;
-    private numberOfBushesToSpawnPer1000X = 20;
+    private numberOfBushesToSpawnPer1000X = 30;
     private bushSpawnBufferZoneProportion = 0.1;
+
+    private maxWind = Math.PI / 6;
 
     private snowFlakes : SnowFlake[] = new Array<SnowFlake>();
     private stars : Star[] = new Array<Star>();
@@ -108,6 +111,8 @@ export class FractalAnimationDirective implements OnInit {
             this.bushes.push(new Tree(spawnInterval, canvasHeight, true));
         });
 
+        const windTargetBuffer = new WindTargetBuffer();
+
         const doFrame = (timeStamp : number) => {
 
             const deltaTime = (timeStamp - this.currentTimeStamp) / 1000;
@@ -173,6 +178,8 @@ export class FractalAnimationDirective implements OnInit {
                 // }
             }
 
+            windTargetBuffer.update(deltaTime);
+
             this.snowFlakes.forEach(snowFlake => {
                 snowFlake.update(deltaTime, canvasHeight);
                 snowFlake.draw(context);
@@ -184,13 +191,12 @@ export class FractalAnimationDirective implements OnInit {
             });
 
             this.trees.forEach(tree => {
-                tree.update(deltaTime);
+                tree.update(deltaTime, windTargetBuffer);
                 tree.drawInitialLine(context, canvasHeight);
                 tree.draw(context);
             });
 
             this.bushes.forEach(bush => {
-                bush.update(deltaTime);
                 bush.draw(context);
             });
 
@@ -207,7 +213,7 @@ export class FractalAnimationDirective implements OnInit {
         const spawnIntervalWidth = 1000 / numberToSpawnPer1000X;
         const numberOfSpawnIntervals = Math.floor(width / spawnIntervalWidth);
         const spawnIntervals = new Array<SpawnInterval>();
-        let currentIntervalBoundary = (width / 2) - (numberOfSpawnIntervals * 2 * spawnIntervalWidth);
+        let currentIntervalBoundary = (width / 2) - ((numberOfSpawnIntervals / 2) * spawnIntervalWidth);
         
         do {
             spawnIntervals.push({ 

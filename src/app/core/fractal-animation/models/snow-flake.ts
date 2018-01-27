@@ -45,9 +45,9 @@ export class SnowFlake extends Fractal {
         this.removeThisFrame = false;
 
         this.color = {
-            r: lodash.random(120, 130, false),
-            g: lodash.random(120, 130, false),
-            b: lodash.random(130, 155, false),
+            r: lodash.random(110, 120, false),
+            g: lodash.random(110, 120, false),
+            b: lodash.random(140, 160, false),
             a: 0.5,
         };
 
