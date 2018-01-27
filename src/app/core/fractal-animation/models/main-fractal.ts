@@ -121,8 +121,6 @@ export class MainFractal extends Fractal {
 
     public update(deltaTime : number) : void {
 
-        console.log(deltaTime);
-
         this.totalTimePassed += deltaTime;
 
         const unboundedFractionTreeGrowthDone = this.totalTimePassed / this.timeForTreeGrowth;

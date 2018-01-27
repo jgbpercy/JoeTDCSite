@@ -7,7 +7,7 @@ export class Star extends Fractal {
     private timeToFadeIn = 0.7;
     private fadeInTimePassed = 0;
 
-    private timeToTwinkle = 0.1;
+    private timeToTwinkle = 0.3;
     private twinkleTimePassed = 0;
 
     private twinkling = false;

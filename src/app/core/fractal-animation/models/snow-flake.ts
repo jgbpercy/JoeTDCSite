@@ -56,7 +56,6 @@ export class SnowFlake extends Fractal {
 
         this.lineWidthChangePerFractalIteration = 0.5;
 
-        //TODO: this can be factored with stuff below
         if (branches === 3) {
 
             this.initialLineWidth = this.lineLength < 9 ? 1.5 : 2;

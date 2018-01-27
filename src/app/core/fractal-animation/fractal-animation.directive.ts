@@ -16,6 +16,7 @@ import {
     Star,
 } from './models';
 import { MainFractal } from './models/main-fractal';
+import { SpawnInterval, Tree } from './models/tree';
 
 @Directive({
     selector: '[jtdcFractalAnimation]'
@@ -32,10 +33,16 @@ export class FractalAnimationDirective implements OnInit {
     private timeBetweenSnowFlakeSpawns = 0.4;
     private timeBetweenStarSpawns = 0.01;
 
-    private numberOfStars = 70;
+    private numberOfStarsToSpawn = 70;
+    private numberOfTreesToSpawnPer1000X = 6;
+    private treeSpawnBufferZoneProportion = 0.1;
+    private numberOfBushesToSpawnPer1000X = 20;
+    private bushSpawnBufferZoneProportion = 0.1;
 
     private snowFlakes : SnowFlake[] = new Array<SnowFlake>();
     private stars : Star[] = new Array<Star>();
+    private trees : Tree[] = new Array<Tree>();
+    private bushes : Tree[] = new Array<Tree>();
 
     constructor(private element : ElementRef) {
 
@@ -82,6 +89,24 @@ export class FractalAnimationDirective implements OnInit {
         let timeSinceLastSnowFlakeSpawn = 0;
         let timeSinceLastStarSpawned = 0;
         let allStarsSpawned = false;
+
+        const treeSpawnIntervals = this.getSpawnIntervals(
+            canvasWidth, 
+            this.numberOfTreesToSpawnPer1000X, 
+            this.treeSpawnBufferZoneProportion,
+        );
+        treeSpawnIntervals.forEach(spawnInterval => {
+            this.trees.push(new Tree(spawnInterval, canvasHeight, false));
+        });
+
+        const bushSpawnIntervals = this.getSpawnIntervals(
+            canvasWidth,
+            this.numberOfBushesToSpawnPer1000X,
+            this.bushSpawnBufferZoneProportion,
+        );
+        bushSpawnIntervals.forEach(spawnInterval => {
+            this.bushes.push(new Tree(spawnInterval, canvasHeight, true));
+        });
 
         const doFrame = (timeStamp : number) => {
 
@@ -138,10 +163,14 @@ export class FractalAnimationDirective implements OnInit {
                         timeSinceLastStarSpawned += deltaTime;
                     }
 
-                    if (this.stars.length >= this.numberOfStars) {
+                    if (this.stars.length >= this.numberOfStarsToSpawn) {
                         allStarsSpawned = true;
                     }
                 }
+
+                // while (this.bushes.length < this.numberOfBushesToSpawn) {
+                //     this.bushes.push(new Tree(canvasWidth, canvasHeight, true));
+                // }
             }
 
             this.snowFlakes.forEach(snowFlake => {
@@ -154,11 +183,41 @@ export class FractalAnimationDirective implements OnInit {
                 star.draw(context);
             });
 
+            this.trees.forEach(tree => {
+                tree.update(deltaTime);
+                tree.drawInitialLine(context, canvasHeight);
+                tree.draw(context);
+            });
+
+            this.bushes.forEach(bush => {
+                bush.update(deltaTime);
+                bush.draw(context);
+            });
+
             this.snowFlakes = this.snowFlakes.filter(snowFlake => !snowFlake.removeThisFrame);
 
             window.requestAnimationFrame(doFrame);
         };
 
-        window.requestAnimationFrame(doFrame.bind(this));
+        window.requestAnimationFrame(doFrame);
+    }
+
+    private getSpawnIntervals(width : number, numberToSpawnPer1000X : number, bufferZoneProportion : number) : SpawnInterval[] {
+        
+        const spawnIntervalWidth = 1000 / numberToSpawnPer1000X;
+        const numberOfSpawnIntervals = Math.floor(width / spawnIntervalWidth);
+        const spawnIntervals = new Array<SpawnInterval>();
+        let currentIntervalBoundary = (width / 2) - (numberOfSpawnIntervals * 2 * spawnIntervalWidth);
+        
+        do {
+            spawnIntervals.push({ 
+                min: currentIntervalBoundary + bufferZoneProportion * spawnIntervalWidth,
+                max: currentIntervalBoundary + (1 - bufferZoneProportion) * spawnIntervalWidth,
+            });
+
+            currentIntervalBoundary += spawnIntervalWidth;
+        } while ( currentIntervalBoundary < width);
+
+        return spawnIntervals;
     }
 }
