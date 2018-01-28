@@ -12,7 +12,7 @@ export class Star extends Fractal {
 
     public drawCachedToBackground = false;
 
-    private timeToTwinkle = 0.6;
+    private timeToTwinkle = 0.45;
     private twinkleTimePassed = 0;
 
     public twinkling = false;
@@ -73,6 +73,9 @@ export class Star extends Fractal {
         ];
     }
 
+    /*Slightly hacky: stars can only twinkle when faded in, so they will be drawn to the background cache, so
+      we can fade between zero alpha and whatever, and it wont make them disappear! :p
+    */
     public update(deltaTime : number) {
 
         if (!this.fadedIn) {
@@ -91,11 +94,9 @@ export class Star extends Fractal {
                 } else {
     
                     if (this.twinkleTimePassed <= this.timeToTwinkle / 2) {
-                        this.color.a = this.normalAlpha
-                            + (this.twinkleTimePassed / (this.timeToTwinkle / 2)) * (1 - this.normalAlpha);
+                        this.color.a = (this.twinkleTimePassed / (this.timeToTwinkle / 2));
                     } else {
-                        this.color.a = this.normalAlpha
-                            + ((this.timeToTwinkle - this.twinkleTimePassed) / (this.timeToTwinkle / 2)) * (1 - this.normalAlpha);
+                        this.color.a = (this.timeToTwinkle - this.twinkleTimePassed) / (this.timeToTwinkle / 2);
                     }
     
                     this.twinkleTimePassed += deltaTime;
