@@ -33,7 +33,9 @@ export class MainFractal extends Fractal {
 
     private getAnglesAtWhichToDrawLines : (angleChangePerFractalIteration : number) => number[];
 
-    private easing : (fraction : number) => number;
+    private rotationEasing : (fraction : number) => number;
+
+    private growthEasing : (fraction : number) => number;
 
     public constructor(canvasWidth : number, lineLength : number) {
 
@@ -60,7 +62,8 @@ export class MainFractal extends Fractal {
 
         this.endAngleChangePerFractalIteration = 2 * Math.PI / lodash.random(3, 7, false);
         
-        this.easing = bezier(0.8, 0.2, 0.45, 0.8);
+        this.rotationEasing = bezier(0.8, 0.2, 0.45, 0.8);
+        this.growthEasing = bezier(0.25, 0.75, 0.55, 1);
 
         const branches = lodash.random(3, 6, false);
 
@@ -131,7 +134,7 @@ export class MainFractal extends Fractal {
             this.rotationTimePassed += deltaTime;
         }
 
-        this.drawLengthIncludingInitialLine = this.lineLength * 4 * fractionTreeGrowthDone;
+        this.drawLengthIncludingInitialLine = this.lineLength * 4 * this.growthEasing(fractionTreeGrowthDone);
         this.totalDrawLength = this.drawLengthIncludingInitialLine - (this.lineLength * 2);
 
         const unboundedFractionRotationDone = this.rotationTimePassed / this.timeForRotation;
@@ -151,7 +154,7 @@ export class MainFractal extends Fractal {
             + (this.endAngleChangePerFractalIteration - this.startAngleChangePerFractalIteration)
             * Math.pow(fractionRotationDone, 6);
 
-        this.fromAngle = this.easing(fractionRotationDone) * -Math.PI;
+        this.fromAngle = this.rotationEasing(fractionRotationDone) * -Math.PI;
 
         this.initialLineDrawn = this.drawLengthIncludingInitialLine > this.lineLength * 2;
         const initialLineLengthToDraw = this.initialLineDrawn ? this.lineLength * 2 : this.drawLengthIncludingInitialLine;
@@ -162,10 +165,10 @@ export class MainFractal extends Fractal {
             initialLineFullLengthYEnd = this.lineLength * 2;
         } else {
             initialLineFullLengthYEnd = this.lineLength * 2 + 
-                this.easing(fractionRotationDone) * (this.endOfAnimationCenterYCoordinate - this.lineLength * 2);
+                this.rotationEasing(fractionRotationDone) * (this.endOfAnimationCenterYCoordinate - this.lineLength * 2);
         }
 
-        const retractedLength = this.lineLength * 2 * this.easing(1 - fractionInitialLineRetractionDone);
+        const retractedLength = this.lineLength * 2 * this.rotationEasing(1 - fractionInitialLineRetractionDone);
 
         this.initialLineStart.x = this.initialLineFullLengthXEnd - retractedLength * Math.sin(this.fromAngle);
         this.initialLineStart.y = initialLineFullLengthYEnd - retractedLength * Math.cos(this.fromAngle);
