@@ -10,12 +10,14 @@ export class Star extends Fractal {
         return this.fadeInTimePassed >= this.timeToFadeIn;
     }
 
-    private timeToTwinkle = 0.7;
+    public drawCachedToBackground = false;
+
+    private timeToTwinkle = 0.6;
     private twinkleTimePassed = 0;
 
     public twinkling = false;
 
-    private twinkleChancePerSecond = 0.04;
+    private twinkleChancePerSecond = 0.03;
 
     private normalAlpha : number;
 

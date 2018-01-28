@@ -35,7 +35,7 @@ export class FractalAnimationDirective implements OnInit {
     private timeBetweenSnowFlakeSpawns = 1;
     private timeBetweenStarSpawns = 0.01;
 
-    private numberOfStarsToSpawn = 100;
+    private numberOfStarsToSpawn = 250;
     private numberOfTreesToSpawnPer1000X = 8;
     private treeSpawnBufferZoneProportion = 0.1;
     private numberOfBushesToSpawnPer1000X = 30;
@@ -66,43 +66,23 @@ export class FractalAnimationDirective implements OnInit {
         
         const mainFractal = new MainFractal(canvasWidth, this.mainFractalInitialLineLength / 2);
         
-        const mainFractalMaskCanvas = document.createElement('canvas');
-        mainFractalMaskCanvas.width = this.canvas.width;
-        mainFractalMaskCanvas.height = this.canvas.height;
+        const cachedBackgroundCanvas = document.createElement('canvas');
+        cachedBackgroundCanvas.width = this.canvas.width;
+        cachedBackgroundCanvas.height = this.canvas.height;
 
-        const mainFractalMaskContext = mainFractalMaskCanvas.getContext('2d');
+        const cachedBackgroundContext = cachedBackgroundCanvas.getContext('2d');
 
-        mainFractalMaskContext.fillStyle = 'black';
-        mainFractalMaskContext.fillRect(0, 0, mainFractalMaskCanvas.width, mainFractalMaskCanvas.height);
-        mainFractalMaskContext.globalCompositeOperation = 'xor';
-        mainFractalMaskContext.beginPath();
-        mainFractalMaskContext.moveTo(canvasWidth / 2, mainFractal.endOfAnimationCenterYCoordinate);
-        mainFractalMaskContext.arc(
-            canvasWidth / 2,
-            mainFractal.endOfAnimationCenterYCoordinate,
-            this.mainFractalInitialLineLength,
-            0,
-            Math.PI * 2,
-        );
-        mainFractalMaskContext.fill();
-
-        const mainFractalAndStarsCanvas = document.createElement('canvas');
-        mainFractalAndStarsCanvas.width = this.canvas.width;
-        mainFractalAndStarsCanvas.height = this.canvas.height;
-
-        const mainFractalAndStarsContext = mainFractalAndStarsCanvas.getContext('2d');
-
-        mainFractalAndStarsContext.fillStyle = 'red';
-        mainFractalAndStarsContext.fillRect(0, 0, mainFractalMaskCanvas.width, mainFractalMaskCanvas.height);
+        cachedBackgroundContext.fillStyle = 'black';
+        cachedBackgroundContext.fillRect(0, 0, cachedBackgroundCanvas.width, cachedBackgroundCanvas.height);
 
         context.lineCap = 'round';
         context.lineJoin = 'round';
 
         let totalTimePassed = 0;
+        let mainFractalCompleteAndCachedToBackground = false;
         let timeSinceLastSnowFlakeSpawn = 0;
         let timeSinceLastStarSpawned = 0;
         let allStarsSpawned = false;
-        let allStarsSpawnedAndDrawnToCache = false;
 
         const treeSpawnIntervals = this.getSpawnIntervals(
             canvasWidth, 
@@ -170,45 +150,24 @@ export class FractalAnimationDirective implements OnInit {
                 }
             }
 
+            this.stars.forEach(star => star.update(deltaTime));
+
             windTargetBuffer.update(deltaTime);
 
-            if (allStarsSpawnedAndDrawnToCache) {
-            
-                context.drawImage(mainFractalAndStarsCanvas, 0, 0);
-                
-            } else if (mainFractal.animationComplete) {
-                
-                context.drawImage(mainFractalMaskCanvas, 0, 0);
+            if (mainFractal.animationComplete && !mainFractalCompleteAndCachedToBackground) {
+                mainFractal.drawInitialLine(cachedBackgroundContext);
+                mainFractal.draw(cachedBackgroundContext);
+                mainFractalCompleteAndCachedToBackground = true;
+            }
 
-                if (allStarsSpawned && this.stars.every(x => x.fadedIn)) {
+            this.stars.filter(star => star.fadedIn && !star.drawCachedToBackground).forEach(star => {
+                star.drawNonTwinkling(cachedBackgroundContext);
+                star.drawCachedToBackground = true;
+            });
 
-                    allStarsSpawnedAndDrawnToCache = true;
+            context.drawImage(cachedBackgroundCanvas, 0, 0);
 
-                    this.stars.forEach(star => {
-                        star.update(deltaTime);
-                        if (!star.twinkling) {
-                            star.draw(context);
-                        }
-                    });
-
-                    mainFractalAndStarsContext.drawImage(this.canvas, 0, 0);
-
-                    this.stars.filter(star => star.twinkling).forEach(star => {
-                        star.draw(context);
-                        star.drawNonTwinkling(mainFractalAndStarsContext);
-                    });
-
-                    // mainFractalAndStarsContext.beginPath();
-                    // mainFractalAndStarsContext.moveTo(30, 30);
-                    // mainFractalAndStarsContext.lineTo(60, 60);
-                    // mainFractalAndStarsContext.strokeStyle = 'rgb(255, 50, 200)';
-                    // mainFractalAndStarsContext.lineWidth = 10;
-                    // mainFractalAndStarsContext.stroke();
-                }
-                
-            } else {
-                context.fillRect(0, 0, canvasWidth, canvasHeight);
-
+            if (!mainFractalCompleteAndCachedToBackground) {
                 mainFractal.update(deltaTime);
                 mainFractal.drawInitialLine(context);
                 if (mainFractal.initialLineDrawn) {
@@ -216,17 +175,14 @@ export class FractalAnimationDirective implements OnInit {
                 }
             }
 
+            this.stars.filter(star => !star.drawCachedToBackground || star.twinkling).forEach(star => {
+                star.draw(context);
+            });
+
             // this.snowFlakes.forEach(snowFlake => {
             //     snowFlake.update(deltaTime, canvasHeight);
             //     snowFlake.draw(context);
             // });
-
-            this.stars.forEach(star => {
-                star.update(deltaTime);
-                if (!allStarsSpawnedAndDrawnToCache || star.twinkling) {
-                    star.draw(context);
-                }
-            });
             
             // this.trees.forEach(tree => {
             //     tree.update(deltaTime, windTargetBuffer, canvasHeight);
