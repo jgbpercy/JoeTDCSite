@@ -139,30 +139,25 @@ export class FractalAnimationDirective implements OnInit {
 
             totalTimePassed += deltaTime;
 
-            if (totalTimePassed >= this.timeBeforeSpawningStars) {
+            if (totalTimePassed >= this.timeBeforeSpawningStars && !allStarsSpawned) {
 
-                if (!allStarsSpawned) {
+                if (timeSinceLastStarSpawned > this.timeBetweenStarSpawns) {
 
-                    if (timeSinceLastStarSpawned > this.timeBetweenStarSpawns) {
+                    this.stars.push(new Star(
+                        canvasWidth,
+                        canvasHeight,
+                        canvasWidth / 2,
+                        mainFractal.endOfAnimationCenterYCoordinate,
+                        this.mainFractalInitialLineLength,
+                    ));
 
-                        this.stars.push(new Star(
-                            canvasWidth,
-                            canvasHeight,
-                            canvasWidth / 2,
-                            mainFractal.endOfAnimationCenterYCoordinate,
-                            this.mainFractalInitialLineLength,
-                        ));
-
-                        timeSinceLastStarSpawned = 0;
-                    } else {
-                        timeSinceLastStarSpawned += deltaTime;
-                    }
-
-                    if (this.stars.length >= this.numberOfStarsToSpawn) {
-                        allStarsSpawned = true;
-                    }
+                    timeSinceLastStarSpawned = 0;
                 } else {
-                    //draw the cached background
+                    timeSinceLastStarSpawned += deltaTime;
+                }
+
+                if (this.stars.length >= this.numberOfStarsToSpawn) {
+                    allStarsSpawned = true;
                 }
             }
 
@@ -203,12 +198,12 @@ export class FractalAnimationDirective implements OnInit {
                         star.drawNonTwinkling(mainFractalAndStarsContext);
                     });
 
-                    mainFractalAndStarsContext.beginPath();
-                    mainFractalAndStarsContext.moveTo(30, 30);
-                    mainFractalAndStarsContext.lineTo(60, 60);
-                    mainFractalAndStarsContext.strokeStyle = 'rgb(255, 50, 200)';
-                    mainFractalAndStarsContext.lineWidth = 10;
-                    mainFractalAndStarsContext.stroke();
+                    // mainFractalAndStarsContext.beginPath();
+                    // mainFractalAndStarsContext.moveTo(30, 30);
+                    // mainFractalAndStarsContext.lineTo(60, 60);
+                    // mainFractalAndStarsContext.strokeStyle = 'rgb(255, 50, 200)';
+                    // mainFractalAndStarsContext.lineWidth = 10;
+                    // mainFractalAndStarsContext.stroke();
                 }
                 
             } else {
