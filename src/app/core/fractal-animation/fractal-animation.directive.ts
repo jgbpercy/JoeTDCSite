@@ -30,11 +30,12 @@ export class FractalAnimationDirective implements OnInit {
 
     private mainFractalInitialLineLength = 250;
 
-    private timeBeforeSpawningSnowFlakesAndStars = 5;
+    private timeBeforeSpawningStars = 5;
+    private timebeforeSpawingSnowFlakes = 8;
     private timeBetweenSnowFlakeSpawns = 1;
     private timeBetweenStarSpawns = 0.01;
 
-    private numberOfStarsToSpawn = 20;
+    private numberOfStarsToSpawn = 100;
     private numberOfTreesToSpawnPer1000X = 8;
     private treeSpawnBufferZoneProportion = 0.1;
     private numberOfBushesToSpawnPer1000X = 30;
@@ -85,6 +86,15 @@ export class FractalAnimationDirective implements OnInit {
         );
         mainFractalMaskContext.fill();
 
+        const mainFractalAndStarsCanvas = document.createElement('canvas');
+        mainFractalAndStarsCanvas.width = this.canvas.width;
+        mainFractalAndStarsCanvas.height = this.canvas.height;
+
+        const mainFractalAndStarsContext = mainFractalAndStarsCanvas.getContext('2d');
+
+        mainFractalAndStarsContext.fillStyle = 'red';
+        mainFractalAndStarsContext.fillRect(0, 0, mainFractalMaskCanvas.width, mainFractalMaskCanvas.height);
+
         context.lineCap = 'round';
         context.lineJoin = 'round';
 
@@ -92,6 +102,7 @@ export class FractalAnimationDirective implements OnInit {
         let timeSinceLastSnowFlakeSpawn = 0;
         let timeSinceLastStarSpawned = 0;
         let allStarsSpawned = false;
+        let allStarsSpawnedAndDrawnToCache = false;
 
         const treeSpawnIntervals = this.getSpawnIntervals(
             canvasWidth, 
@@ -128,28 +139,7 @@ export class FractalAnimationDirective implements OnInit {
 
             totalTimePassed += deltaTime;
 
-            if (!mainFractal.animationComplete) {
-
-                context.fillRect(0, 0, canvasWidth, canvasHeight);
-
-                mainFractal.update(deltaTime);
-                mainFractal.drawInitialLine(context);
-                if (mainFractal.initialLineDrawn) {
-                    mainFractal.draw(context);
-                }
-
-            } else {
-                context.drawImage(mainFractalMaskCanvas, 0, 0);
-            }
-
-            if (totalTimePassed >= this.timeBeforeSpawningSnowFlakesAndStars) {
-
-                if (timeSinceLastSnowFlakeSpawn > this.timeBetweenSnowFlakeSpawns) {
-                    this.snowFlakes.push(new SnowFlake(canvasWidth, canvasWidth / 2, this.mainFractalInitialLineLength));
-                    timeSinceLastSnowFlakeSpawn = 0;
-                } else {
-                    timeSinceLastSnowFlakeSpawn += deltaTime;
-                }
+            if (totalTimePassed >= this.timeBeforeSpawningStars) {
 
                 if (!allStarsSpawned) {
 
@@ -171,34 +161,87 @@ export class FractalAnimationDirective implements OnInit {
                     if (this.stars.length >= this.numberOfStarsToSpawn) {
                         allStarsSpawned = true;
                     }
+                } else {
+                    //draw the cached background
                 }
+            }
 
-                // while (this.bushes.length < this.numberOfBushesToSpawn) {
-                //     this.bushes.push(new Tree(canvasWidth, canvasHeight, true));
-                // }
+            if (totalTimePassed >= this.timebeforeSpawingSnowFlakes) {
+                if (timeSinceLastSnowFlakeSpawn > this.timeBetweenSnowFlakeSpawns) {
+                    this.snowFlakes.push(new SnowFlake(canvasWidth, canvasWidth / 2, this.mainFractalInitialLineLength));
+                    timeSinceLastSnowFlakeSpawn = 0;
+                } else {
+                    timeSinceLastSnowFlakeSpawn += deltaTime;
+                }
             }
 
             windTargetBuffer.update(deltaTime);
 
-            this.snowFlakes.forEach(snowFlake => {
-                snowFlake.update(deltaTime, canvasHeight);
-                snowFlake.draw(context);
-            });
+            if (allStarsSpawnedAndDrawnToCache) {
+            
+                context.drawImage(mainFractalAndStarsCanvas, 0, 0);
+                
+            } else if (mainFractal.animationComplete) {
+                
+                context.drawImage(mainFractalMaskCanvas, 0, 0);
+
+                if (allStarsSpawned && this.stars.every(x => x.fadedIn)) {
+
+                    allStarsSpawnedAndDrawnToCache = true;
+
+                    this.stars.forEach(star => {
+                        star.update(deltaTime);
+                        if (!star.twinkling) {
+                            star.draw(context);
+                        }
+                    });
+
+                    mainFractalAndStarsContext.drawImage(this.canvas, 0, 0);
+
+                    this.stars.filter(star => star.twinkling).forEach(star => {
+                        star.draw(context);
+                        star.drawNonTwinkling(mainFractalAndStarsContext);
+                    });
+
+                    mainFractalAndStarsContext.beginPath();
+                    mainFractalAndStarsContext.moveTo(30, 30);
+                    mainFractalAndStarsContext.lineTo(60, 60);
+                    mainFractalAndStarsContext.strokeStyle = 'rgb(255, 50, 200)';
+                    mainFractalAndStarsContext.lineWidth = 10;
+                    mainFractalAndStarsContext.stroke();
+                }
+                
+            } else {
+                context.fillRect(0, 0, canvasWidth, canvasHeight);
+
+                mainFractal.update(deltaTime);
+                mainFractal.drawInitialLine(context);
+                if (mainFractal.initialLineDrawn) {
+                    mainFractal.draw(context);
+                }
+            }
+
+            // this.snowFlakes.forEach(snowFlake => {
+            //     snowFlake.update(deltaTime, canvasHeight);
+            //     snowFlake.draw(context);
+            // });
 
             this.stars.forEach(star => {
                 star.update(deltaTime);
-                star.draw(context);
+                if (!allStarsSpawnedAndDrawnToCache || star.twinkling) {
+                    star.draw(context);
+                }
             });
+            
+            // this.trees.forEach(tree => {
+            //     tree.update(deltaTime, windTargetBuffer, canvasHeight);
+            //     tree.drawInitialLine(context, canvasHeight);
+            //     tree.draw(context);
+            // });
 
-            this.trees.forEach(tree => {
-                tree.update(deltaTime, windTargetBuffer, canvasHeight);
-                tree.drawInitialLine(context, canvasHeight);
-                tree.draw(context);
-            });
-
-            this.bushes.forEach(bush => {
-                bush.draw(context);
-            });
+            // this.bushes.forEach(bush => {
+            //     bush.draw(context);
+            // });
 
             this.snowFlakes = this.snowFlakes.filter(snowFlake => !snowFlake.removeThisFrame);
 

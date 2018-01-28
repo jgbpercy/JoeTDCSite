@@ -4,15 +4,18 @@ import { Fractal } from './fractal';
 
 export class Star extends Fractal {
 
-    private timeToFadeIn = 0.7;
+    private timeToFadeIn = 0.6;
     private fadeInTimePassed = 0;
+    public get fadedIn() : boolean {
+        return this.fadeInTimePassed >= this.timeToFadeIn;
+    }
 
-    private timeToTwinkle = 0.3;
+    private timeToTwinkle = 0.7;
     private twinkleTimePassed = 0;
 
-    private twinkling = false;
+    public twinkling = false;
 
-    private twinkleChancePerSecond = 0.1;
+    private twinkleChancePerSecond = 0.04;
 
     private normalAlpha : number;
 
@@ -70,34 +73,52 @@ export class Star extends Fractal {
 
     public update(deltaTime : number) {
 
-        if (this.fadeInTimePassed <= this.timeToFadeIn) {
+        if (!this.fadedIn) {
 
             this.color.a = this.normalAlpha * this.fadeInTimePassed / this.timeToFadeIn;
             this.fadeInTimePassed += deltaTime;
 
-        } else if (this.twinkling) {
+        } else {
 
-            if (this.twinkleTimePassed > this.timeToTwinkle) {
-                this.color.a = this.normalAlpha;
-                this.twinkling = false;
+            if (this.twinkling) {
+    
+                if (this.twinkleTimePassed > this.timeToTwinkle) {
+                    this.color.a = this.normalAlpha;
+                    this.twinkling = false;
+                    this.twinkleTimePassed = 0;
+                } else {
+    
+                    if (this.twinkleTimePassed <= this.timeToTwinkle / 2) {
+                        this.color.a = this.normalAlpha
+                            + (this.twinkleTimePassed / (this.timeToTwinkle / 2)) * (1 - this.normalAlpha);
+                    } else {
+                        this.color.a = this.normalAlpha
+                            + ((this.timeToTwinkle - this.twinkleTimePassed) / (this.timeToTwinkle / 2)) * (1 - this.normalAlpha);
+                    }
+    
+                    this.twinkleTimePassed += deltaTime;
+                }
             } else {
 
-                if (this.twinkleTimePassed <= this.timeToTwinkle / 2) {
-                    this.color.a = this.normalAlpha
-                        + (this.twinkleTimePassed / (this.timeToTwinkle / 2)) * (1 - this.normalAlpha);
-                } else {
-                    this.color.a = this.normalAlpha
-                        + ((this.timeToTwinkle - this.twinkleTimePassed) / (this.timeToTwinkle / 2)) * (1 - this.normalAlpha);
+                this.color.a = this.normalAlpha;
+
+                const twinkleChangeInDeltaTime = 1 - Math.pow(1 - this.twinkleChancePerSecond, deltaTime);
+    
+                if (lodash.random(0, 1, true) < twinkleChangeInDeltaTime) {
+                    this.twinkling = true;
                 }
-
-                this.twinkleTimePassed += deltaTime;
             }
+        } 
+    }
+
+    public drawNonTwinkling(context : CanvasRenderingContext2D) {
+        if (this.twinkling) {
+            const currentAlpha = this.color.a;
+            this.color.a = this.normalAlpha;
+            this.draw(context);
+            this.color.a = currentAlpha;
         } else {
-            const twinkleChangeInDeltaTime = 1 - Math.pow(1 - this.twinkleChancePerSecond, deltaTime);
-
-            if (lodash.random(0, 1, true) < twinkleChangeInDeltaTime) {
-                this.twinkling = true;
-            }
+            this.draw(context);
         }
     }
 }
