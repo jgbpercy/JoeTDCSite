@@ -31,8 +31,8 @@ export class FractalAnimationDirective implements OnInit {
     private mainFractalInitialLineLength = 250;
 
     private timeBeforeSpawningStars = 5;
-    private timebeforeSpawingSnowFlakes = 8;
-    private timeBetweenSnowFlakeSpawns = 1;
+    private timeBeforeSpawingSnowFlakes = 7;
+    private timeBetweenSnowFlakeSpawns = 0.15;
     private timeBetweenStarSpawns = 0.01;
 
     private numberOfStarsToSpawn = 250;
@@ -141,7 +141,7 @@ export class FractalAnimationDirective implements OnInit {
                 }
             }
 
-            if (totalTimePassed >= this.timebeforeSpawingSnowFlakes) {
+            if (totalTimePassed >= this.timeBeforeSpawingSnowFlakes) {
                 if (timeSinceLastSnowFlakeSpawn > this.timeBetweenSnowFlakeSpawns) {
                     this.snowFlakes.push(new SnowFlake(canvasWidth, canvasWidth / 2, this.mainFractalInitialLineLength));
                     timeSinceLastSnowFlakeSpawn = 0;
@@ -179,10 +179,11 @@ export class FractalAnimationDirective implements OnInit {
                 star.draw(context);
             });
 
-            // this.snowFlakes.forEach(snowFlake => {
-            //     snowFlake.update(deltaTime, canvasHeight);
-            //     snowFlake.draw(context);
-            // });
+            this.snowFlakes.forEach(snowFlake => {
+                snowFlake.update(deltaTime, canvasHeight);
+                //snowFlake.draw(context);
+                snowFlake.drawCached(context);
+            });
             
             // this.trees.forEach(tree => {
             //     tree.update(deltaTime, windTargetBuffer, canvasHeight);
