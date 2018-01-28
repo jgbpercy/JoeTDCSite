@@ -13,7 +13,7 @@ export class MainFractal extends Fractal {
 
     public endOfAnimationCenterYCoordinate = 450;
 
-    private timeForTreeGrowth = 3;
+    private timeForGrowth = 3;
     private timeForRotation = 4;
     private totalTimeToCompleteAnimation : number;
     private timeBeforeInitialLineStartsRetracting = 2;
@@ -41,7 +41,7 @@ export class MainFractal extends Fractal {
 
         super();
 
-        this.totalTimeToCompleteAnimation = this.timeForTreeGrowth + this.timeForRotation;
+        this.totalTimeToCompleteAnimation = this.timeForGrowth + this.timeForRotation;
         this.timeForInitialLineRetraction = this.totalTimeToCompleteAnimation - this.timeBeforeInitialLineStartsRetracting;
 
         this.lineLength = lineLength;
@@ -52,8 +52,8 @@ export class MainFractal extends Fractal {
         this.lineWidthChangePerFractalIteration = 0.4;
 
         this.color = {
-            r: 130,
-            g: 55,
+            r: 115,
+            g: 60,
             b: 45,
             a: 0.9,
         };
@@ -126,7 +126,7 @@ export class MainFractal extends Fractal {
 
         this.totalTimePassed += deltaTime;
 
-        const unboundedFractionTreeGrowthDone = this.totalTimePassed / this.timeForTreeGrowth;
+        const unboundedFractionTreeGrowthDone = this.totalTimePassed / this.timeForGrowth;
         const fractionTreeGrowthDone = unboundedFractionTreeGrowthDone > 1 ? 1 : unboundedFractionTreeGrowthDone;
         this.treeGrowthDone = fractionTreeGrowthDone === 1;
 
@@ -184,7 +184,16 @@ export class MainFractal extends Fractal {
         this.drawLinesAtAngles = this.getAnglesAtWhichToDrawLines(angleChangePerFractalIteration);
     }
 
-    public drawInitialLine(context : CanvasRenderingContext2D) : void {
+    public draw(context : CanvasRenderingContext2D) {
+
+        this.drawInitialLine(context);
+
+        if (this.totalDrawLength > 0) {
+            super.draw(context);
+        }
+    }
+
+    private drawInitialLine(context : CanvasRenderingContext2D) : void {
 
         context.lineWidth = this.initialLineWidth + this.lineWidthChangePerFractalIteration;
         context.strokeStyle = `rgba(${this.color.r}, ${this.color.g}, ${this.color.b}, ${this.color.a})`;
