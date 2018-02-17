@@ -10,14 +10,17 @@ import { take } from 'rxjs/operators/take';
 import * as lodash from 'lodash';
 
 import { 
+    Bush,
     Color,
     Fractal,
+    FullTree,
+    MainFractal,
     SnowFlake,
+    SpawnInterval,
     Star,
+    Tree,
+    WindTargetBuffer
 } from './models';
-import { MainFractal } from './models/main-fractal';
-import { SpawnInterval, Tree } from './models/tree';
-import { WindTargetBuffer } from './models/wind-target-buffer';
 
 @Directive({
     selector: '[jtdcFractalAnimation]'
@@ -39,18 +42,18 @@ export class FractalAnimationDirective implements OnInit {
 
     private timeBeforeSpawingTreesAndBushes = 9;
     private timeBetweenTreeSpawns = 0.5;
-    private timeBetweenBushSpawns = 0.2;
-    private numberOfTreesToSpawnPer1000X = 8;
+    private timeBetweenBushSpawns = 0.1;
+    private numberOfTreesToSpawnPer1000X = 10;
     private treeSpawnBufferZoneProportion = 0.1;
-    private numberOfBushesToSpawnPer1000X = 30;
+    private numberOfBushesToSpawnPer1000X = 40;
     private bushSpawnBufferZoneProportion = 0.1;
 
     private maxWind = Math.PI / 6;
 
     private snowFlakes : SnowFlake[] = new Array<SnowFlake>();
     private stars : Star[] = new Array<Star>();
-    private trees : Tree[] = new Array<Tree>();
-    private bushes : Tree[] = new Array<Tree>();
+    private trees : FullTree[] = new Array<FullTree>();
+    private bushes : Bush[] = new Array<Bush>();
 
     constructor(private element : ElementRef) {
 
@@ -88,6 +91,7 @@ export class FractalAnimationDirective implements OnInit {
         let timeSinceLastStarSpawned = 0;
         let allStarsSpawned = false;
         let timeSinceLastTreeSpawned = 0;
+        let timeSinceLastBushSpawned = 0;
 
         const treeSpawnIntervals = this.getSpawnIntervals(
             canvasWidth, 
@@ -100,9 +104,6 @@ export class FractalAnimationDirective implements OnInit {
             this.numberOfBushesToSpawnPer1000X,
             this.bushSpawnBufferZoneProportion,
         );
-        bushSpawnIntervals.forEach(spawnInterval => {
-            this.bushes.push(new Tree(spawnInterval, canvasHeight, true));
-        });
 
         const windTargetBuffer = new WindTargetBuffer();
 
@@ -160,7 +161,7 @@ export class FractalAnimationDirective implements OnInit {
                     const randomInterval = treeSpawnIntervals[randomIntervalIndex];
                     treeSpawnIntervals.splice(randomIntervalIndex, 1);
 
-                    this.trees.push(new Tree(randomInterval, canvasHeight, false));
+                    this.trees.push(new FullTree(randomInterval, canvasHeight, windTargetBuffer));
 
                     timeSinceLastTreeSpawned = 0;
 
@@ -169,10 +170,28 @@ export class FractalAnimationDirective implements OnInit {
                 }
             }
 
+            if (bushSpawnIntervals.length > 0 && totalTimePassed >= this.timeBeforeSpawingTreesAndBushes) {
+
+                if (timeSinceLastBushSpawned > this.timeBetweenBushSpawns) {
+
+                    const randomIntervalIndex = lodash.random(0, bushSpawnIntervals.length - 1, false);
+                    const randomInterval = bushSpawnIntervals[randomIntervalIndex];
+                    bushSpawnIntervals.splice(randomIntervalIndex, 1);
+
+                    this.bushes.push(new Bush(randomInterval, canvasHeight));
+
+                    timeSinceLastBushSpawned = 0;
+
+                } else {
+                    timeSinceLastBushSpawned += deltaTime;
+                }
+            }
+
             windTargetBuffer.update(deltaTime);
             
             this.stars.forEach(star => star.update(deltaTime));
-            this.trees.forEach(tree => tree.update(deltaTime, windTargetBuffer, canvasHeight));
+            this.trees.forEach(tree => tree.update(deltaTime));
+            this.bushes.forEach(bush => bush.update(deltaTime));
 
             if (mainFractal.animationComplete && !mainFractalCompleteAndCachedToBackground) {
                 mainFractal.draw(cachedBackgroundContext);
@@ -187,6 +206,11 @@ export class FractalAnimationDirective implements OnInit {
             this.trees.filter(tree => tree.growthDone && !tree.drawCachedToBackground).forEach(tree => {
                 tree.draw(cachedBackgroundContext);
                 tree.drawCachedToBackground = true;
+            });
+
+            this.bushes.filter(bush => bush.growthDone && !bush.drawCachedToBackground).forEach(bush => {
+                bush.draw(cachedBackgroundContext);
+                bush.drawCachedToBackground = true;
             });
 
             context.drawImage(cachedBackgroundCanvas, 0, 0);
@@ -207,9 +231,7 @@ export class FractalAnimationDirective implements OnInit {
             
             this.trees.filter(tree => !tree.growthDone).forEach(tree => tree.draw(context));
 
-            // this.bushes.forEach(bush => {
-            //     bush.draw(context);
-            // });
+            this.bushes.filter(bush => !bush.growthDone).forEach(bush => bush.draw(context));
 
             this.snowFlakes = this.snowFlakes.filter(snowFlake => !snowFlake.removeThisFrame);
 
