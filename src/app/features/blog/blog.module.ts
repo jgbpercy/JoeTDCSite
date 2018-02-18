@@ -1,16 +1,16 @@
-import { NgModule } from '@angular/core'
+import { NgModule } from '@angular/core';
 
-import { SharedModule } from '../../shared/shared.module'
-import { BlogRoutingModule } from './blog-routing.module'
-import { PostListComponent } from './post-list/post-list.component'
+import { SharedModule } from '../../shared/shared.module';
+import { BlogRoutingModule } from './blog-routing.module';
+import { PostListComponent } from './post-list/post-list.component';
 
 @NgModule({
     imports: [
         SharedModule,
-        BlogRoutingModule
+        BlogRoutingModule,
     ],
     declarations: [
-        PostListComponent
+        PostListComponent,
     ]
 })
 export class BlogModule { }

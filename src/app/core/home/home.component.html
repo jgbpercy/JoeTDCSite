@@ -1,5 +1,13 @@
 <h1 *ngIf="showTitle" class="home-title">JoeTDC</h1>
 
+<div *ngIf="showWotButton" class="who-button-container">
+    <button 
+        class="who-button"
+        (click)="toggleWhoContent()">
+        Who?
+    </button>
+</div>
+
 <canvas class="fractal-animation" jtdcFractalAnimation></canvas>
 
 <div 
@@ -12,10 +20,23 @@
     </button>
 </div>
 
-<div *ngIf="showWotContent" class="wot-content-wrapper">
+<div *ngIf="showWhoContent" class="who-content-wrapper" [@whoContentIsShown]="true">
+    <div class="who-content">
+        <p>Hello, I'm Joseph, aka Joe. I write code, make websites, sometimes create music. Some things that I have made or am making:</p>
+        <ul>
+            <li>This website - <a href="https://github.com/jgbpercy/JoeTDCSite" target="_blank">source</a></li>
+            <li>A video game - <a routerLink="/video-gaem">blog</a> / <a href="https://github.com/jgbpercy/GrimoireTD" target="_blank">source</a> / <a href="https://www.youtube.com/playlist?list=PL1BfrVN5gAzy3q54w1CaRPDoZ95iaPMMF" target="_blank">videos</a></li>
+            <li>Two sucessful websites with revision materials for surgical trainees - <a href="https://orthopaedicprep.com/question-bank-free/" target="_blank">OrthoPrep</a> and <a href="https://coresurgicalprep.com/question-bank-free/" target="_blank">CorePrep</a> (closed source)</li>
+            <li>Some electronic <a routerLink="/music">music</a></li>
+        </ul>
+        <p>The Technicolour Death Cult, aka the TDC, is everyone else in the world, especially those that make it possible or easier to make things. They don't know they are the Technicolour Death Cult, but they are.</p>
+    </div>
+</div>
+
+<div *ngIf="showWotContent" class="wot-content-wrapper" [@wotContentIsShown]="true">
     <div class="wot-content">
         <p><span class="wot-heading">WOT?</span> Procedural fractal animation on HTML5 canvas.</p>
-        <p><span class="wot-heading">WAI?</span> I like fractals, they are terribly profound.</p>
+        <p><span class="wot-heading">WAI?</span> I like fractals; they are terribly profound.</p>
         <p><span class="wot-heading">HAO?</span> The source for this site is on <a href="https://github.com/jgbpercy/JoeTDCSite" target="_blank">GitHub</a>.</p>
     </div>
 </div>

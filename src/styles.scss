@@ -2,14 +2,37 @@
 
 $nav-height: 46px;
 
-$std-text-color: rgba(160, 145, 140, 0.9);
-$link-color: rgba(130, 130, 180, 0.9);
+$std-text-color: rgb(160, 145, 140);
+$std-text-hover-color: rgb(50, 40, 40);
+$link-color: rgb(130, 130, 180);
+
+$std-border-radius: 8px;
 
 $fractal-center: 450px;
 $wot-radius: 50px;
 
 @mixin std-transition {
     transition: all 0.6s;
+}
+
+@mixin std-button {
+    @include std-transition;
+    border-radius: $std-border-radius;
+    background-color: transparent;
+    border-width: 3px;
+    border-color: $std-text-color;
+    color: $std-text-color;
+    border-style: solid;
+    line-height: 2em;
+}
+
+@mixin std-button-hover {
+    color: $std-text-hover-color;
+    background-color: $std-text-color;
+}
+
+@mixin home-fade-in($seconds) {
+    animation: home-fade-in $seconds;
 }
 
 body {
@@ -27,6 +50,11 @@ a {
 
 a:visited {
     color: $link-color;
+}
+
+button {
+    font-family: inherit;
+    cursor: pointer;
 }
 
 button:focus {
@@ -65,7 +93,7 @@ nav {
 
     a:hover {
         background-color: rgb(210, 210, 210);
-        color: rgb(50, 40, 40)
+        color: $std-text-hover-color;
     }
 }
 
@@ -73,39 +101,78 @@ nav {
     padding-top: $nav-height;
 }
 
+@keyframes home-fade-in {
+    from { 
+        color: transparent;
+        border-color: transparent;
+    }
+    to { 
+        color: $std-text-color;
+        border-color: $std-text-color;
+    }
+}
+
 h1.home-title {
+    @include home-fade-in(3s);    
     text-align: center;
     font-size: 5em;
-    animation-name: home-fade-in;
-    animation-duration: 4.5s;
+    margin-top: 0.3em;
+    margin-bottom: 0.2em;
 }
 
-.fractal-animation {
-    height: 100%;
-    height: 100%;
-    height: 100%;
-    width: 100%;
+.who-button-container {
+    display: block;
+    text-align: center;
+}
+
+.who-button {
+    @include home-fade-in(2s);
+    @include std-button;
+    font-size: 1.3em;
+    width: 100px;
+}
+
+.who-button:hover {
+    @include std-button-hover;
+}
+
+@mixin home-content-wrapper($left-offset) {
     position: fixed;
+    opacity: 1;
+    left: calc(50% + #{$left-offset});
     top: 0;
-    z-index: -1;
-    background-color: rgb(210, 200, 195);
+    height: 100%;
+    z-index: -5;
 }
 
-div.wot-button-container {
+@mixin home-content {
+    position: absolute;
+    top: $fractal-center;
+    transform: translate(0, -50%);
+}
+
+.who-content-wrapper {
+    @include home-content-wrapper(-500px);
+    width: 300px;
+}
+
+.who-content {
+    @include home-content;
+    font-size: 1.1em;
+}
+
+.wot-button-container {
     position: fixed;
     left: 0;
     top: $fractal-center - $wot-radius;
     text-align: center;
     width: 100%;
+    z-index: -6;
 }
 
-@keyframes home-fade-in {
-    from { color: transparent }
-    to { color: $std-text-color }
-}
-
-button.wot-button {
+.wot-button {
     @include std-transition;
+    @include home-fade-in(3s);
     color: $std-text-color;
     background-color: transparent;
     border-radius: $wot-radius;
@@ -115,29 +182,33 @@ button.wot-button {
     font-size: 5em;
     border-style: none;
     cursor: pointer;
-    animation-name: home-fade-in;
-    animation-duration: 3s;
 }
 
-button.wot-button:hover {
+.wot-button:hover {
     background-color: rgba(200, 150, 150, 0.1);
 }
 
-div.wot-content-wrapper {
-    position: fixed;
-    left: calc(50% + 200px);
-    top: 0;
-    height: 100%;
+.wot-content-wrapper {
+    @include home-content-wrapper(200px);
     width: 100%;
 }
 
-div.wot-content {
+.wot-content {
+    @include home-content;
     font-size: 1.2em;
-    position: absolute;
-    top: $fractal-center;
-    transform: translate(0, -50%);
 }
 
-span.wot-heading {
+.wot-heading {
     font-weight: bold;
+}
+
+.fractal-animation {
+    height: 100%;
+    height: 100%;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: -10;
+    background-color: rgb(210, 200, 195);
 }
