@@ -1,5 +1,6 @@
 import * as lodash from 'lodash';
 
+import { Color } from './color';
 import { Fractal } from './fractal';
 import { SpawnInterval, Tree } from './tree';
 import { Vector2 } from './vector-2';
@@ -45,12 +46,12 @@ export class FullTree extends Tree {
 
         this.normalFromAngle = this.fromAngle;
 
-        this.color = {
-            r: lodash.random(110, 150, false),
-            g: lodash.random(160, 200, false),
-            b: lodash.random(90, 130, false),
-            a: 0.6,
-        };
+        this.color = new Color(
+            lodash.random(110, 150, false),
+            lodash.random(160, 200, false),
+            lodash.random(90, 130, false),
+            0.6,
+        );
 
         this.initialLineWidth = this.lineWidthChangePerFractalIteration * 4;
 

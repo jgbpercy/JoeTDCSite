@@ -1,6 +1,7 @@
 import * as bezier from 'bezier-easing';
 import * as lodash from 'lodash';
 
+import { Color } from './color';
 import { Fractal } from './fractal';
 import { Vector2 } from './vector-2';
 
@@ -13,7 +14,7 @@ export class MainFractal extends Fractal {
 
     public endOfAnimationCenterYCoordinate = 450;
 
-    private timeForGrowth = 3;
+    private timeForGrowth = 5;
     private timeForRotation = 4;
     private totalTimeToCompleteAnimation : number;
     private timeBeforeInitialLineStartsRetracting = 2;
@@ -25,7 +26,7 @@ export class MainFractal extends Fractal {
     private totalTimePassed = 0;
     private rotationTimePassed = 0;
     private initialLineRetractionTimePassed = 0;
-    private treeGrowthDone = false;
+    public treeGrowthDone = false;
 
     private drawLengthIncludingInitialLine = 0;
 
@@ -51,19 +52,14 @@ export class MainFractal extends Fractal {
 
         this.lineWidthChangePerFractalIteration = 0.4;
 
-        this.color = {
-            r: 115,
-            g: 60,
-            b: 45,
-            a: 0.9,
-        };
+        this.color = new Color(115, 60, 45, 0.9);
 
         this.alphaChangePerFractalIteration = 0.1;
 
         this.endAngleChangePerFractalIteration = 2 * Math.PI / lodash.random(3, 7, false);
         
-        this.rotationEasing = bezier(0.8, 0.2, 0.45, 0.8);
         this.growthEasing = bezier(0.25, 0.75, 0.55, 1);
+        this.rotationEasing = bezier(0.8, 0.05, 0.5, 0.95);
 
         const branches = lodash.random(3, 6, false);
 
@@ -152,7 +148,7 @@ export class MainFractal extends Fractal {
 
         const angleChangePerFractalIteration = this.startAngleChangePerFractalIteration
             + (this.endAngleChangePerFractalIteration - this.startAngleChangePerFractalIteration)
-            * Math.pow(fractionRotationDone, 6);
+            * this.rotationEasing(fractionRotationDone);
 
         this.fromAngle = this.rotationEasing(fractionRotationDone) * -Math.PI;
 

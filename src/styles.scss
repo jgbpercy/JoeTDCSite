@@ -1,45 +1,71 @@
 @import url('https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed');
 
-$nav-height: 45px;
-$nav-border-width: 1px;
+$nav-height: 46px;
+
+$std-text-color: rgba(160, 145, 140, 0.9);
+$link-color: rgba(130, 130, 180, 0.9);
+
+$fractal-center: 450px;
+$wot-radius: 50px;
+
+@mixin std-transition {
+    transition: all 0.6s;
+}
 
 body {
     font-family: 'Barlow Semi Condensed', sans-serif;
     margin: 0;
-    color: rgb(30, 20, 20);
+    padding: 0;
+    color: $std-text-color;
+    background-color: black;
+}
+
+a {
+    text-decoration: none;
+    color: $link-color;
+}
+
+a:visited {
+    color: $link-color;
+}
+
+button:focus {
+    outline: none;
 }
 
 nav {
-    border-bottom: $nav-border-width rgb(200, 200, 200) solid;
-    background-color: rgba(245, 245, 245, 150);
+    background-color: transparent;
     text-align: center;
     position: fixed;
     top: 0;
     width: 100%;
 
     a {
+        @include std-transition;
         width: 10%;
-        font-size: 1.2em;
+        font-size: 1.15em;
         text-align: center;
         display: inline-block;
-        transition: all 0.6s;
         text-decoration: none;
-        height: $nav-height - $nav-border-width;
-        line-height: $nav-height - $nav-border-width;
+        height: 100%;
+        line-height: $nav-height;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+        color: $std-text-color;
 
         span {
             display: inline-block;
-            vertical-align: middle;
             line-height: normal;
         }
     }
 
     a:visited {
-        color: inherit;
+        color: $std-text-color;
     }
 
     a:hover {
-        background-color: rgba(230, 230, 230, 150);
+        background-color: rgb(210, 210, 210);
+        color: rgb(50, 40, 40)
     }
 }
 
@@ -50,15 +76,68 @@ nav {
 h1.home-title {
     text-align: center;
     font-size: 5em;
-    color: rgba(120, 100, 100, 150);
+    animation-name: home-fade-in;
+    animation-duration: 4.5s;
 }
 
 .fractal-animation {
-    height: -webkit-calc(100% -  #{$nav-height});
-    height: -moz-calc(100% - #{$nav-height});
-    height: calc(100% - #{$nav-height});
+    height: 100%;
+    height: 100%;
+    height: 100%;
     width: 100%;
     position: fixed;
-    top: $nav-height;
+    top: 0;
     z-index: -1;
+    background-color: rgb(210, 200, 195);
+}
+
+div.wot-button-container {
+    position: fixed;
+    left: 0;
+    top: $fractal-center - $wot-radius;
+    text-align: center;
+    width: 100%;
+}
+
+@keyframes home-fade-in {
+    from { color: transparent }
+    to { color: $std-text-color }
+}
+
+button.wot-button {
+    @include std-transition;
+    color: $std-text-color;
+    background-color: transparent;
+    border-radius: $wot-radius;
+    display: inline-block;
+    width: $wot-radius * 2;
+    height: $wot-radius * 2;
+    font-size: 5em;
+    border-style: none;
+    cursor: pointer;
+    animation-name: home-fade-in;
+    animation-duration: 3s;
+}
+
+button.wot-button:hover {
+    background-color: rgba(200, 150, 150, 0.1);
+}
+
+div.wot-content-wrapper {
+    position: fixed;
+    left: calc(50% + 200px);
+    top: 0;
+    height: 100%;
+    width: 100%;
+}
+
+div.wot-content {
+    font-size: 1.2em;
+    position: absolute;
+    top: $fractal-center;
+    transform: translate(0, -50%);
+}
+
+span.wot-heading {
+    font-weight: bold;
 }

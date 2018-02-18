@@ -1,5 +1,6 @@
 import * as lodash from 'lodash';
 
+import { Color } from './color';
 import { Fractal } from './fractal';
 
 export class Star extends Fractal {
@@ -56,12 +57,12 @@ export class Star extends Fractal {
 
         this.fromAngle = 0;
 
-        this.color = {
-            r: lodash.random(100, 120, false),
-            g: 100,
-            b: lodash.random(80, 100, false),
-            a: 0,
-        };
+        this.color = new Color(
+            lodash.random(150, 170, false),
+            150,
+            lodash.random(120, 140, false),
+            0,
+        );
 
         this.normalAlpha = ((0.9 + 0.1 * lodash.random(0, 1, true)) * (canvasHeight - this.position.y) / canvasHeight);
 

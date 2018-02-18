@@ -1,5 +1,6 @@
 import * as lodash from 'lodash';
 
+import { Color } from './color';
 import { Fractal } from './fractal';
 import { Vector2 } from './vector-2';
 
@@ -9,12 +10,14 @@ export class SnowFlake extends Fractal {
 
     public rotationSpeed : number;
 
+    private startFadeOutAtY : number;
+    private endFadeOutAtY : number;
+
     private cachedImageCanvas : HTMLCanvasElement;
 
     public constructor(
         canvasWidth : number,
-        mainFractalCenterX : number,
-        mainFractalExclusionLength : number,
+        canvasHeight : number,
     ) {
         super();
 
@@ -22,7 +25,7 @@ export class SnowFlake extends Fractal {
 
         this.totalDrawLength = this.lineLength * 2.2;
 
-        this.speed = (40 + lodash.random(10, true)) * this.lineLength / 4;
+        this.speed = (28 + lodash.random(8, true)) * this.lineLength / 4;
 
         this.rotationSpeed = lodash.random(1, 3, true);
         const rotationDirection = lodash.random(0, 1, true) > 0.5 ? -1 : 1;
@@ -32,27 +35,17 @@ export class SnowFlake extends Fractal {
 
         this.position.y = -this.lineLength * 2;
 
-        // let foundPos = false;
-        // while (!foundPos) {
-
         this.position.x = lodash.random(0, canvasWidth, true);
     
-        //     const xFromMainFractalCenter = Math.abs(this.position.x - mainFractalCenterX);
-
-        //     if (xFromMainFractalCenter > mainFractalExclusionLength + this.lineLength * 2)  {
-        //         foundPos = true;
-        //     }
-        // }
-
         this.fromAngle = 0;
         this.removeThisFrame = false;
 
-        this.color = {
-            r: lodash.random(110, 120, false),
-            g: lodash.random(110, 120, false),
-            b: lodash.random(140, 160, false),
-            a: 0.5,
-        };
+        this.color = new Color(
+            lodash.random(110, 120, false),
+            lodash.random(110, 120, false),
+            lodash.random(140, 160, false),
+            0.5,
+        );
 
         let branches = lodash.random(4, 6, false);
         branches = branches === 4 ? 3 : branches;
@@ -116,6 +109,10 @@ export class SnowFlake extends Fractal {
             x: realPosition.x,
             y: realPosition.y,
         };
+
+        this.startFadeOutAtY = canvasHeight / 2;
+
+        this.endFadeOutAtY = canvasHeight * 3 / 4;
     }
 
     public update(deltaTime : number, canvasHeight : number) {
@@ -130,17 +127,19 @@ export class SnowFlake extends Fractal {
             this.fromAngle += 2 * Math.PI;
         }
 
-        if (this.position.y > canvasHeight - 2 * this.lineLength) {
+        if (this.position.y >= this.endFadeOutAtY) {
             this.removeThisFrame = true;
         }
     }
 
-    public drawCached(context : CanvasRenderingContext2D) {
+    public drawCached(context : CanvasRenderingContext2D, canvasHeight : number) {
 
         context.save();
 
         context.translate(this.position.x, this.position.y);
         context.rotate(this.fromAngle);
+        context.globalAlpha = 1 - (this.position.y - this.startFadeOutAtY) / (this.endFadeOutAtY - this.startFadeOutAtY);
+        if (this.removeThisFrame) { context.globalAlpha = 0; }
         context.drawImage(this.cachedImageCanvas, -this.lineLength * 2, -this.lineLength * 2);
 
         context.restore();

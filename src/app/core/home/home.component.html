@@ -1,2 +1,21 @@
-<h1 class="home-title">wot</h1>
+<h1 *ngIf="showTitle" class="home-title">JoeTDC</h1>
+
 <canvas class="fractal-animation" jtdcFractalAnimation></canvas>
+
+<div 
+    *ngIf="showWotButton" 
+    class="wot-button-container">
+    <button 
+        class="wot-button"
+        (click)="toggleWotContent()">
+        ?
+    </button>
+</div>
+
+<div *ngIf="showWotContent" class="wot-content-wrapper">
+    <div class="wot-content">
+        <p><span class="wot-heading">WOT?</span> Procedural fractal animation on HTML5 canvas.</p>
+        <p><span class="wot-heading">WAI?</span> I like fractals, they are terribly profound.</p>
+        <p><span class="wot-heading">HAO?</span> The source for this site is on <a href="https://github.com/jgbpercy/JoeTDCSite" target="_blank">GitHub</a>.</p>
+    </div>
+</div>

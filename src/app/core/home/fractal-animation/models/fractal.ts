@@ -26,10 +26,11 @@ export class Fractal {
         const actualDrawLength = drawWholeLength ? this.lineLength : this.totalDrawLength;
 
         const lineEnds : Vector2WithCachedAngle[] = this.drawLinesAtAngles.map(drawLineAtAngle => {
+            const newAngle = this.fromAngle + drawLineAtAngle;
             return {
-                x: this.position.x + actualDrawLength * Math.sin(this.fromAngle + drawLineAtAngle),
-                y: this.position.y + actualDrawLength * Math.cos(this.fromAngle + drawLineAtAngle),
-                angle: this.fromAngle + drawLineAtAngle,
+                x: this.position.x + actualDrawLength * Math.sin(newAngle),
+                y: this.position.y + actualDrawLength * Math.cos(newAngle),
+                angle: newAngle,
             };
         });
 
@@ -78,12 +79,12 @@ export class Fractal {
         child.drawLinesAtAngles = this.drawLinesAtAngles;
         child.fromAngle = position.angle;
 
-        child.color = {
-            r: this.color.r,
-            g: this.color.g,
-            b: this.color.b,
-            a: this.color.a - this.alphaChangePerFractalIteration,
-        };
+        child.color = new Color(
+            this.color.r,
+            this.color.g,
+            this.color.b,
+            this.color.a - this.alphaChangePerFractalIteration,
+        );
         child.alphaChangePerFractalIteration = this.alphaChangePerFractalIteration;
         
         this.removeThisFrame = this.removeThisFrame;

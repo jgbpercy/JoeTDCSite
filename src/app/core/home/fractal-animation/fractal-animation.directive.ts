@@ -1,14 +1,13 @@
 import {
     Directive,
     ElementRef,
+    OnDestroy,
     OnInit,
 } from '@angular/core';
-import { interval } from 'rxjs/observable/interval';
-import { map } from 'rxjs/operators/map';
-import { take } from 'rxjs/operators/take';
 
 import * as lodash from 'lodash';
 
+import { EventArgs, HomeEventsService } from '../services/home-events.service';
 import { 
     Bush,
     Color,
@@ -19,15 +18,20 @@ import {
     SpawnInterval,
     Star,
     Tree,
-    WindTargetBuffer
+    WindTargetBuffer,
 } from './models';
+
+export class EAMainFractalAnimationDone extends EventArgs { }
+export class EAMainFractalGrowthDone extends EventArgs {}
 
 @Directive({
     selector: '[jtdcFractalAnimation]'
 })
-export class FractalAnimationDirective implements OnInit {
+export class FractalAnimationDirective implements OnInit, OnDestroy {
 
     private canvas : HTMLCanvasElement;
+
+    private continueAnimation = true;
 
     private currentTimeStamp = 0;
 
@@ -48,6 +52,8 @@ export class FractalAnimationDirective implements OnInit {
     private numberOfBushesToSpawnPer1000X = 40;
     private bushSpawnBufferZoneProportion = 0.1;
 
+    private initialBackgroundColor : Color = new Color(210, 200, 195, 1);
+
     private maxWind = Math.PI / 6;
 
     private snowFlakes : SnowFlake[] = new Array<SnowFlake>();
@@ -55,8 +61,10 @@ export class FractalAnimationDirective implements OnInit {
     private trees : FullTree[] = new Array<FullTree>();
     private bushes : Bush[] = new Array<Bush>();
 
-    constructor(private element : ElementRef) {
-
+    constructor(
+        private element : ElementRef,
+        private homeEventsService : HomeEventsService,
+    ) {
         this.canvas = this.element.nativeElement as HTMLCanvasElement;
     }
 
@@ -79,13 +87,11 @@ export class FractalAnimationDirective implements OnInit {
 
         const cachedBackgroundContext = cachedBackgroundCanvas.getContext('2d');
 
-        cachedBackgroundContext.fillStyle = 'black';
-        cachedBackgroundContext.fillRect(0, 0, cachedBackgroundCanvas.width, cachedBackgroundCanvas.height);
-
         context.lineCap = 'round';
         context.lineJoin = 'round';
 
         let totalTimePassed = 0;
+        let mainFractalGrowthFinishedEventEmitted = false;
         let mainFractalCompleteAndCachedToBackground = false;
         let timeSinceLastSnowFlakeSpawn = 0;
         let timeSinceLastStarSpawned = 0;
@@ -106,6 +112,9 @@ export class FractalAnimationDirective implements OnInit {
         );
 
         const windTargetBuffer = new WindTargetBuffer();
+
+        cachedBackgroundContext.fillStyle = this.initialBackgroundColor.toContextStyleString();
+        cachedBackgroundContext.fillRect(0, 0, cachedBackgroundCanvas.width, cachedBackgroundCanvas.height);
 
         const doFrame = (timeStamp : number) => {
 
@@ -146,7 +155,7 @@ export class FractalAnimationDirective implements OnInit {
 
             if (totalTimePassed >= this.timeBeforeSpawingSnowFlakes) {
                 if (timeSinceLastSnowFlakeSpawn > this.timeBetweenSnowFlakeSpawns) {
-                    this.snowFlakes.push(new SnowFlake(canvasWidth, canvasWidth / 2, this.mainFractalInitialLineLength));
+                    this.snowFlakes.push(new SnowFlake(canvasWidth, canvasHeight));
                     timeSinceLastSnowFlakeSpawn = 0;
                 } else {
                     timeSinceLastSnowFlakeSpawn += deltaTime;
@@ -193,9 +202,23 @@ export class FractalAnimationDirective implements OnInit {
             this.trees.forEach(tree => tree.update(deltaTime));
             this.bushes.forEach(bush => bush.update(deltaTime));
 
+            if (totalTimePassed < this.timeBeforeSpawningStars) {
+                const fractionTimeBeforeStarSpawnsDone = totalTimePassed / this.timeBeforeSpawningStars; 
+                const currentBackgroundColor = new Color(
+                    this.initialBackgroundColor.r * (1 - fractionTimeBeforeStarSpawnsDone),
+                    this.initialBackgroundColor.g * (1 - fractionTimeBeforeStarSpawnsDone),
+                    this.initialBackgroundColor.b * (1 - fractionTimeBeforeStarSpawnsDone),
+                    1,
+                );
+
+                cachedBackgroundContext.fillStyle = currentBackgroundColor.toContextStyleString();
+                cachedBackgroundContext.fillRect(0, 0, cachedBackgroundCanvas.width, cachedBackgroundCanvas.height);    
+            }
+
             if (mainFractal.animationComplete && !mainFractalCompleteAndCachedToBackground) {
                 mainFractal.draw(cachedBackgroundContext);
                 mainFractalCompleteAndCachedToBackground = true;
+                this.homeEventsService.emit(new EAMainFractalAnimationDone(this));
             }
 
             this.stars.filter(star => star.fadedIn && !star.drawCachedToBackground).forEach(star => {
@@ -217,6 +240,10 @@ export class FractalAnimationDirective implements OnInit {
 
             if (!mainFractalCompleteAndCachedToBackground) {
                 mainFractal.update(deltaTime);
+                if (mainFractal.treeGrowthDone && !mainFractalGrowthFinishedEventEmitted) {
+                    this.homeEventsService.emit(new EAMainFractalGrowthDone(this));
+                    mainFractalGrowthFinishedEventEmitted = true;
+                }
                 mainFractal.draw(context);
             }
 
@@ -226,7 +253,7 @@ export class FractalAnimationDirective implements OnInit {
 
             this.snowFlakes.forEach(snowFlake => {
                 snowFlake.update(deltaTime, canvasHeight);
-                snowFlake.drawCached(context);
+                snowFlake.drawCached(context, canvasHeight);
             });
             
             this.trees.filter(tree => !tree.growthDone).forEach(tree => tree.draw(context));
@@ -235,7 +262,9 @@ export class FractalAnimationDirective implements OnInit {
 
             this.snowFlakes = this.snowFlakes.filter(snowFlake => !snowFlake.removeThisFrame);
 
-            window.requestAnimationFrame(doFrame);
+            if (this.continueAnimation) {
+                window.requestAnimationFrame(doFrame);
+            }
         };
 
         window.requestAnimationFrame(doFrame);
@@ -258,5 +287,9 @@ export class FractalAnimationDirective implements OnInit {
         } while ( currentIntervalBoundary < width);
 
         return spawnIntervals;
+    }
+
+    public ngOnDestroy() : void {
+        this.continueAnimation = false;
     }
 }

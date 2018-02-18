@@ -1,5 +1,6 @@
 import * as lodash from 'lodash';
 
+import { Color } from './color';
 import { SpawnInterval, Tree } from './tree';
 
 export class Bush extends Tree {
@@ -12,12 +13,12 @@ export class Bush extends Tree {
 
         this.lineLength = lodash.random(5, 24, false);
 
-        this.color = {
-            r: lodash.random(150, 190, false),
-            g: lodash.random(150, 190, false),
-            b: lodash.random(80, 120, false),
-            a: 0.5,
-        };
+        this.color = new Color(
+            lodash.random(150, 190, false),
+            lodash.random(150, 190, false),
+            lodash.random(80, 120, false),
+            0.5,
+        );
 
         this.initialLineWidth = this.lineLength > 11 ? 
             this.lineWidthChangePerFractalIteration * 3 : this.lineWidthChangePerFractalIteration * 2;
