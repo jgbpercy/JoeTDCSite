@@ -28,6 +28,8 @@ export class FullTree extends Tree {
         spawnInterval : SpawnInterval,
         canvasHeight : number,
         windTargetBuffer : WindTargetBuffer,
+        minLineLength : number,
+        maxLineLength : number,
     ) {
         super(spawnInterval, canvasHeight);
 
@@ -35,7 +37,7 @@ export class FullTree extends Tree {
         // this.canvasHeight = canvasHeight;
         // this.windTargetBuffer = windTargetBuffer;
 
-        this.lineLength = lodash.random(40, 60, false);
+        this.lineLength = lodash.random(minLineLength, maxLineLength, false);
 
         this.totalDrawLengthIncludingInitialLine = 0;
 

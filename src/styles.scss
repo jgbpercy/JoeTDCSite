@@ -4,7 +4,8 @@ $nav-height: 46px;
 
 $std-text-color: rgb(160, 145, 140);
 $std-text-hover-color: rgb(50, 40, 40);
-$link-color: rgb(130, 130, 180);
+$std-link-color: rgb(130, 130, 180);
+$std-link-hover-color: rgb(160, 160, 220);
 
 $std-border-radius: 8px;
 
@@ -44,12 +45,21 @@ body {
 }
 
 a {
+    @include std-transition;
     text-decoration: none;
-    color: $link-color;
+    color: $std-link-color;
+}
+
+a:hover {
+    color: $std-link-hover-color;
 }
 
 a:visited {
-    color: $link-color;
+    color: $std-link-color;
+}
+
+a:visited:hover {
+    color: $std-link-hover-color;
 }
 
 button {
@@ -92,6 +102,11 @@ nav {
     }
 
     a:hover {
+        background-color: rgb(210, 210, 210);
+        color: $std-text-hover-color;
+    }
+
+    a:visited:hover {
         background-color: rgb(210, 210, 210);
         color: $std-text-hover-color;
     }

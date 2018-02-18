@@ -8,6 +8,7 @@ import { FractalAnimationDirective, HomeComponent } from './core/home';
 import { HomeEventsService } from './core/home/services/home-events.service';
 import { NavComponent } from './core/nav/nav.component';
 import { PageNotFoundComponent } from './core/page-not-found/page-not-found.component';
+import { WindowResizeService } from './core/services/window-resize.service';
 import { SharedModule } from './shared/shared.module';
 
 @NgModule({
@@ -26,6 +27,7 @@ import { SharedModule } from './shared/shared.module';
     ],
     providers: [
         HomeEventsService,
+        WindowResizeService,
     ],
     bootstrap: [AppComponent],
 })

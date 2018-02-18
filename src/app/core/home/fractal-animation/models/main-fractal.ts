@@ -38,7 +38,10 @@ export class MainFractal extends Fractal {
 
     private growthEasing : (fraction : number) => number;
 
-    public constructor(canvasWidth : number, lineLength : number) {
+    public constructor(
+        canvasWidth : number,
+        lineLength : number,
+    ) {
 
         super();
 

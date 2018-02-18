@@ -39,10 +39,10 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
 
     private timeBeforeSpawningStars = 5;
     private timeBetweenStarSpawns = 0.01;
-    private numberOfStarsToSpawn = 250;
+    private numberOfStarsPerPixel = 0.00025;
 
     private timeBeforeSpawingSnowFlakes = 7;
-    private timeBetweenSnowFlakeSpawns = 0.15;
+    private numberOfSnowFlakesToSpawnPerYPerSecond = 0.004;
 
     private timeBeforeSpawingTreesAndBushes = 9;
     private timeBetweenTreeSpawns = 0.5;
@@ -51,6 +51,9 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
     private treeSpawnBufferZoneProportion = 0.1;
     private numberOfBushesToSpawnPer1000X = 40;
     private bushSpawnBufferZoneProportion = 0.1;
+
+    private maxTreeHeight = 240;
+    private minTreeHeight = 160;
 
     private initialBackgroundColor : Color = new Color(210, 200, 195, 1);
 
@@ -98,6 +101,13 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
         let allStarsSpawned = false;
         let timeSinceLastTreeSpawned = 0;
         let timeSinceLastBushSpawned = 0;
+
+        const pixelsForStarSpawns = 
+            ((canvasHeight - this.maxTreeHeight) * canvasWidth)
+            - Math.PI * Math.pow(this.mainFractalInitialLineLength, 2);
+        const numberOfStarsToSpawn = Math.round(this.numberOfStarsPerPixel * pixelsForStarSpawns);
+
+        const timeBetweenSnowFlakeSpawns = 1 / (this.numberOfSnowFlakesToSpawnPerYPerSecond * canvasWidth);
 
         const treeSpawnIntervals = this.getSpawnIntervals(
             canvasWidth, 
@@ -148,13 +158,13 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
                     timeSinceLastStarSpawned += deltaTime;
                 }
 
-                if (this.stars.length >= this.numberOfStarsToSpawn) {
+                if (this.stars.length >= numberOfStarsToSpawn) {
                     allStarsSpawned = true;
                 }
             }
 
             if (totalTimePassed >= this.timeBeforeSpawingSnowFlakes) {
-                if (timeSinceLastSnowFlakeSpawn > this.timeBetweenSnowFlakeSpawns) {
+                if (timeSinceLastSnowFlakeSpawn > timeBetweenSnowFlakeSpawns) {
                     this.snowFlakes.push(new SnowFlake(canvasWidth, canvasHeight));
                     timeSinceLastSnowFlakeSpawn = 0;
                 } else {
@@ -170,7 +180,13 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
                     const randomInterval = treeSpawnIntervals[randomIntervalIndex];
                     treeSpawnIntervals.splice(randomIntervalIndex, 1);
 
-                    this.trees.push(new FullTree(randomInterval, canvasHeight, windTargetBuffer));
+                    this.trees.push(new FullTree(
+                        randomInterval,
+                        canvasHeight,
+                        windTargetBuffer,
+                        this.minTreeHeight / 4,
+                        this.maxTreeHeight / 4,
+                    ));
 
                     timeSinceLastTreeSpawned = 0;
 

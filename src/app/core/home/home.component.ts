@@ -7,8 +7,11 @@ import {
 } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
 
+import { delay } from 'rxjs/operators/delay';
 import { filter } from 'rxjs/operators/filter';
+import { tap } from 'rxjs/operators/tap';
 
+import { WindowResizeService } from '../services/window-resize.service';
 import { EAMainFractalAnimationDone, EAMainFractalGrowthDone } from './fractal-animation';
 import { HomeEventsService } from './services/home-events.service';
 
@@ -60,9 +63,12 @@ export class HomeComponent implements OnInit {
     public showWotButton = false;
     public showWotContent = false;
     public showWhoContent = false;
+
+    public showAnimation = true;
     
     constructor(
         private homeEventService : HomeEventsService,
+        private windowResizeService : WindowResizeService,
     ) { }
     
     public ngOnInit() : void {
@@ -79,6 +85,13 @@ export class HomeComponent implements OnInit {
         .subscribe(
             event => this.showTitle = true
         );
+
+        this.windowResizeService.windowSizeChange
+        .pipe(
+            tap(size => this.showAnimation = false),
+            delay(3),
+        )
+        .subscribe(size => this.showAnimation = true);
     }
 
     public toggleWotContent() : void {
