@@ -28,6 +28,7 @@ export class Star extends Fractal {
         mainFractalCenterX : number,
         mainFractalCenterY : number,
         mainFractalExclusionLength : number,
+        maxY : number,
     ) {
         super();
 
@@ -43,7 +44,7 @@ export class Star extends Fractal {
         while (!foundPos) {
 
             this.position.x = lodash.random(0, canvasWidth, true);
-            this.position.y = lodash.random(0, 3 * canvasHeight / 4, true);
+            this.position.y = lodash.random(0, maxY, true);
 
             const xFromMainFractalCenter = this.position.x - mainFractalCenterX;
             const yFromMainFractalCenter = this.position.y - mainFractalCenterY;

@@ -64,7 +64,15 @@ export class HomeComponent implements OnInit {
     public showWotContent = false;
     public showWhoContent = false;
 
-    public showAnimation = true;
+    public showAnimation = false;
+
+    public canvasHeight = 1;
+    public canvasWidth = 1;
+    public mainFractalRadius = 1;
+    public mainFractalCenterY = 1;
+
+    public wotButtonRadius = 50;
+    public whoContentWidth = 300;
     
     constructor(
         private homeEventService : HomeEventsService,
@@ -91,7 +99,13 @@ export class HomeComponent implements OnInit {
             tap(size => this.showAnimation = false),
             delay(3),
         )
-        .subscribe(size => this.showAnimation = true);
+        .subscribe(size => {
+            this.showAnimation = true;
+            this.canvasHeight = size.height;
+            this.canvasWidth = size.width;
+            this.mainFractalRadius = size.height / 4;
+            this.mainFractalCenterY = size.height / 2;
+        });
     }
 
     public toggleWotContent() : void {

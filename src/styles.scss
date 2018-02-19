@@ -9,9 +9,6 @@ $std-link-hover-color: rgb(160, 160, 220);
 
 $std-border-radius: 8px;
 
-$fractal-center: 450px;
-$wot-radius: 50px;
-
 @mixin std-transition {
     transition: all 0.6s;
 }
@@ -151,35 +148,27 @@ h1.home-title {
     @include std-button-hover;
 }
 
-@mixin home-content-wrapper($left-offset) {
+@mixin home-content-wrapper {
     position: fixed;
     opacity: 1;
-    left: calc(50% + #{$left-offset});
     top: 0;
     height: 100%;
     z-index: -5;
 }
 
-@mixin home-content {
-    position: absolute;
-    top: $fractal-center;
-    transform: translate(0, -50%);
-}
-
 .who-content-wrapper {
-    @include home-content-wrapper(-500px);
-    width: 300px;
+    @include home-content-wrapper;
 }
 
 .who-content {
-    @include home-content;
+    position: absolute;
+    transform: translate(0, -50%); 
     font-size: 1.1em;
 }
 
 .wot-button-container {
     position: fixed;
     left: 0;
-    top: $fractal-center - $wot-radius;
     text-align: center;
     width: 100%;
     z-index: -6;
@@ -190,10 +179,7 @@ h1.home-title {
     @include home-fade-in(3s);
     color: $std-text-color;
     background-color: transparent;
-    border-radius: $wot-radius;
     display: inline-block;
-    width: $wot-radius * 2;
-    height: $wot-radius * 2;
     font-size: 5em;
     border-style: none;
     cursor: pointer;
@@ -204,12 +190,13 @@ h1.home-title {
 }
 
 .wot-content-wrapper {
-    @include home-content-wrapper(200px);
+    @include home-content-wrapper;
     width: 100%;
 }
 
 .wot-content {
-    @include home-content;
+    position: absolute;
+    transform: translate(0, -50%); 
     font-size: 1.2em;
 }
 

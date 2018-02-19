@@ -20,7 +20,7 @@ export class WindowResizeService {
     private readonly _windowHeightChange = new BehaviorSubject<number>(window.innerHeight);
     public readonly windowHeightChange = this._windowHeightChange.asObservable();
 
-    private readonly _windowSizeChange = new BehaviorSubject<WindowSize>({ width: window.innerWidth, height: window.innerHeight })
+    private readonly _windowSizeChange = new BehaviorSubject<WindowSize>({ width: window.innerWidth, height: window.innerHeight });
     public readonly windowSizeChange = this._windowSizeChange.asObservable();
 
     constructor() {

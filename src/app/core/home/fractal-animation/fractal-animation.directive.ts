@@ -1,6 +1,7 @@
 import {
     Directive,
     ElementRef,
+    Input,
     OnDestroy,
     OnInit,
 } from '@angular/core';
@@ -35,7 +36,11 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
 
     private currentTimeStamp = 0;
 
-    private mainFractalInitialLineLength = 250;
+    @Input() public canvasWidth : number;
+    @Input() public canvasHeight : number;
+
+    @Input() public mainFractalRadius : number;
+    @Input() public mainFractalCenterY : number;
 
     private timeBeforeSpawningStars = 5;
     private timeBetweenStarSpawns = 0.01;
@@ -51,9 +56,6 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
     private treeSpawnBufferZoneProportion = 0.1;
     private numberOfBushesToSpawnPer1000X = 40;
     private bushSpawnBufferZoneProportion = 0.1;
-
-    private maxTreeHeight = 240;
-    private minTreeHeight = 160;
 
     private initialBackgroundColor : Color = new Color(210, 200, 195, 1);
 
@@ -74,15 +76,15 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
     public ngOnInit() : void {
 
         const context = this.canvas.getContext('2d');
+                
+        this.canvas.width = this.canvasWidth;
+        this.canvas.height = this.canvasHeight;
         
-        const boundingRect = this.canvas.getBoundingClientRect();
-        const canvasWidth = boundingRect.width;
-        const canvasHeight = boundingRect.height;
-        
-        this.canvas.width = canvasWidth;
-        this.canvas.height = canvasHeight;
-        
-        const mainFractal = new MainFractal(canvasWidth, this.mainFractalInitialLineLength / 2);
+        const mainFractal = new MainFractal(
+            this.canvasWidth,
+            this.mainFractalRadius / 2,
+            this.mainFractalCenterY,
+        );
         
         const cachedBackgroundCanvas = document.createElement('canvas');
         cachedBackgroundCanvas.width = this.canvas.width;
@@ -102,21 +104,24 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
         let timeSinceLastTreeSpawned = 0;
         let timeSinceLastBushSpawned = 0;
 
+        const maxTreeHeight = this.canvasHeight / 5;
+        const minTreeHeight = this.canvasHeight / 6;
+
         const pixelsForStarSpawns = 
-            ((canvasHeight - this.maxTreeHeight) * canvasWidth)
-            - Math.PI * Math.pow(this.mainFractalInitialLineLength, 2);
+            ((this.canvasHeight - maxTreeHeight) * this.canvasWidth)
+            - Math.PI * Math.pow(this.mainFractalRadius, 2);
         const numberOfStarsToSpawn = Math.round(this.numberOfStarsPerPixel * pixelsForStarSpawns);
 
-        const timeBetweenSnowFlakeSpawns = 1 / (this.numberOfSnowFlakesToSpawnPerYPerSecond * canvasWidth);
+        const timeBetweenSnowFlakeSpawns = 1 / (this.numberOfSnowFlakesToSpawnPerYPerSecond * this.canvasWidth);
 
         const treeSpawnIntervals = this.getSpawnIntervals(
-            canvasWidth, 
+            this.canvasWidth, 
             this.numberOfTreesToSpawnPer1000X, 
             this.treeSpawnBufferZoneProportion,
         );
 
         const bushSpawnIntervals = this.getSpawnIntervals(
-            canvasWidth,
+            this.canvasWidth,
             this.numberOfBushesToSpawnPer1000X,
             this.bushSpawnBufferZoneProportion,
         );
@@ -146,11 +151,12 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
                 if (timeSinceLastStarSpawned > this.timeBetweenStarSpawns) {
 
                     this.stars.push(new Star(
-                        canvasWidth,
-                        canvasHeight,
-                        canvasWidth / 2,
+                        this.canvasWidth,
+                        this.canvasHeight,
+                        this.canvasWidth / 2,
                         mainFractal.endOfAnimationCenterYCoordinate,
-                        this.mainFractalInitialLineLength,
+                        this.mainFractalRadius,
+                        this.canvasHeight - maxTreeHeight,
                     ));
 
                     timeSinceLastStarSpawned = 0;
@@ -165,7 +171,7 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
 
             if (totalTimePassed >= this.timeBeforeSpawingSnowFlakes) {
                 if (timeSinceLastSnowFlakeSpawn > timeBetweenSnowFlakeSpawns) {
-                    this.snowFlakes.push(new SnowFlake(canvasWidth, canvasHeight));
+                    this.snowFlakes.push(new SnowFlake(this.canvasWidth, this.canvasHeight));
                     timeSinceLastSnowFlakeSpawn = 0;
                 } else {
                     timeSinceLastSnowFlakeSpawn += deltaTime;
@@ -182,10 +188,10 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
 
                     this.trees.push(new FullTree(
                         randomInterval,
-                        canvasHeight,
+                        this.canvasHeight,
                         windTargetBuffer,
-                        this.minTreeHeight / 4,
-                        this.maxTreeHeight / 4,
+                        minTreeHeight / 4,
+                        maxTreeHeight / 4,
                     ));
 
                     timeSinceLastTreeSpawned = 0;
@@ -203,7 +209,7 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
                     const randomInterval = bushSpawnIntervals[randomIntervalIndex];
                     bushSpawnIntervals.splice(randomIntervalIndex, 1);
 
-                    this.bushes.push(new Bush(randomInterval, canvasHeight));
+                    this.bushes.push(new Bush(randomInterval, this.canvasHeight));
 
                     timeSinceLastBushSpawned = 0;
 
@@ -268,8 +274,8 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
             });
 
             this.snowFlakes.forEach(snowFlake => {
-                snowFlake.update(deltaTime, canvasHeight);
-                snowFlake.drawCached(context, canvasHeight);
+                snowFlake.update(deltaTime, this.canvasHeight);
+                snowFlake.drawCached(context, this.canvasHeight);
             });
             
             this.trees.filter(tree => !tree.growthDone).forEach(tree => tree.draw(context));

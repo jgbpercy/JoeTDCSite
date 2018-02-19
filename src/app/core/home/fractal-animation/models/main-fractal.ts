@@ -12,7 +12,7 @@ export class MainFractal extends Fractal {
     
     public initialLineStart : Vector2 = new Vector2();
 
-    public endOfAnimationCenterYCoordinate = 450;
+    public endOfAnimationCenterYCoordinate : number;
 
     private timeForGrowth = 5;
     private timeForRotation = 4;
@@ -41,6 +41,7 @@ export class MainFractal extends Fractal {
     public constructor(
         canvasWidth : number,
         lineLength : number,
+        endCenterY : number,
     ) {
 
         super();
@@ -52,6 +53,8 @@ export class MainFractal extends Fractal {
         this.totalDrawLength = 0;
 
         this.initialLineFullLengthXEnd = canvasWidth * 0.5;
+
+        this.endOfAnimationCenterYCoordinate = endCenterY;
 
         this.lineWidthChangePerFractalIteration = 0.4;
 

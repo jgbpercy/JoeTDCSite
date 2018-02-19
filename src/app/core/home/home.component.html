@@ -8,20 +8,39 @@
     </button>
 </div>
 
-<canvas *ngIf="showAnimation" class="fractal-animation" jtdcFractalAnimation></canvas>
+<canvas
+    *ngIf="showAnimation"
+    class="fractal-animation"
+    jtdcFractalAnimation
+    [canvasWidth]="canvasWidth"
+    [canvasHeight]="canvasHeight"
+    [mainFractalRadius]="mainFractalRadius"
+    [mainFractalCenterY]="mainFractalCenterY">
+</canvas>
 
 <div 
     *ngIf="showWotButton" 
-    class="wot-button-container">
+    class="wot-button-container"
+    [style.top.px]="mainFractalCenterY - wotButtonRadius">
     <button 
         class="wot-button"
+        [style.border-radius.px]="wotButtonRadius"
+        [style.width.px]="wotButtonRadius * 2"
+        [style.height.px]="wotButtonRadius * 2"
         (click)="toggleWotContent()">
         ?
     </button>
 </div>
 
-<div *ngIf="showWhoContent" class="who-content-wrapper" [@whoContentIsShown]="true">
-    <div class="who-content">
+<div
+    *ngIf="showWhoContent"
+    class="who-content-wrapper"
+    [@whoContentIsShown]="true"
+    [style.left.px]="(canvasWidth / 2) - mainFractalRadius - whoContentWidth"
+    [style.width.px]="whoContentWidth">
+    <div 
+        class="who-content"
+        [style.top.px]="canvasHeight / 2">
         <p>Hello, I'm Joseph, aka Joe. I write code, make websites, sometimes create music. Some things that I have made or am making:</p>
         <ul>
             <li>This website - <a href="https://github.com/jgbpercy/JoeTDCSite" target="_blank">source</a></li>
@@ -33,8 +52,14 @@
     </div>
 </div>
 
-<div *ngIf="showWotContent" class="wot-content-wrapper" [@wotContentIsShown]="true">
-    <div class="wot-content">
+<div
+    *ngIf="showWotContent"
+    class="wot-content-wrapper"
+    [@wotContentIsShown]="true"
+    [style.left.px]="(canvasWidth / 2) + mainFractalRadius">
+    <div 
+        class="wot-content"
+        [style.top.px]="canvasHeight / 2">
         <p><span class="wot-heading">WOT?</span> Procedural fractal animation on HTML5 canvas.</p>
         <p><span class="wot-heading">WAI?</span> I like fractals; they are terribly profound.</p>
         <p><span class="wot-heading">HAO?</span> The source for this site is on <a href="https://github.com/jgbpercy/JoeTDCSite" target="_blank">GitHub</a>.</p>
