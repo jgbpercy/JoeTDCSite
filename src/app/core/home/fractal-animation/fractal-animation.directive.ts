@@ -5,10 +5,11 @@ import {
     OnDestroy,
     OnInit,
 } from '@angular/core';
-
 import * as lodash from 'lodash';
 
+import { LoggerChannel, LoggerService } from '../../services/logger.service';
 import { EventArgs, HomeEventsService } from '../services/home-events.service';
+
 import { 
     Bush,
     Color,
@@ -22,8 +23,10 @@ import {
     WindTargetBuffer,
 } from './models';
 
+const PerfLogChannel = LoggerChannel.FractalAnimationPerformanceCheck;
+
 export class EAMainFractalAnimationDone extends EventArgs { }
-export class EAMainFractalGrowthDone extends EventArgs {}
+export class EAMainFractalGrowthDone extends EventArgs { }
 
 @Directive({
     selector: '[jtdcFractalAnimation]'
@@ -69,6 +72,7 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
     constructor(
         private element : ElementRef,
         private homeEventsService : HomeEventsService,
+        private loggerService : LoggerService,
     ) {
         this.canvas = this.element.nativeElement as HTMLCanvasElement;
     }
@@ -94,6 +98,13 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
 
         context.lineCap = 'round';
         context.lineJoin = 'round';
+
+        let donePerformanceCheck = false;
+        let doingPerformanceCheck = false;
+        let finalizingCheckFailure = false;
+        let finalizingCheckFailureCount = 0;
+        let finalizingPerformanceCheck = false;
+        let finalizingPerformanceCheckCount = 0;
 
         let totalTimePassed = 0;
         let mainFractalGrowthFinishedEventEmitted = false;
@@ -133,156 +144,216 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
 
         const doFrame = (timeStamp : number) => {
 
+            // Capture deltaTime
             const deltaTime = (timeStamp - this.currentTimeStamp) / 1000;
-    
             this.currentTimeStamp = timeStamp;
 
-            if (deltaTime > 0.2) {
+            // Clear initial slow frames
+            if (!donePerformanceCheck && !doingPerformanceCheck && deltaTime > 0.035) {
+                this.loggerService.log(PerfLogChannel, 'Pre perf check, clearing slow frames, deltaTime: ' + deltaTime);
                 window.requestAnimationFrame(doFrame);
                 return;
-            } else {
-                this.currentTimeStamp = timeStamp;
             }
 
-            totalTimePassed += deltaTime;
-
-            if (totalTimePassed >= this.timeBeforeSpawningStars && !allStarsSpawned) {
-
-                if (timeSinceLastStarSpawned > this.timeBetweenStarSpawns) {
-
-                    this.stars.push(new Star(
-                        this.canvasWidth,
-                        this.canvasHeight,
-                        this.canvasWidth / 2,
-                        mainFractal.endOfAnimationCenterYCoordinate,
-                        this.mainFractalRadius,
-                        this.canvasHeight - maxTreeHeight,
-                    ));
-
-                    timeSinceLastStarSpawned = 0;
-                } else {
-                    timeSinceLastStarSpawned += deltaTime;
-                }
-
-                if (this.stars.length >= numberOfStarsToSpawn) {
-                    allStarsSpawned = true;
-                }
-            }
-
-            if (totalTimePassed >= this.timeBeforeSpawingSnowFlakes) {
-                if (timeSinceLastSnowFlakeSpawn > timeBetweenSnowFlakeSpawns) {
-                    this.snowFlakes.push(new SnowFlake(this.canvasWidth, this.canvasHeight));
-                    timeSinceLastSnowFlakeSpawn = 0;
-                } else {
-                    timeSinceLastSnowFlakeSpawn += deltaTime;
-                }
-            }
-
-            if (treeSpawnIntervals.length > 0 && totalTimePassed >= this.timeBeforeSpawingTreesAndBushes) {
-
-                if (timeSinceLastTreeSpawned > this.timeBetweenTreeSpawns) {
-
-                    const randomIntervalIndex = lodash.random(0, treeSpawnIntervals.length - 1, false);
-                    const randomInterval = treeSpawnIntervals[randomIntervalIndex];
-                    treeSpawnIntervals.splice(randomIntervalIndex, 1);
-
-                    this.trees.push(new FullTree(
-                        randomInterval,
-                        this.canvasHeight,
-                        windTargetBuffer,
-                        minTreeHeight / 4,
-                        maxTreeHeight / 4,
-                    ));
-
-                    timeSinceLastTreeSpawned = 0;
-
-                } else {
-                    timeSinceLastTreeSpawned += deltaTime;
-                }
-            }
-
-            if (bushSpawnIntervals.length > 0 && totalTimePassed >= this.timeBeforeSpawingTreesAndBushes) {
-
-                if (timeSinceLastBushSpawned > this.timeBetweenBushSpawns) {
-
-                    const randomIntervalIndex = lodash.random(0, bushSpawnIntervals.length - 1, false);
-                    const randomInterval = bushSpawnIntervals[randomIntervalIndex];
-                    bushSpawnIntervals.splice(randomIntervalIndex, 1);
-
-                    this.bushes.push(new Bush(randomInterval, this.canvasHeight));
-
-                    timeSinceLastBushSpawned = 0;
-
-                } else {
-                    timeSinceLastBushSpawned += deltaTime;
-                }
-            }
-
-            windTargetBuffer.update(deltaTime);
-            
-            this.stars.forEach(star => star.update(deltaTime));
-            this.trees.forEach(tree => tree.update(deltaTime));
-            this.bushes.forEach(bush => bush.update(deltaTime));
-
-            if (totalTimePassed < this.timeBeforeSpawningStars) {
-                const fractionTimeBeforeStarSpawnsDone = totalTimePassed / this.timeBeforeSpawningStars; 
-                const currentBackgroundColor = new Color(
-                    this.initialBackgroundColor.r * (1 - fractionTimeBeforeStarSpawnsDone),
-                    this.initialBackgroundColor.g * (1 - fractionTimeBeforeStarSpawnsDone),
-                    this.initialBackgroundColor.b * (1 - fractionTimeBeforeStarSpawnsDone),
-                    1,
-                );
-
-                cachedBackgroundContext.fillStyle = currentBackgroundColor.toContextStyleString();
-                cachedBackgroundContext.fillRect(0, 0, cachedBackgroundCanvas.width, cachedBackgroundCanvas.height);    
-            }
-
-            if (mainFractal.animationComplete && !mainFractalCompleteAndCachedToBackground) {
-                mainFractal.draw(cachedBackgroundContext);
-                mainFractalCompleteAndCachedToBackground = true;
-                this.homeEventsService.emit(new EAMainFractalAnimationDone(this));
-            }
-
-            this.stars.filter(star => star.fadedIn && !star.drawCachedToBackground).forEach(star => {
-                star.drawNonTwinkling(cachedBackgroundContext);
-                star.drawCachedToBackground = true;
-            });
-
-            this.trees.filter(tree => tree.growthDone && !tree.drawCachedToBackground).forEach(tree => {
-                tree.draw(cachedBackgroundContext);
-                tree.drawCachedToBackground = true;
-            });
-
-            this.bushes.filter(bush => bush.growthDone && !bush.drawCachedToBackground).forEach(bush => {
-                bush.draw(cachedBackgroundContext);
-                bush.drawCachedToBackground = true;
-            });
-
-            context.drawImage(cachedBackgroundCanvas, 0, 0);
-
-            if (!mainFractalCompleteAndCachedToBackground) {
-                mainFractal.update(deltaTime);
-                if (mainFractal.treeGrowthDone && !mainFractalGrowthFinishedEventEmitted) {
-                    this.homeEventsService.emit(new EAMainFractalGrowthDone(this));
-                    mainFractalGrowthFinishedEventEmitted = true;
-                }
+            //Start performance check
+            if (!doingPerformanceCheck && !donePerformanceCheck) {
+                this.loggerService.log(PerfLogChannel, 'Starting checks, deltaTime: ' + deltaTime);
+                doingPerformanceCheck = true;
+                mainFractal.initForPerformanceChecks(this.canvasWidth, this.canvasHeight);
                 mainFractal.draw(context);
+                window.requestAnimationFrame(doFrame);
+                return;
             }
 
-            this.stars.filter(star => !star.drawCachedToBackground || star.twinkling).forEach(star => {
-                star.draw(context);
-            });
+            //Performance check
+            if (doingPerformanceCheck) {
+                if (finalizingPerformanceCheck) {
+                    if (deltaTime > 0.035) {
+                        this.loggerService.log(PerfLogChannel, 'Got slow frame during finalization, deltaTime: ' + deltaTime);
+                        finalizingCheckFailureCount = 0;
+                        finalizingPerformanceCheck = false;
+                        finalizingCheckFailure = true;
+                    } else if (finalizingPerformanceCheckCount === 2) {
+                        finalizingPerformanceCheck = false;
+                        doingPerformanceCheck = false;
+                        donePerformanceCheck = true;
+                        this.loggerService.log(PerfLogChannel, 'Passed finalization and finished checks, deltaTime: ' + deltaTime);
+                        mainFractal.initAfterPerformanceChecks();
+                    } else {
+                        this.loggerService.log(PerfLogChannel, 'Passed finalization iteration, deltaTime: ' + deltaTime);
+                        finalizingPerformanceCheckCount += 1;
+                    }
+                } else if (finalizingCheckFailure) {
+                    if (deltaTime < 0.035) {
+                        this.loggerService.log(PerfLogChannel, 'Got ok frame while finalizing failure, deltaTime: ' + deltaTime);
+                        finalizingCheckFailure = false;
+                    } else if (finalizingCheckFailureCount === 2) {
+                        this.loggerService.log(PerfLogChannel, 'finished finalizing failure, deltaTime: ' + deltaTime);
+                        finalizingCheckFailure = false;
+                        finalizingPerformanceCheck = true;
+                        mainFractal.reduceFractalIterationsForPerformanceCheckFinalization(this.loggerService);
+                    } else {
+                        this.loggerService.log(PerfLogChannel, 'Did failure finalization iteration, deltaTime: ' + deltaTime);
+                        finalizingCheckFailureCount += 1;
+                    }
+                } else {
+                    if (deltaTime < 0.035) {
+                        this.loggerService.log(PerfLogChannel, 'Passed initial check iteration, deltaTime: ' + deltaTime);
+                        mainFractal.increaseFractalIterations(this.loggerService);
+                    } else {
+                        this.loggerService.log(PerfLogChannel, 'Failed initial check iteration, deltaTime: ' + deltaTime);
+                        finalizingCheckFailure = true;
+                        finalizingCheckFailureCount = 0;
+                    }
+                }
 
-            this.snowFlakes.forEach(snowFlake => {
-                snowFlake.update(deltaTime, this.canvasHeight);
-                snowFlake.drawCached(context, this.canvasHeight);
-            });
-            
-            this.trees.filter(tree => !tree.growthDone).forEach(tree => tree.draw(context));
+                context.fillStyle = this.initialBackgroundColor.toContextStyleString();
+                context.fillRect(0, 0, cachedBackgroundCanvas.width, cachedBackgroundCanvas.height);
+                mainFractal.draw(context);
 
-            this.bushes.filter(bush => !bush.growthDone).forEach(bush => bush.draw(context));
+            //Normal loop
+            } else {
 
-            this.snowFlakes = this.snowFlakes.filter(snowFlake => !snowFlake.removeThisFrame);
+                totalTimePassed += deltaTime;
+    
+                if (totalTimePassed >= this.timeBeforeSpawningStars && !allStarsSpawned) {
+    
+                    if (timeSinceLastStarSpawned > this.timeBetweenStarSpawns) {
+    
+                        this.stars.push(new Star(
+                            this.canvasWidth,
+                            this.canvasHeight,
+                            this.canvasWidth / 2,
+                            mainFractal.endOfAnimationCenterYCoordinate,
+                            this.mainFractalRadius,
+                            this.canvasHeight - maxTreeHeight,
+                        ));
+    
+                        timeSinceLastStarSpawned = 0;
+                    } else {
+                        timeSinceLastStarSpawned += deltaTime;
+                    }
+    
+                    if (this.stars.length >= numberOfStarsToSpawn) {
+                        allStarsSpawned = true;
+                    }
+                }
+    
+                if (totalTimePassed >= this.timeBeforeSpawingSnowFlakes) {
+                    if (timeSinceLastSnowFlakeSpawn > timeBetweenSnowFlakeSpawns) {
+                        this.snowFlakes.push(new SnowFlake(this.canvasWidth, this.canvasHeight));
+                        timeSinceLastSnowFlakeSpawn = 0;
+                    } else {
+                        timeSinceLastSnowFlakeSpawn += deltaTime;
+                    }
+                }
+    
+                if (treeSpawnIntervals.length > 0 && totalTimePassed >= this.timeBeforeSpawingTreesAndBushes) {
+    
+                    if (timeSinceLastTreeSpawned > this.timeBetweenTreeSpawns) {
+    
+                        const randomIntervalIndex = lodash.random(0, treeSpawnIntervals.length - 1, false);
+                        const randomInterval = treeSpawnIntervals[randomIntervalIndex];
+                        treeSpawnIntervals.splice(randomIntervalIndex, 1);
+    
+                        this.trees.push(new FullTree(
+                            randomInterval,
+                            this.canvasHeight,
+                            windTargetBuffer,
+                            minTreeHeight / 4,
+                            maxTreeHeight / 4,
+                        ));
+    
+                        timeSinceLastTreeSpawned = 0;
+    
+                    } else {
+                        timeSinceLastTreeSpawned += deltaTime;
+                    }
+                }
+    
+                if (bushSpawnIntervals.length > 0 && totalTimePassed >= this.timeBeforeSpawingTreesAndBushes) {
+    
+                    if (timeSinceLastBushSpawned > this.timeBetweenBushSpawns) {
+    
+                        const randomIntervalIndex = lodash.random(0, bushSpawnIntervals.length - 1, false);
+                        const randomInterval = bushSpawnIntervals[randomIntervalIndex];
+                        bushSpawnIntervals.splice(randomIntervalIndex, 1);
+    
+                        this.bushes.push(new Bush(randomInterval, this.canvasHeight));
+    
+                        timeSinceLastBushSpawned = 0;
+    
+                    } else {
+                        timeSinceLastBushSpawned += deltaTime;
+                    }
+                }
+    
+                windTargetBuffer.update(deltaTime);
+                
+                this.stars.forEach(star => star.update(deltaTime));
+                this.trees.forEach(tree => tree.update(deltaTime));
+                this.bushes.forEach(bush => bush.update(deltaTime));
+    
+                if (totalTimePassed < this.timeBeforeSpawningStars) {
+                    const fractionTimeBeforeStarSpawnsDone = totalTimePassed / this.timeBeforeSpawningStars; 
+                    const currentBackgroundColor = new Color(
+                        this.initialBackgroundColor.r * (1 - fractionTimeBeforeStarSpawnsDone),
+                        this.initialBackgroundColor.g * (1 - fractionTimeBeforeStarSpawnsDone),
+                        this.initialBackgroundColor.b * (1 - fractionTimeBeforeStarSpawnsDone),
+                        1,
+                    );
+    
+                    cachedBackgroundContext.fillStyle = currentBackgroundColor.toContextStyleString();
+                    cachedBackgroundContext.fillRect(0, 0, cachedBackgroundCanvas.width, cachedBackgroundCanvas.height);    
+                }
+    
+                if (mainFractal.animationComplete && !mainFractalCompleteAndCachedToBackground) {
+                    mainFractal.draw(cachedBackgroundContext);
+                    mainFractalCompleteAndCachedToBackground = true;
+                    this.homeEventsService.emit(new EAMainFractalAnimationDone(this));
+                }
+    
+                this.stars.filter(star => star.fadedIn && !star.drawCachedToBackground).forEach(star => {
+                    star.drawNonTwinkling(cachedBackgroundContext);
+                    star.drawCachedToBackground = true;
+                });
+    
+                this.trees.filter(tree => tree.growthDone && !tree.drawCachedToBackground).forEach(tree => {
+                    tree.draw(cachedBackgroundContext);
+                    tree.drawCachedToBackground = true;
+                });
+    
+                this.bushes.filter(bush => bush.growthDone && !bush.drawCachedToBackground).forEach(bush => {
+                    bush.draw(cachedBackgroundContext);
+                    bush.drawCachedToBackground = true;
+                });
+    
+                context.drawImage(cachedBackgroundCanvas, 0, 0);
+    
+                if (!mainFractalCompleteAndCachedToBackground) {
+                    mainFractal.update(deltaTime);
+                    if (mainFractal.treeGrowthDone && !mainFractalGrowthFinishedEventEmitted) {
+                        this.homeEventsService.emit(new EAMainFractalGrowthDone(this));
+                        mainFractalGrowthFinishedEventEmitted = true;
+                    }
+                    mainFractal.draw(context);
+                }
+    
+                this.stars.filter(star => !star.drawCachedToBackground || star.twinkling).forEach(star => {
+                    star.draw(context);
+                });
+    
+                this.snowFlakes.forEach(snowFlake => {
+                    snowFlake.update(deltaTime, this.canvasHeight);
+                    snowFlake.drawCached(context, this.canvasHeight);
+                });
+                
+                this.trees.filter(tree => !tree.growthDone).forEach(tree => tree.draw(context));
+    
+                this.bushes.filter(bush => !bush.growthDone).forEach(bush => bush.draw(context));
+    
+                this.snowFlakes = this.snowFlakes.filter(snowFlake => !snowFlake.removeThisFrame);
+            }
 
             if (this.continueAnimation) {
                 window.requestAnimationFrame(doFrame);

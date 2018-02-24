@@ -14,6 +14,7 @@ import { tap } from 'rxjs/operators/tap';
 import { WindowResizeService } from '../services/window-resize.service';
 import { EAMainFractalAnimationDone, EAMainFractalGrowthDone } from './fractal-animation';
 import { HomeEventsService } from './services/home-events.service';
+import { LoggerService, LoggerChannel } from '../services/logger.service';
 
 @Component({
     templateUrl: './home.component.html',
@@ -73,10 +74,14 @@ export class HomeComponent implements OnInit {
 
     public wotButtonRadius = 50;
     public whoContentWidth = 300;
+
+    //TEMP
+    public logString : string;
     
     constructor(
         private homeEventService : HomeEventsService,
         private windowResizeService : WindowResizeService,
+        private loggerService : LoggerService,
     ) { }
     
     public ngOnInit() : void {
@@ -91,7 +96,10 @@ export class HomeComponent implements OnInit {
             filter<EAMainFractalGrowthDone>(event => event instanceof EAMainFractalGrowthDone)
         )
         .subscribe(
-            event => this.showTitle = true
+            event => { 
+                this.showTitle = true;
+                this.logString = this.loggerService.getLogString(LoggerChannel.FractalAnimationPerformanceCheck);
+            }
         );
 
         this.windowResizeService.windowSizeChange

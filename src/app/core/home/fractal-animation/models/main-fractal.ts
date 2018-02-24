@@ -1,6 +1,8 @@
 import * as bezier from 'bezier-easing';
 import * as lodash from 'lodash';
 
+import { LoggerChannel, LoggerService } from '../../../services/logger.service';
+
 import { Color } from './color';
 import { Fractal } from './fractal';
 import { Vector2 } from './vector-2';
@@ -43,22 +45,18 @@ export class MainFractal extends Fractal {
         lineLength : number,
         endCenterY : number,
     ) {
-
         super();
 
         this.totalTimeToCompleteAnimation = this.timeForGrowth + this.timeForRotation;
         this.timeForInitialLineRetraction = this.totalTimeToCompleteAnimation - this.timeBeforeInitialLineStartsRetracting;
 
         this.lineLength = lineLength;
-        this.totalDrawLength = 0;
 
         this.initialLineFullLengthXEnd = canvasWidth * 0.5;
 
         this.endOfAnimationCenterYCoordinate = endCenterY;
 
         this.lineWidthChangePerFractalIteration = 0.4;
-
-        this.color = new Color(115, 60, 45, 0.9);
 
         this.alphaChangePerFractalIteration = 0.1;
 
@@ -71,7 +69,7 @@ export class MainFractal extends Fractal {
 
         if (branches === 3) {
 
-            this.initialLineWidth = this.lineWidthChangePerFractalIteration * 7;
+            this.initialLineWidth = this.lineWidthChangePerFractalIteration * 4;
 
             this.startAngleChangePerFractalIteration = Math.PI / lodash.random(4.5, 7.5, true);
             this.getAnglesAtWhichToDrawLines = angleChangePerFractalIteration => [
@@ -82,7 +80,7 @@ export class MainFractal extends Fractal {
 
         } else if (branches === 4) {
 
-            this.initialLineWidth = this.lineWidthChangePerFractalIteration * 6;
+            this.initialLineWidth = this.lineWidthChangePerFractalIteration * 4;
 
             this.startAngleChangePerFractalIteration = Math.PI / lodash.random(5, 7.5, true);
             this.getAnglesAtWhichToDrawLines = angleChangePerFractalIteration => [
@@ -94,7 +92,7 @@ export class MainFractal extends Fractal {
 
         } else if (branches === 5) {
 
-            this.initialLineWidth = this.lineWidthChangePerFractalIteration * 5;
+            this.initialLineWidth = this.lineWidthChangePerFractalIteration * 3;
 
             this.startAngleChangePerFractalIteration = Math.PI / lodash.random(5.5, 8, true);
             this.getAnglesAtWhichToDrawLines = angleChangePerFractalIteration => [
@@ -107,7 +105,7 @@ export class MainFractal extends Fractal {
 
         } else if (branches === 6) {
 
-            this.initialLineWidth = this.lineWidthChangePerFractalIteration * 5;
+            this.initialLineWidth = this.lineWidthChangePerFractalIteration * 3;
 
             this.startAngleChangePerFractalIteration = Math.PI / lodash.random(6, 8, true);
             this.getAnglesAtWhichToDrawLines = angleChangePerFractalIteration => [
@@ -122,6 +120,30 @@ export class MainFractal extends Fractal {
         } else {
             console.error('mainTreeBranches was an unexpected number: ' + branches);
         }
+    }
+    
+    public initForPerformanceChecks(canvasWidth : number, canvasHeight : number) : void {
+        this.drawLinesAtAngles = this.getAnglesAtWhichToDrawLines(this.startAngleChangePerFractalIteration);
+        this.position.x = canvasWidth / 2;
+        this.position.y = canvasHeight / 3;
+        this.totalDrawLength = this.lineLength * 2;
+        this.fromAngle = -Math.PI;
+        this.color = new Color(211, 201, 196, 1);
+    }
+
+    public initAfterPerformanceChecks() : void {
+        this.totalDrawLength = 0;
+        this.color = new Color(115, 60, 45, 0.9);
+    }
+
+    public increaseFractalIterations(logger : LoggerService) : void {
+        this.initialLineWidth += this.lineWidthChangePerFractalIteration;
+        logger.log(LoggerChannel.FractalAnimationPerformanceCheck, 'Increased line width to ' + this.initialLineWidth);
+    }
+    
+    public reduceFractalIterationsForPerformanceCheckFinalization(logger : LoggerService) : void {
+        this.initialLineWidth -= this.lineWidthChangePerFractalIteration;
+        logger.log(LoggerChannel.FractalAnimationPerformanceCheck, 'Decreased line width to ' + this.initialLineWidth);
     }
 
     public update(deltaTime : number) : void {
