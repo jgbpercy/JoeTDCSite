@@ -9,7 +9,7 @@ import { HomeEventsService } from './core/home/services/home-events.service';
 import { NavComponent } from './core/nav/nav.component';
 import { PageNotFoundComponent } from './core/page-not-found/page-not-found.component';
 import { LoggerService } from './core/services/logger.service';
-import { WindowResizeService } from './core/services/window-resize.service';
+import { WindowSizeService } from './core/services/window-size.service';
 import { SharedModule } from './shared/shared.module';
 
 @NgModule({
@@ -28,7 +28,7 @@ import { SharedModule } from './shared/shared.module';
     ],
     providers: [
         HomeEventsService,
-        WindowResizeService,
+        WindowSizeService,
         LoggerService,
     ],
     bootstrap: [AppComponent],

@@ -6,15 +6,15 @@ import {
     trigger 
 } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
-
 import { delay } from 'rxjs/operators/delay';
 import { filter } from 'rxjs/operators/filter';
 import { tap } from 'rxjs/operators/tap';
 
-import { WindowResizeService } from '../services/window-resize.service';
+import { LoggerChannel, LoggerService } from '../services/logger.service';
+import { WindowSizeService } from '../services/window-size.service';
+
 import { EAMainFractalAnimationDone, EAMainFractalGrowthDone } from './fractal-animation';
 import { HomeEventsService } from './services/home-events.service';
-import { LoggerService, LoggerChannel } from '../services/logger.service';
 
 @Component({
     templateUrl: './home.component.html',
@@ -60,7 +60,7 @@ import { LoggerService, LoggerChannel } from '../services/logger.service';
 })
 export class HomeComponent implements OnInit { 
 
-    public showTitle = false;
+    public showTitleAndWhoButton = false;
     public showWotButton = false;
     public showWotContent = false;
     public showWhoContent = false;
@@ -72,15 +72,21 @@ export class HomeComponent implements OnInit {
     public mainFractalRadius = 1;
     public mainFractalCenterY = 1;
 
-    public wotButtonRadius = 50;
-    public whoContentWidth = 300;
+    public wotButtonRadius : number;
 
-    //TEMP
-    public logString : string;
+    public contentOffsetFromCenter : number;
+    public contentEdgeMargin = 10;
+
+    public whoContentMaxWidth = 300;
+    public whoContentWidth : number;
+    public whoContentLeft : number;
+
+    public wotContentLeft : number;
+    public wotContentWidth : number;
     
     constructor(
         private homeEventService : HomeEventsService,
-        private windowResizeService : WindowResizeService,
+        private windowResizeService : WindowSizeService,
         private loggerService : LoggerService,
     ) { }
     
@@ -89,7 +95,9 @@ export class HomeComponent implements OnInit {
             filter<EAMainFractalAnimationDone>(event => event instanceof EAMainFractalAnimationDone)
         )
         .subscribe(
-            event => this.showWotButton = true
+            event => {
+                this.showWotButton = true;
+            }
         );
 
         this.homeEventService.homeEvents.pipe(
@@ -97,8 +105,7 @@ export class HomeComponent implements OnInit {
         )
         .subscribe(
             event => { 
-                this.showTitle = true;
-                this.logString = this.loggerService.getLogString(LoggerChannel.FractalAnimationPerformanceCheck);
+                this.showTitleAndWhoButton = true;
             }
         );
 
@@ -108,11 +115,37 @@ export class HomeComponent implements OnInit {
             delay(3),
         )
         .subscribe(size => {
+
             this.showAnimation = true;
+
             this.canvasHeight = size.height;
             this.canvasWidth = size.width;
-            this.mainFractalRadius = size.height / 4;
+
+            this.mainFractalRadius = Math.min(size.height / 4, size.width / 3);
             this.mainFractalCenterY = size.height / 2;
+
+            if (size.width <= 812) {
+                this.wotButtonRadius = 30;
+                this.contentOffsetFromCenter = this.mainFractalRadius / 4;
+            } else if (size.width <= 1024) {
+                this.wotButtonRadius = 40;
+                this.contentOffsetFromCenter = this.mainFractalRadius / 2;
+            } else {
+                this.wotButtonRadius = 50;
+                this.contentOffsetFromCenter = this.mainFractalRadius;
+            }
+
+            this.wotContentLeft = (size.width / 2) + this.contentOffsetFromCenter;
+            this.wotContentWidth = (size.width / 2) - this.contentOffsetFromCenter - this.contentEdgeMargin;
+
+            const whoContentUnrestrictedLeft = (size.width / 2) - this.contentOffsetFromCenter - this.whoContentMaxWidth;
+            if (whoContentUnrestrictedLeft < this.contentEdgeMargin) {
+                this.whoContentWidth = (size.width / 2) - this.contentEdgeMargin - this.contentOffsetFromCenter;
+                this.whoContentLeft = this.contentEdgeMargin;
+            } else {
+                this.whoContentWidth = this.whoContentMaxWidth;
+                this.whoContentLeft = whoContentUnrestrictedLeft;
+            }
         });
     }
 

@@ -134,6 +134,9 @@ export class MainFractal extends Fractal {
     public initAfterPerformanceChecks() : void {
         this.totalDrawLength = 0;
         this.color = new Color(115, 60, 45, 0.9);
+        if (this.initialLineWidth < this.lineWidthChangePerFractalIteration * 4.5) {
+            this.initialLineWidth = this.lineWidthChangePerFractalIteration * 4;
+        }
     }
 
     public increaseFractalIterations(logger : LoggerService) : void {

@@ -1,9 +1,21 @@
-<nav>
-    <a routerLink="/home" routerLinkActive="active-nav-link"><span>Home</span></a>
-    <a routerLink="/video-gaem" routerLinkActive="active-nav-link"><span>Video Gaem</span></a>
-    <a routerLink="/music" routerLinkActive="active-nav-link"><span>Music</span></a>
-    <a routerLink="/notepad-txt" routerLinkActive="active-nav-link"><span>notepad.txt</span></a>
-</nav>
-<div class="content">
+<div class="nav-wrapper">
+    <a class="mobile-nav-button" (click)="showMobileNav = !showMobileNav">
+        <i class="fas fa-bars"></i> Navigation
+    </a>
+
+    <nav 
+        *ngIf="showMobileNav || !(isMobileWidth | async)"
+        [@mobileMenuFadeInOut]="true">
+        <a routerLink="/home" routerLinkActive="active-nav-link" (click)="closeMobileNav()"><span>Home</span></a>
+        <a routerLink="/video-gaem" routerLinkActive="active-nav-link" (click)="closeMobileNav()"><span>Video Gaem</span></a>
+        <a routerLink="/music" routerLinkActive="active-nav-link" (click)="closeMobileNav()"><span>Music</span></a>
+        <a routerLink="/notepad-txt" routerLinkActive="active-nav-link" (click)="closeMobileNav()"><span>notepad.txt</span></a>
+    </nav>
+</div>
+
+<div 
+    *ngIf="!showMobileNav || !(isMobileWidth | async)"
+    class="content"
+    [@mobileContentHide]="true">
     <router-outlet></router-outlet>
 </div>

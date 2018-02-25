@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed');
 
 $nav-height: 46px;
+$mobile-nav-height: 30px;
 
 $std-text-color: rgb(160, 145, 140);
 $std-text-hover-color: rgb(50, 40, 40);
@@ -68,49 +69,78 @@ button:focus {
     outline: none;
 }
 
-nav {
-    background-color: transparent;
+ul {
+    @media only screen and (max-width: 700px) {
+        padding-left: 15px;
+    }
+}
+
+div.nav-wrapper {
+
     text-align: center;
     position: fixed;
     top: 0;
     width: 100%;
-
+    
     a {
+
         @include std-transition;
-        width: 10%;
+        width: 150px;
         font-size: 1.15em;
         text-align: center;
         display: inline-block;
-        text-decoration: none;
         height: 100%;
         line-height: $nav-height;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
         color: $std-text-color;
-
+    
         span {
             display: inline-block;
             line-height: normal;
         }
     }
-
+    
     a:visited {
         color: $std-text-color;
     }
-
+    
     a:hover {
         background-color: rgb(210, 210, 210);
         color: $std-text-hover-color;
     }
-
+    
     a:visited:hover {
         background-color: rgb(210, 210, 210);
         color: $std-text-hover-color;
     }
+
+    .mobile-nav-button {
+
+        display: none;
+        border-bottom-left-radius: 0px;
+        cursor: pointer;
+        font-size: 0.9em;
+        line-height: $mobile-nav-height;
+        text-align: left;
+        padding-left: 8px;
+
+        svg {
+            margin-right: 5px;
+        }
+    
+        @media only screen and (max-width: 700px) {
+            display: block;
+        }
+    }    
 }
 
 .content {
     padding-top: $nav-height;
+
+    @media only screen and (max-width: 700px) {
+        padding-top: $mobile-nav-height;
+    }
 }
 
 @keyframes home-fade-in {
@@ -124,29 +154,78 @@ nav {
     }
 }
 
-h1.home-title {
-    @include home-fade-in(3s);    
+.home-heading-section {
+
     text-align: center;
-    font-size: 5em;
-    margin-top: 0.3em;
-    margin-bottom: 0.2em;
+
+    .home-title {
+
+        @include home-fade-in(3s);    
+        font-size: 5em;
+        margin-top: 0.3em;
+        margin-bottom: 0.2em;
+    
+        @media only screen and (max-width: 1024px) {
+            font-size: 4em;
+        }
+    
+        @media only screen and (max-width: 812px) and (orientation: landscape) {
+            font-size: 3em;
+        }
+    
+        @media only screen and (max-width: 700px) {
+            font-size: 3em;
+            margin-top: 0;
+        }
+    
+        @media only screen and (max-width: 400px) {
+            font-size: 2.3em;
+            display: inline;
+        }
+    }
+
+    .who-button-container {
+
+        display: block;
+        text-align: center;
+    
+        @media only screen and (max-width: 400px) {
+            display: inline-block;
+            margin-left: 12px;
+        }
+
+        .who-button {
+            @include home-fade-in(2s);
+            @include std-button;
+            font-size: 1.3em;
+            width: 100px;
+                
+            @media only screen and (max-width: 1024px) {
+                font-size: 1em;
+            }
+        
+            @media only screen and (max-width: 812px) and (orientation: landscape) {
+                font-size: 0.9em;
+            }
+        
+            @media only screen and (max-width: 700px) {
+                font-size: 0.9em;
+            }
+        }
+
+        .who-button:hover {
+            @include std-button-hover;
+        }
+    }
+
+    @media only screen and (max-width: 400px) {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
-.who-button-container {
-    display: block;
-    text-align: center;
-}
 
-.who-button {
-    @include home-fade-in(2s);
-    @include std-button;
-    font-size: 1.3em;
-    width: 100px;
-}
-
-.who-button:hover {
-    @include std-button-hover;
-}
 
 @mixin home-content-wrapper {
     position: fixed;
@@ -164,6 +243,18 @@ h1.home-title {
     position: absolute;
     transform: translate(0, -50%); 
     font-size: 1.1em;
+    
+    @media only screen and (max-width: 1024px) {
+        font-size: 0.9em;
+    }
+
+    @media only screen and (max-width: 812px) and (orientation: landscape) {
+        font-size: 0.7em;
+    }
+
+    @media only screen and (max-width: 700px) {
+        font-size: 0.7em;
+    }
 }
 
 .wot-button-container {
@@ -183,6 +274,18 @@ h1.home-title {
     font-size: 5em;
     border-style: none;
     cursor: pointer;
+    
+    @media only screen and (max-width: 1024px) {
+        font-size: 4em;
+    }
+
+    @media only screen and (max-width: 812px) and (orientation: landscape) {
+        font-size: 3em;
+    }
+
+    @media only screen and (max-width: 700px) {
+        font-size: 3em;
+    }
 }
 
 .wot-button:hover {
@@ -198,6 +301,18 @@ h1.home-title {
     position: absolute;
     transform: translate(0, -50%); 
     font-size: 1.2em;
+
+    @media only screen and (max-width: 1024px) {
+        font-size: 1em;
+    }
+
+    @media only screen and (max-width: 812px) and (orientation: landscape) {
+        font-size: 0.8em
+    }
+
+    @media only screen and (max-width: 700px) {
+        font-size: 0.8em
+    }
 }
 
 .wot-heading {
