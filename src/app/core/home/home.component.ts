@@ -126,10 +126,18 @@ export class HomeComponent implements OnInit {
 
             if (size.width <= 812) {
                 this.wotButtonRadius = 30;
-                this.contentOffsetFromCenter = this.mainFractalRadius / 4;
+                if (size.width < size.height) {
+                    this.contentOffsetFromCenter = this.mainFractalRadius / 4;
+                } else {
+                    this.contentOffsetFromCenter = this.mainFractalRadius;
+                }
             } else if (size.width <= 1024) {
                 this.wotButtonRadius = 40;
-                this.contentOffsetFromCenter = this.mainFractalRadius / 2;
+                if (size.width < size.height) {
+                    this.contentOffsetFromCenter = this.mainFractalRadius / 2;
+                } else {
+                    this.contentOffsetFromCenter = this.mainFractalRadius;
+                }
             } else {
                 this.wotButtonRadius = 50;
                 this.contentOffsetFromCenter = this.mainFractalRadius;
