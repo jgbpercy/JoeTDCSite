@@ -1,0 +1,5 @@
+<div class="post-header-row">
+    <h2 class="post-header" (click)="toggleShow()">{{post.title}}</h2>
+    <div class="post-header-date-container">{{post.date}}</div>
+</div>
+<div *ngIf="showContent" [innerHtml]="post.content"></div>

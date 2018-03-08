@@ -3,8 +3,10 @@
 $nav-height: 46px;
 $mobile-nav-height: 30px;
 
-$std-text-color: rgb(160, 145, 140);
+$std-text-color: rgb(170, 155, 150);
 $std-text-hover-color: rgb(50, 40, 40);
+$std-header-text-color: rgb(230, 225, 240);
+$std-header-hover-color: rgb(180, 185, 235);
 $std-link-color: rgb(130, 130, 180);
 $std-link-hover-color: rgb(160, 160, 220);
 
@@ -83,8 +85,8 @@ div.nav-wrapper {
     width: 100%;
     
     nav {
+
         a {
-    
             @include std-transition;
             width: 150px;
             font-size: 1.15em;
@@ -107,29 +109,37 @@ div.nav-wrapper {
                 margin: 10px 0;
             }
 
-        }
-        
-        a:visited {
-            color: $std-text-color;
-        }
-        
-        a:hover {
-            background-color: rgb(210, 210, 210);
-            color: $std-text-hover-color;
+            &:visited {
+                color: $std-text-color;
+            } 
 
-            @media only screen and (max-width: 700px) {
-                @include std-button-hover();
+            &:hover {
+                background-color: rgb(210, 210, 210);
+                color: $std-text-hover-color;
+    
+                @media only screen and (max-width: 700px) {
+                    @include std-button-hover();
+                }
+            }
+
+            &:visited:hover {
+                background-color: rgb(210, 210, 210);
+                color: $std-text-hover-color;
+
+                @media only screen and (max-width: 700px) {
+                    @include std-button-hover();
+                }
+            }
+
+            &.active-nav-link {
+                color: white;
+                
+                @media only screen and (min-width: 700px) {
+                    border-bottom: 1px solid rgb(150, 150, 150);
+                }
             }
         }
         
-        a:visited:hover {
-            background-color: rgb(210, 210, 210);
-            color: $std-text-hover-color;
-
-            @media only screen and (max-width: 700px) {
-                @include std-button-hover();
-            }
-        }
 
         @media only screen and (max-width: 700px) {
             display: flex;
@@ -210,7 +220,6 @@ div.nav-wrapper {
 
         @media only screen and (max-width: 700px) and (orientation: landscape) {
             font-size: 2.3em;
-            margin-top: 0;
         }
     }
 
@@ -351,11 +360,58 @@ div.nav-wrapper {
 
 .fractal-animation {
     height: 100%;
-    height: 100%;
-    height: 100%;
     width: 100%;
     position: fixed;
     top: 0;
     z-index: -10;
     background-color: rgb(210, 200, 195);
+}
+
+.post-list-wrapper {
+    margin: 1em auto 0 auto;
+    width: 1024px;
+    font-size: 1.1em;
+    
+    h1.post-list-title {
+        font-size: 3em;
+        color: $std-header-text-color;
+    }
+    
+    .post {
+        border: 2px solid rgb(50, 45, 40);
+        padding: 0 12px;
+
+        background-color: rgb(12, 10, 8);
+        border-radius: 3px;
+        margin-top: 20px;
+
+        box-shadow: 0px 0px 10px 5px rgb(10, 8, 6);
+
+        @include std-transition();
+    
+        .post-header-row {
+            
+            display: flex;
+            justify-content: space-between;
+            color: $std-header-text-color;
+
+            .post-header {
+                @include std-transition();
+                margin: 0.4em 0;
+                font-weight: normal;
+                cursor: pointer;
+
+                &:hover {
+                    color: $std-header-hover-color;
+                }
+            }
+
+            .post-header-date-container {
+                text-align: right;
+                margin: 0.6em 0;
+            }
+        }
+
+    }
+    
 }

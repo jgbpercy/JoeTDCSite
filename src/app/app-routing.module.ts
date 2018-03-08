@@ -16,7 +16,24 @@ const routes : Routes = [
             },
             {
                 path: 'video-gaem',
-                loadChildren: './features/blog/blog.module#BlogModule'
+                loadChildren: './features/blog/blog.module#BlogModule',
+                data: { 
+                    postCollectionName: 'GrimoireTDPosts',
+                    title: 'Video Gaem',
+                    //TODO make this a dynamic component?
+                    description: `
+                        <p>I started making a game in Unity. This is a place for updates, thoughts, videos and whatever else.</p>
+                        <p>It is currently a hex-based tower defence game.</p>
+                        <p>
+                            <a href="https://github.com/jgbpercy/GrimoireTD" target="_blank">
+                                <i class="fab fa-sm fa-github"></i> GitHub
+                            </a> 
+                            <a href="https://www.youtube.com/playlist?list=PL1BfrVN5gAzy3q54w1CaRPDoZ95iaPMMF" target="_blank">
+                                <i class="fab fa-sm fa-youtube"></i> YouTube
+                            </a>
+                        </p>
+                    `
+                },
             },
             {
                 path: 'music',
@@ -24,7 +41,12 @@ const routes : Routes = [
             },
             {
                 path: 'notepad-txt',
-                loadChildren: './features/blog/blog.module#BlogModule'
+                loadChildren: './features/blog/blog.module#BlogModule',
+                data: { 
+                    postCollectionName: 'NotepadPosts',
+                    title: 'notepad.txt',
+                    description: '<p>Because sometimes you have a thought and you want to put it on a website for some reason</p>',
+                },
             },
             {
                 path: '',
