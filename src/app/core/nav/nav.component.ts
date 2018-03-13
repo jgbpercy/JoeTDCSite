@@ -1,5 +1,7 @@
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Component,  } from '@angular/core';
+import { AngularFireAuth } from 'angularfire2/auth';
+import * as fb from 'firebase/app';
 import { Observable } from 'rxjs/Observable';
 
 import { WindowSizeService } from '../services/window-size.service';
@@ -42,11 +44,22 @@ export class NavComponent {
     public showMobileNav = false;
     public isMobileWidth : Observable<boolean>;
     
-    constructor(private windowResizeService : WindowSizeService) {
+    constructor(
+        private windowResizeService : WindowSizeService,
+        public afAuth : AngularFireAuth,
+    ) {
         this.isMobileWidth = this.windowResizeService.isMobileWidth;
     }
 
     public closeMobileNav() : void {
         this.showMobileNav = false;
+    }
+
+    public login() {
+        this.afAuth.auth.signInWithRedirect(new fb.auth.GoogleAuthProvider());
+    }
+
+    public logout() {
+        this.afAuth.auth.signOut();
     }
 }

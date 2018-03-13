@@ -3,8 +3,12 @@ import { NgModule } from '@angular/core';
 import { SharedModule } from '../../shared/shared.module';
 
 import { BlogRoutingModule } from './blog-routing.module';
-import { PostListComponent } from './post-list/post-list.component';
-import { PostComponent } from './post/post.component';
+import { 
+    EditBlogComponent,
+    PostComponent,
+    PostListComponent,
+} from './components';
+import { BlogDataService } from './services';
 
 @NgModule({
     imports: [
@@ -14,6 +18,10 @@ import { PostComponent } from './post/post.component';
     declarations: [
         PostListComponent,
         PostComponent,
+        EditBlogComponent,
+    ],
+    providers: [
+        BlogDataService,
     ]
 })
 export class BlogModule { }

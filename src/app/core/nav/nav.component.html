@@ -2,7 +2,7 @@
     <a class="mobile-nav-button" (click)="showMobileNav = !showMobileNav">
         <i class="fas fa-bars"></i> Navigation
     </a>
-
+    
     <nav 
         *ngIf="showMobileNav || !(isMobileWidth | async)"
         [@mobileMenuFadeInOut]="true">
@@ -12,6 +12,10 @@
         <a routerLink="/notepad-txt" routerLinkActive="active-nav-link" (click)="closeMobileNav()"><span>notepad.txt</span></a>
     </nav>
 </div>
+
+<button *ngIf="!(afAuth.authState | async)" type="button" class="auth-button login" (click)="login()">Log In</button>
+
+<button *ngIf="afAuth.authState | async" type="button" class="auth-button logout" (click)="logout()">Log Out</button>
 
 <div 
     *ngIf="!showMobileNav || !(isMobileWidth | async)"

@@ -2,11 +2,13 @@
 
     <h1 class="post-list-title">{{title | async}}</h1>
 
+    <a class="edit-posts-button" *ngIf="(afAuth.authState | async) && (afAuth.authState | async).uid === 'eh76GnbFn3NSrPviA3pxL1xQDro2'">edit</a>
+
     <div [innerHtml]="description | async"></div>
 
     <div class="posts">
 
-        <div class="post" *ngFor="let post of posts | async">
+        <div class="post" *ngFor="let post of blogDataService.posts | async">
             <jtdc-post [post]="post"></jtdc-post>
         </div>
 

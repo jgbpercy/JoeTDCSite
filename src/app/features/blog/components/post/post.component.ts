@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { ViewPost } from '../post-list/post-list.component';
+import { ViewPost } from '../../services';
 
 @Component({
     selector: 'jtdc-post',
