@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { ViewPost } from '../../services';
+import { Post } from '../../models';
 
 @Component({
     selector: 'jtdc-post',
@@ -8,7 +8,7 @@ import { ViewPost } from '../../services';
 })
 export class PostComponent {
 
-    @Input() public post : ViewPost;
+    @Input() public post : Post;
 
     public showContent = true;
 

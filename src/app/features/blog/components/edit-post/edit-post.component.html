@@ -1,0 +1,16 @@
+<form [formGroup]="form">
+
+    <div>
+        <input type="text" formControlName="title"/>
+    </div>
+
+    <div>
+        <input type="date" formControlName="date"/>
+    </div>
+
+    <div>
+        <textarea formControlName="content"></textarea>
+    </div>
+
+    <button type="button" (click)="save()">Save</button>
+</form>

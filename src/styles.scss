@@ -181,6 +181,7 @@ div.nav-wrapper {
     border-top-left-radius: 0px;
     border-bottom-right-radius: 0px;
     border-top-right-radius: 0px;
+    border-width: 2px;
 
     &:hover {
         @include std-button-hover();

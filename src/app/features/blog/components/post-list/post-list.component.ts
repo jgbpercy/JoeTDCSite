@@ -6,14 +6,15 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { map, take } from 'rxjs/operators';
 
-import { BlogDataService, ViewPost } from '../../services/blog-data.service';
+import { Post } from '../../models';
+import { BlogDataService } from '../../services/blog-data.service';
 
 @Component({
     templateUrl: './post-list.component.html'
 })
 export class PostListComponent {
 
-    public posts : Observable<ViewPost[]>;
+    public posts : Observable<Post[]>;
 
     public title : Observable<string>;
     public description : Observable<string>;
@@ -28,7 +29,7 @@ export class PostListComponent {
 
         this.route.data.pipe(take(1)).subscribe(
             routeData => {
-                this.blogDataService.setPostCollectionName(routeData.postCollectionName);
+                this.blogDataService.postCollectionName.next(routeData.postCollectionName);
             }
         );
     }

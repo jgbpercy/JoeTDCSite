@@ -1,0 +1,9 @@
+<h1>EDIT!</h1>
+
+<div *ngFor="let post of blogDataService.posts | async">
+    <a (click)="openPost(post)">{{post.title}}</a>
+</div>
+
+<ng-container *ngIf="post">
+    <jtdc-edit-post [post]="post"></jtdc-edit-post>
+</ng-container>

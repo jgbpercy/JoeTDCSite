@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { take } from 'rxjs/operators';
 
+import { Post } from '../../models';
 import { BlogDataService } from '../../services/blog-data.service';
 
 @Component({
@@ -8,12 +10,22 @@ import { BlogDataService } from '../../services/blog-data.service';
 })
 export class EditBlogComponent implements OnInit {
 
+    public post : Post;
+
     constructor(
-        private fb : FormBuilder,
-        public dataService : BlogDataService,
+        public blogDataService : BlogDataService,
+        private route : ActivatedRoute,
     ) { }
 
     public ngOnInit() : void {
-        
+        this.route.data.pipe(take(1)).subscribe(
+            routeData => {
+                this.blogDataService.postCollectionName.next(routeData.postCollectionName);
+            }
+        );
+    }
+
+    public openPost(post : Post) : void {
+        this.post = post;
     }
 }

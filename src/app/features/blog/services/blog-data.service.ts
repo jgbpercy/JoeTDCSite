@@ -1,47 +1,35 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
-import * as moment from 'moment';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 
-export interface ViewPost {
-    date : string;
-    title : string;
-    content : string;
-}
-
-interface DbPost {
-    date : Date;
-    title : string;
-    content : string;
-}
+import { DbPost, Post } from '../models';
 
 @Injectable()
 export class BlogDataService {
 
-    public posts : Observable<ViewPost[]>;
+    public posts : Observable<Post[]>;
 
-    private postCollectionName = new BehaviorSubject<string>('');
+    public postCollectionName = new BehaviorSubject<string>('');
     
     constructor(
         private afdb : AngularFirestore,
     ) { 
         this.posts = this.postCollectionName.pipe(
+            distinctUntilChanged(),
             switchMap(postCollectionName => {
-                return this.afdb.collection<DbPost>(postCollectionName).valueChanges();
+                return this.afdb.collection<DbPost>(postCollectionName).snapshotChanges();
             }),
-            map(dbPosts => dbPosts.map(dbPost => {
-                return {
-                    title: dbPost.title,
-                    content: dbPost.content,
-                    date: moment(dbPost.date).format('DD-MM-YYYY'),
-                };
+            map(dbData => dbData.map(dbSnapShot => {
+                const dbPost = dbSnapShot.payload.doc.data() as DbPost;
+                return new Post(
+                    dbSnapShot.payload.doc.id,
+                    dbPost.title,
+                    dbPost.date,
+                    dbPost.content,
+                );
             }))
         );
-    }
-
-    public setPostCollectionName(postCollectionName : string) {
-        this.postCollectionName.next(postCollectionName);
     }
 }

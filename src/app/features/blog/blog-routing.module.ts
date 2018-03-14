@@ -1,12 +1,16 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { PostListComponent } from './components';
+import { EditBlogComponent, PostListComponent } from './components';
 
 const routes : Routes = [
     {
         path: '',
         component: PostListComponent,
+    },
+    {
+        path: 'edit',
+        component: EditBlogComponent,
     }
 ];
 
