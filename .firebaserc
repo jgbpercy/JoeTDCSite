@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "joetdc-site-dev"
+    "default": "joetdc-site-dev",
+    "production": "joetdc-site"
   }
 }

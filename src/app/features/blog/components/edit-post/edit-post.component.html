@@ -1,16 +1,37 @@
 <form [formGroup]="form">
 
-    <div>
-        <input type="text" formControlName="title"/>
+    <div class="input-container">
+        <p class="input-label">Title</p>
+        <input type="text" class="input" formControlName="title"/>
     </div>
 
-    <div>
-        <input type="date" formControlName="date"/>
+    <div class="input-container">
+        <p class="input-label">Date</p>
+        <input type="date" class="input" formControlName="date"/>
     </div>
 
+    <div class="input-container">
+            <p class="input-label">Content</p>
+        <div class="input dummy-input"></div>
+    </div>
     <div>
-        <textarea formControlName="content"></textarea>
+        <jtdc-tiny-mce 
+            [uniqueFieldName]="'post-content'"
+            [initialContent]="post.content"
+            formControlName="content">
+        </jtdc-tiny-mce>
     </div>
 
-    <button type="button" (click)="save()">Save</button>
+    <button
+        class="jtdc-button save"
+        type="button" 
+        (click)="save()">
+        Save
+    </button>
 </form>
+
+<jtdc-post
+    *ngIf="previewPost"
+    [post]="previewPost">
+</jtdc-post>
+

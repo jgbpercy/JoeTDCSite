@@ -1,7 +1,10 @@
 import * as bezier from 'bezier-easing';
 import * as lodash from 'lodash';
 
-import { LoggerChannel, LoggerService } from '../../../services/logger.service';
+import {
+    LoggerChannel,
+    LoggerService,
+} from 'core/services';
 
 import { Color } from './color';
 import { Fractal } from './fractal';

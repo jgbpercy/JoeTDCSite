@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { map, take } from 'rxjs/operators';
 
+import { AuthService } from 'app/core/services';
 import { Post } from '../../models';
-import { BlogDataService } from '../../services/blog-data.service';
+import { BlogDataService } from '../../services';
 
 @Component({
     templateUrl: './post-list.component.html'
@@ -22,7 +22,7 @@ export class PostListComponent {
     constructor(
         private route : ActivatedRoute,
         public blogDataService : BlogDataService,
-        public afAuth : AngularFireAuth,
+        public authService : AuthService,
     ) {
         this.title = this.route.data.pipe(map(routeData => routeData.title));
         this.description = this.route.data.pipe(map(routeData => routeData.description));

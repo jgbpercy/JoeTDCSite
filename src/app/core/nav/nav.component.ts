@@ -8,7 +8,6 @@ import { WindowSizeService } from '../services/window-size.service';
 
 @Component({
     templateUrl: './nav.component.html',
-    styleUrls: ['./nav.component.css'],
     animations: [
         trigger('mobileContentHide', [
             transition(':leave', [

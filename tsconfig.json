@@ -17,9 +17,10 @@
         ],
         "baseUrl": ".",
         "paths": {
-            "@app/*": ["src/app/*"],
-            "@corestuff/*": ["src/app/core/*"],
-            "@shared/*": ["src/app/shared/*"]
+            "app/*": ["src/app/*"],
+            "core/*": ["src/app/core/*"],
+            "shared/*": ["src/app/shared/*"],
+            "environment": ["src/environments/environment"]
         }
     }
 }

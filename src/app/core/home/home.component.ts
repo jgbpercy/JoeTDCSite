@@ -10,11 +10,14 @@ import { delay } from 'rxjs/operators/delay';
 import { filter } from 'rxjs/operators/filter';
 import { tap } from 'rxjs/operators/tap';
 
-import { LoggerChannel, LoggerService } from '../services/logger.service';
-import { WindowSizeService } from '../services/window-size.service';
+import {
+    HomeEventsService,
+    LoggerChannel,
+    LoggerService,
+    WindowSizeService,
+} from 'core/services';
 
 import { EAMainFractalAnimationDone, EAMainFractalGrowthDone } from './fractal-animation';
-import { HomeEventsService } from './services/home-events.service';
 
 @Component({
     templateUrl: './home.component.html',

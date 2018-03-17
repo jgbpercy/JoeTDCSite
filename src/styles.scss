@@ -20,11 +20,10 @@ $std-border-radius: 8px;
     @include std-transition;
     border-radius: $std-border-radius;
     background-color: transparent;
-    border-width: 3px;
-    border-color: $std-text-color;
+    border: 3px solid $std-text-color;
     color: $std-text-color;
-    border-style: solid;
-    line-height: 2em;
+    line-height: 1.8em;
+    padding: 0 1.2em;
 }
 
 @mixin std-button-hover {
@@ -34,6 +33,11 @@ $std-border-radius: 8px;
 
 @mixin home-fade-in($seconds) {
     animation: home-fade-in $seconds;
+}
+
+@mixin std-content-wrapper() {
+    margin: 1em auto 0 auto;
+    width: 1024px;
 }
 
 body {
@@ -65,6 +69,7 @@ a:visited:hover {
 button {
     font-family: inherit;
     cursor: pointer;
+    font-size: inherit;
 }
 
 button:focus {
@@ -173,15 +178,14 @@ div.nav-wrapper {
 .auth-button {
     @include std-button();
     position: fixed;
+    font-size: 1.1em;
     top: 0;
     right: 0;
     padding: 3px 12px;
-    border-top: none;
-    border-right: none;
     border-top-left-radius: 0px;
     border-bottom-right-radius: 0px;
     border-top-right-radius: 0px;
-    border-width: 2px;
+    border: none;
 
     &:hover {
         @include std-button-hover();
@@ -387,48 +391,132 @@ div.nav-wrapper {
 }
 
 .post-list-wrapper {
-    margin: 1em auto 0 auto;
-    width: 1024px;
+    @include std-content-wrapper();
     font-size: 1.1em;
     
     h1.post-list-title {
         font-size: 3em;
         color: $std-header-text-color;
     }
-    
-    .post {
-        border: 2px solid rgb(50, 45, 40);
-        padding: 0 12px;
 
-        background-color: rgb(12, 10, 8);
-        border-radius: 3px;
-        margin-top: 20px;
+    button.edit-posts {
+        @include std-button();
 
-        box-shadow: 0px 0px 10px 5px rgb(10, 8, 6);
-    
-        .post-header-row {
-            
-            display: flex;
-            justify-content: space-between;
-            color: $std-header-text-color;
+        &:hover {
+            @include std-button-hover();
+        }
+    }
+}
 
-            .post-header {
-                @include std-transition();
-                margin: 0.4em 0;
-                font-weight: normal;
-                cursor: pointer;
+.post {
+    border: 2px solid rgb(50, 45, 40);
+    padding: 0 12px;
 
-                &:hover {
-                    color: $std-header-hover-color;
-                }
+    background-color: rgb(12, 10, 8);
+    border-radius: 3px;
+    margin-top: 20px;
+
+    box-shadow: 0px 0px 10px 5px rgb(10, 8, 6);
+
+    .post-header-row {
+        
+        display: flex;
+        justify-content: space-between;
+        color: $std-header-text-color;
+
+        .post-header {
+            @include std-transition();
+            margin: 0.4em 0;
+            font-weight: normal;
+            cursor: pointer;
+            max-width: 85%;
+            flex: 1;
+
+            &:hover {
+                color: $std-header-hover-color;
             }
+        }
 
-            .post-header-date-container {
-                text-align: right;
-                margin: 0.6em 0;
+        .post-header-date-container {
+            text-align: right;
+            margin: 0.6em 0;
+            min-width: 15%;
+            flex: 0;
+        }
+    }
+}
+
+.blog-editor-wrapper {
+    @include std-content-wrapper();
+    font-size: 1.1em;
+
+    display: flex;
+
+    button.jtdc-button {
+        @include std-button();
+        margin-bottom: 10px;
+        width: 100%;
+
+        &:hover {
+            @include std-button-hover();
+        }
+
+        &.save {
+            margin-top: 15px;
+            width: 250px;
+        }
+    }
+
+    .editor-post-list {
+        flex: 1;
+        max-width: 200px;
+        padding-right: 20px;
+    }
+
+    .editor-post-wrapper {
+        flex: 4;
+    }
+
+    .input-container {
+        display: flex;
+        margin: 10px 0;
+
+        .input-label {
+            text-align: right;
+            flex: 1;
+            margin: 0;
+            padding: 3px 5px 3px 10px;
+        }
+
+        .input {
+            width: 100%;
+            background-color: rgb(50, 40, 30);
+            border: none;
+            font-family: inherit;
+            flex: 5;
+            font-size: inherit;
+            color: white;
+            padding: 3px 5px;
+
+            &.dummy-input {
+                background-color: transparent;
             }
         }
 
     }
-    
+}
+
+.video-wrapper {
+	position: relative;
+	padding-bottom: 56.25%;
+	padding-top: 25px;
+	height: 0;
+}
+
+.video-wrapper iframe {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }

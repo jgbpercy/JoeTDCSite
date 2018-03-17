@@ -7,8 +7,12 @@ import {
 } from '@angular/core';
 import * as lodash from 'lodash';
 
-import { LoggerChannel, LoggerService } from '../../services/logger.service';
-import { EventArgs, HomeEventsService } from '../services/home-events.service';
+import {
+    EventArgs,
+    HomeEventsService,
+    LoggerChannel,
+    LoggerService,
+} from 'core/services';
 
 import { 
     Bush,

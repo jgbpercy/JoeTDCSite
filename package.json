@@ -4,11 +4,16 @@
     "license": "MIT",
     "scripts": {
         "ng": "ng",
+        "firebase": "firebase",
         "start": "ng serve",
         "build": "ng build",
-        "test": "ng test",
         "lint": "ng lint",
-        "e2e": "ng e2e"
+        "builddev": "ng build --prod --env=dev",
+        "buildprod": "ng build --prod",
+        "switchdev": "firebase use joetdc-site-dev",
+        "switchprod": "firebase use joetdc-site",
+        "godev": "npm run builddev && npm run switchdev && firebase deploy", 
+        "golive": "npm run buildprod && npm run switchprod && firebase deploy"
     },
     "private": true,
     "dependencies": {
@@ -28,6 +33,7 @@
         "lodash": "4.17.5",
         "moment": "2.21.0",
         "rxjs": "5.5.6",
+        "tinymce": "4.7.9",
         "zone.js": "0.8.14"
     },
     "devDependencies": {
@@ -40,6 +46,6 @@
         "codelyzer": "4.0.1",
         "ts-node": "4.1.0",
         "tslint": "5.9.1",
-        "typescript": "^2.7.2"
+        "typescript": "2.7.2"
     }
 }

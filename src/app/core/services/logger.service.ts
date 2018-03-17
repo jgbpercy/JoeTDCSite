@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 //TODO: Fix this to be absolute path import
-import { environment } from '../../../environments/environment.prod';
+import { environment } from 'environment';
 
 export enum LoggerChannel {
     FractalAnimationPerformanceCheck

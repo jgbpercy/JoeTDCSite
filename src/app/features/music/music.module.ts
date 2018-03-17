@@ -1,8 +1,9 @@
-import { NgModule } from '@angular/core'
+import { NgModule } from '@angular/core';
 
-import { SharedModule } from '../../shared/shared.module'
-import { MusicRoutingModule } from './music-routing.module'
-import { MusicComponent } from './music/music.component'
+import { SharedModule } from 'shared/shared.module';
+
+import { MusicRoutingModule } from './music-routing.module';
+import { MusicComponent } from './music/music.component';
 
 @NgModule({
     imports: [

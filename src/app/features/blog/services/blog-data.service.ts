@@ -21,15 +21,18 @@ export class BlogDataService {
             switchMap(postCollectionName => {
                 return this.afdb.collection<DbPost>(postCollectionName).snapshotChanges();
             }),
-            map(dbData => dbData.map(dbSnapShot => {
-                const dbPost = dbSnapShot.payload.doc.data() as DbPost;
-                return new Post(
-                    dbSnapShot.payload.doc.id,
-                    dbPost.title,
-                    dbPost.date,
-                    dbPost.content,
-                );
-            }))
+            map(dbData => {
+                return dbData.map(dbSnapShot => {
+                    const dbPost = dbSnapShot.payload.doc.data() as DbPost;
+                    return new Post(
+                        dbSnapShot.payload.doc.id,
+                        dbPost.title,
+                        dbPost.date,
+                        dbPost.content,
+                    );
+                })
+                .sort((a, b) => a.date > b.date ? -1 : a.date < b.date ? 1 : 0 ); //TODO: server side or here?
+            })
         );
     }
 }

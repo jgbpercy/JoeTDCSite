@@ -8,8 +8,10 @@ import {
     FormBuilder,
     FormGroup,
 } from '@angular/forms';
+import { Observable } from 'rxjs/Observable';
+import { map } from 'rxjs/operators/map';
 
-import { Post } from '../../models';
+import { DbPost, Post } from '../../models';
 import { BlogActionsService } from '../../services';
 
 @Component({
@@ -21,6 +23,8 @@ export class EditPostComponent implements OnChanges {
     @Input() public post : Post;
 
     public form : FormGroup;
+
+    public previewPost : Post;
     
     constructor(
         private fb : FormBuilder,
@@ -33,16 +37,38 @@ export class EditPostComponent implements OnChanges {
             'date': this.post.inputFormattedDate,
             'content': this.post.content,
         });
+
+        this.previewPost = this.post;
+
+        this.form.valueChanges.subscribe(
+            formValues => {
+                this.previewPost = new Post(
+                    '',
+                    formValues.title,
+                    formValues.date,
+                    formValues.content,
+                );
+            }
+        );
     }
 
     public save() {
-        this.blogActionService.savePost(
-            {
-                title: this.form.controls.title.value,
-                date: this.form.controls.date.value,
-                content: this.form.controls.content.value,
-            },
-            this.post.id,
-        );
+
+        const postToSave : DbPost = {
+            title: this.form.controls.title.value,
+            date: this.form.controls.date.value,
+            content: this.form.controls.content.value,
+        };
+
+        if (this.post.id) {
+            this.blogActionService.savePost(
+                postToSave,
+                this.post.id,
+            );
+        } else {
+            this.blogActionService.newPost(
+                postToSave
+            );
+        }
     }
 }

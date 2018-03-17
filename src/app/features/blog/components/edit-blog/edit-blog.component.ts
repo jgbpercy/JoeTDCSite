@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { take } from 'rxjs/operators';
 
 import { Post } from '../../models';
-import { BlogDataService } from '../../services/blog-data.service';
+import { BlogDataService } from '../../services';
 
 @Component({
     templateUrl: './edit-blog.component.html'
@@ -27,5 +27,9 @@ export class EditBlogComponent implements OnInit {
 
     public openPost(post : Post) : void {
         this.post = post;
+    }
+
+    public newPost() : void {
+        this.post = new Post();
     }
 }

@@ -43,18 +43,6 @@
             140
         ],
         "member-access": true,
-        "member-ordering": [
-            true,
-            {
-                "order": [
-                    "static-field",
-                    "instance-field",
-                    "constructor",
-                    "static-method",
-                    "instance-method"
-                ]
-            }
-        ],
         "no-any": true,
         "no-arg": true,
         "no-bitwise": true,
@@ -110,7 +98,6 @@
             true,
             {
                 "import-sources-order": "case-insensitive",
-                "grouped-imports": true,
                 "named-imports-order": "case-insensitive"
             }
         ],

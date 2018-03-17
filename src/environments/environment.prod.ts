@@ -1,11 +1,13 @@
 export const environment = {
     production: true,
     firebase: {
-        authDomain: 'joetdc-site-dev.firebaseapp.com',
-        databaseUrl: 'https://joetdc-site-dev.firebaseio.com',
-        projectId: 'joetdc-site-dev',
-        storageBucket: 'joetdc-site-dev.appspot.com',
-        messagingSenderId: '54641572739'
+        authDomain: 'joetdc-site.firebaseapp.com',
+        databaseURL: 'https://joetdc-site.firebaseio.com',
+        projectId: 'joetdc-site',
+        storageBucket: 'joetdc-site.appspot.com',
+        messagingSenderId: '426920800438',
+        apiKey: 'AIzaSyD5IdcpIxv76hLVJMsiIazPwIt_claC8y8',
     },
-    fireabaseAppName: 'joetdc-site-dev',
+    firebaseAdminUid: 'prE3GoKyE5SLsjRMHJNHQijCiMC3',
+    fireabaseAppName: 'joetdc-site',
 };
