@@ -1,7 +1,9 @@
 import {
     Component,
+    EventEmitter,
     Input,
     OnChanges,
+    Output,
     SimpleChanges,
  } from '@angular/core';
 import {
@@ -21,6 +23,9 @@ import { BlogActionsService } from '../../services';
 export class EditPostComponent implements OnChanges {
 
     @Input() public post : Post;
+
+    @Output() public addPost = new EventEmitter<Observable<string>>();
+    @Output() public deletePost = new EventEmitter<void>();
 
     public form : FormGroup;
 
@@ -66,9 +71,14 @@ export class EditPostComponent implements OnChanges {
                 this.post.id,
             );
         } else {
-            this.blogActionService.newPost(
-                postToSave
+            this.addPost.emit(
+                this.blogActionService.newPost(postToSave)
             );
         }
+    }
+
+    public delete() {
+        this.deletePost.emit();
+        this.blogActionService.deletePost(this.post.id);
     }
 }

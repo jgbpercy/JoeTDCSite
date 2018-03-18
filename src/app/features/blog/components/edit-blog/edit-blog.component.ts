@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
+import { forkJoin } from 'rxjs/observable/forkJoin';
 import { take } from 'rxjs/operators';
 
 import { Post } from '../../models';
@@ -9,6 +11,8 @@ import { BlogDataService } from '../../services';
     templateUrl: './edit-blog.component.html'
 })
 export class EditBlogComponent implements OnInit {
+
+    public isLoading = false;
 
     public post : Post;
 
@@ -31,5 +35,25 @@ export class EditBlogComponent implements OnInit {
 
     public newPost() : void {
         this.post = new Post();
+    }
+
+    private onAddPost(idObs : Observable<string>) : void {
+        this.isLoading = true;
+
+        forkJoin(
+            idObs,
+            this.blogDataService.posts.pipe(take(1)),
+            (id, posts) => ({ id, posts }),
+        )
+        .subscribe(
+            stream => {
+                this.isLoading = false;
+                this.openPost(stream.posts.find(x => x.id === stream.id));
+            }
+        );
+    }
+
+    private onDeletePost() : void {
+        this.post = undefined;
     }
 }

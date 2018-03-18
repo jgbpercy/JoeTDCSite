@@ -17,7 +17,13 @@
         </div>
     </div>
 
-    <div class="editor-post-wrapper" *ngIf="post">
-        <jtdc-edit-post [post]="post"></jtdc-edit-post>
+    <div *ngIf="isLoading">Loading...</div>
+
+    <div class="editor-post-wrapper" *ngIf="post && !isLoading">
+        <jtdc-edit-post
+            [post]="post"
+            (addPost)="onAddPost($event)"
+            (deletePost)="onDeletePost()">
+        </jtdc-edit-post>
     </div>
 </div>

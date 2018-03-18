@@ -46,7 +46,16 @@ export class Post extends DbEntity {
         return this._sanitizedContent;
     }
 
-    // TODO: A more robust thing!
+    /*  TODO: A more robust thing!
+        So it would probably be safe just to bypassSecurityTrustHtml the whole post content, because the
+        server will (should) ensure that only someone authed on the server can push content to posts, and
+        posts can only come from the server, so to my understanding XSS wouldn't (shouldn't) be an issue.
+        But that doesn't seem like a brilliant idea, because who's to say I don't forget that and use the 
+        post object later for something that can be entered by joe public?
+        So this, at time of writing, looks for [YouTube='youtubeid',T='timeToStartAt']. It's not currently
+        a very robust implementations! But it works fine for now for that single use case, and it means that
+        only links to YouTube are sanitized.
+    */
     private _getSanitizedContentWithVideos(sanitizer : DomSanitizer) : (SafeHtml | string)[] {
 
         const contentArray = new Array<(SafeHtml | string)>();

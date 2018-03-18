@@ -28,6 +28,14 @@
         (click)="save()">
         Save
     </button>
+    
+    <button
+        *ngIf="post.id"
+        class="jtdc-button delete"
+        type="button" 
+        (click)="delete()">
+        Delete
+    </button>
 </form>
 
 <jtdc-post

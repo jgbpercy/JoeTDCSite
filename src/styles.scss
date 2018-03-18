@@ -461,7 +461,7 @@ div.nav-wrapper {
             @include std-button-hover();
         }
 
-        &.save {
+        &.save, &.delete {
             margin-top: 15px;
             width: 250px;
         }
@@ -510,7 +510,8 @@ div.nav-wrapper {
 	position: relative;
 	padding-bottom: 56.25%;
 	padding-top: 25px;
-	height: 0;
+    height: 0;
+    margin: 1em 0;
 }
 
 .video-wrapper iframe {
