@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css?family=Barlow+Semi+Condensed');
 
 $nav-height: 46px;
+$nav-background-height: 76px;
 $mobile-nav-height: 30px;
 
 $std-text-color: rgb(170, 155, 150);
@@ -88,6 +89,14 @@ div.nav-wrapper {
     position: fixed;
     top: 0;
     width: 100%;
+    background: linear-gradient(black 60%, transparent);
+    z-index: 1;
+    border-bottom-width: 20px;
+    height: $nav-background-height;
+
+    &.transparent-nav-wrapper {
+        background: transparent;
+    }
     
     nav {
 

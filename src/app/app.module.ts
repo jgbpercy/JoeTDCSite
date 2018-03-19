@@ -9,7 +9,7 @@ import { AngularFireStorageModule } from 'angularfire2/storage';
 
 import {
     AuthService,
-    HomeEventsService,
+    EventsService,
     LoggerService,
     WindowSizeService,
 } from 'core/services';
@@ -40,7 +40,7 @@ import { SharedModule } from './shared/shared.module';
         FractalAnimationDirective,
     ],
     providers: [
-        HomeEventsService,
+        EventsService,
         WindowSizeService,
         LoggerService,
         AuthService,

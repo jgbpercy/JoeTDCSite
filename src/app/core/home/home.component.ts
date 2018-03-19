@@ -11,13 +11,11 @@ import { filter } from 'rxjs/operators/filter';
 import { tap } from 'rxjs/operators/tap';
 
 import {
-    HomeEventsService,
+    EventsService,
     LoggerChannel,
     LoggerService,
     WindowSizeService,
 } from 'core/services';
-
-import { EAMainFractalAnimationDone, EAMainFractalGrowthDone } from './fractal-animation';
 
 @Component({
     templateUrl: './home.component.html',
@@ -88,14 +86,14 @@ export class HomeComponent implements OnInit {
     public wotContentWidth : number;
     
     constructor(
-        private homeEventService : HomeEventsService,
+        private eventsService : EventsService,
         private windowResizeService : WindowSizeService,
         private loggerService : LoggerService,
     ) { }
     
     public ngOnInit() : void {
-        this.homeEventService.homeEvents.pipe(
-            filter<EAMainFractalAnimationDone>(event => event instanceof EAMainFractalAnimationDone)
+        this.eventsService.events.pipe(
+            filter(event => event.type === 'Main Fractal Animation Done')
         )
         .subscribe(
             event => {
@@ -103,8 +101,8 @@ export class HomeComponent implements OnInit {
             }
         );
 
-        this.homeEventService.homeEvents.pipe(
-            filter<EAMainFractalGrowthDone>(event => event instanceof EAMainFractalGrowthDone)
+        this.eventsService.events.pipe(
+            filter(event => event.type === 'Main Fractal Growth Done')
         )
         .subscribe(
             event => { 

@@ -8,13 +8,22 @@ export class EventArgs {
     }
 }
 
+export interface EventContent {
+    type : EventType;
+    args : EventArgs;
+}
+
+export type EventType = 
+    'Main Fractal Animation Done' |
+    'Main Fractal Growth Done';
+
 @Injectable()
-export class HomeEventsService {
+export class EventsService {
 
-    private readonly _homeEvents = new Subject<EventArgs>();
-    public readonly homeEvents = this._homeEvents.asObservable();
+    private readonly _events = new Subject<EventContent>();
+    public readonly events = this._events.asObservable();
 
-    public emit<TEventArgs extends EventArgs>(eventArgs : TEventArgs) {
-        this._homeEvents.next(eventArgs);
+    public emit<TEventArgs extends EventArgs>(type : EventType, eventArgs : TEventArgs) : void {
+        this._events.next({ type, args: eventArgs });
     }
 }

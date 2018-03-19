@@ -12,7 +12,8 @@ const routes : Routes = [
         children: [
             {
                 path: 'home',
-                component: HomeComponent
+                component: HomeComponent,
+                data: { navTransparent: true },
             },
             {
                 path: 'video-gaem',
