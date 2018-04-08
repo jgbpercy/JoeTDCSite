@@ -1,23 +1,30 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
-import { map, take } from 'rxjs/operators';
+import { combineLatest } from 'rxjs/observable/combineLatest';
+import { delay, map, take } from 'rxjs/operators';
 
 import { AuthService } from 'app/core/services';
 import { Post } from '../../models';
 import { BlogDataService } from '../../services';
 
 @Component({
-    templateUrl: './post-list.component.html'
+    templateUrl: './post-list.component.html',
+    styles: [':host { height: 100% }'],
 })
-export class PostListComponent {
-
-    public posts : Observable<Post[]>;
+export class PostListComponent implements OnInit {
+    
+    public posts : Post[];
 
     public title : Observable<string>;
     public description : Observable<string>;
+
+    public hasScroll = new BehaviorSubject<boolean>(false);
+    public isLoaded = new BehaviorSubject<boolean>(false);
+
+    public loadedAll = false;
 
     constructor(
         private route : ActivatedRoute,
@@ -32,5 +39,58 @@ export class PostListComponent {
                 this.blogDataService.postCollectionName.next(routeData.postCollectionName);
             }
         );
+    }
+
+    public ngOnInit() : void {
+        
+        this.blogDataService.initService();
+
+        this.blogDataService.getPosts(5).subscribe(
+            posts => {
+                this.posts = posts;
+                this.isLoaded.next(true);
+            }
+        );
+
+        combineLatest(
+            this.isLoaded.pipe(delay(50)),
+            this.hasScroll,
+            (isLoaded, hasScroll) => ({ isLoaded, hasScroll}),
+        )
+        .subscribe(
+            values => {
+                if (values.isLoaded && !values.hasScroll) {
+                    this.loadMore();
+                }
+            }
+        );
+    }
+
+    private loadMore() : void {
+
+        if (this.loadedAll) {
+            return;
+        }
+
+        this.isLoaded.next(false);
+
+        this.blogDataService.getPosts(3).subscribe(
+            newPosts => {
+                if (!newPosts.length) {
+                    this.loadedAll = true;
+                } else {
+                    this.posts = this.posts.concat(newPosts);
+                }
+                this.isLoaded.next(true);
+            }
+        );
+    }
+
+    public onScrolledBottom() : void {
+        this.loadMore();
+    }
+
+    public onHasScroll(event : boolean) : void {
+        this.hasScroll.next(event);
     }
 }

@@ -11,6 +11,14 @@ $std-header-hover-color: rgb(180, 185, 235);
 $std-link-color: rgb(130, 130, 180);
 $std-link-hover-color: rgb(160, 160, 220);
 
+$std-bck-color: rgb(0, 0, 0);
+$alt-bck-color: rgb(12, 10, 8);
+$dark-border-color: rgb(50, 45, 40);
+
+$mid-grey: rgb(150, 150, 150);
+
+$fractal-animation-start-bck-color: rgb(210, 200, 195);
+
 $std-border-radius: 8px;
 
 @mixin std-transition {
@@ -37,8 +45,41 @@ $std-border-radius: 8px;
 }
 
 @mixin std-content-wrapper() {
+    width: 100%;
+}
+
+@mixin std-content-inner-wrapper() {
     margin: 1em auto 0 auto;
     width: 1024px;
+}
+
+//main scrollbar
+::-webkit-scrollbar {
+    background-color: $std-bck-color;
+}
+
+//top and bottom buttons
+::-webkit-scrollbar-button {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: $dark-border-color;
+    width: 14px;
+    border-radius: 5px;
+}
+
+//main-track-background
+::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+::-webkit-scrollbar-track-piece {
+    background-color: transparent;
+}
+
+html {
+    height: 100%;
 }
 
 body {
@@ -46,7 +87,8 @@ body {
     margin: 0;
     padding: 0;
     color: $std-text-color;
-    background-color: black;
+    background-color: $std-bck-color;
+    height: 100%;
 }
 
 a {
@@ -83,13 +125,20 @@ ul {
     }
 }
 
+.loading {
+    text-align: center;
+    font-size: 5em;
+    color: $dark-border-color;
+    padding: 0.5em 0;
+}
+
 div.nav-wrapper {
 
     text-align: center;
     position: fixed;
     top: 0;
     width: 100%;
-    background: linear-gradient(black 60%, transparent);
+    background: linear-gradient($std-bck-color 60%, transparent);
     z-index: 1;
     border-bottom-width: 20px;
     height: $nav-background-height;
@@ -128,7 +177,7 @@ div.nav-wrapper {
             } 
 
             &:hover {
-                background-color: rgb(210, 210, 210);
+                background-color: $std-text-color;
                 color: $std-text-hover-color;
     
                 @media only screen and (max-width: 700px) {
@@ -137,7 +186,7 @@ div.nav-wrapper {
             }
 
             &:visited:hover {
-                background-color: rgb(210, 210, 210);
+                background-color: $std-text-color;
                 color: $std-text-hover-color;
 
                 @media only screen and (max-width: 700px) {
@@ -149,7 +198,7 @@ div.nav-wrapper {
                 color: white;
                 
                 @media only screen and (min-width: 700px) {
-                    border-bottom: 1px solid rgb(150, 150, 150);
+                    border-bottom: 1px solid $mid-grey;
                 }
             }
         }
@@ -203,6 +252,8 @@ div.nav-wrapper {
 
 .content {
     padding-top: $nav-height;
+    box-sizing: border-box;
+    height: 100%;
 
     @media only screen and (max-width: 700px) {
         padding-top: $mobile-nav-height;
@@ -296,14 +347,12 @@ div.nav-wrapper {
     }
 }
 
-
-
 @mixin home-content-wrapper {
     position: fixed;
     opacity: 1;
     top: 0;
     height: 100%;
-    z-index: -5;
+    z-index: 2;
 }
 
 .who-content-wrapper {
@@ -333,7 +382,7 @@ div.nav-wrapper {
     left: 0;
     text-align: center;
     width: 100%;
-    z-index: -6;
+    z-index: 1;
 }
 
 .wot-button {
@@ -396,36 +445,54 @@ div.nav-wrapper {
     position: fixed;
     top: 0;
     z-index: -10;
-    background-color: rgb(210, 200, 195);
+    background-color: $fractal-animation-start-bck-color;
 }
 
 .post-list-wrapper {
     @include std-content-wrapper();
     font-size: 1.1em;
-    
-    h1.post-list-title {
-        font-size: 3em;
-        color: $std-header-text-color;
-    }
+    overflow-y: scroll;
+    max-height: 100%;
 
-    button.edit-posts {
-        @include std-button();
+    .post-list-inner-wrapper {
+        @include std-content-inner-wrapper();
+        
+        .blog-header {
+            text-align: center;
 
-        &:hover {
-            @include std-button-hover();
+            h1.post-list-title {
+                font-size: 3em;
+                color: $std-header-text-color;
+            }
+        
+            button.edit-posts {
+                @include std-button();
+        
+                &:hover {
+                    @include std-button-hover();
+                }
+            }
+        }
+
+
+        .end-of-posts {
+            text-align: center;
+            font-size: 1.5em;
+            padding: 2em 0;
         }
     }
+    
 }
 
 .post {
-    border: 2px solid rgb(50, 45, 40);
+    border: 2px solid $dark-border-color;
     padding: 0 12px;
 
-    background-color: rgb(12, 10, 8);
+    background-color: $alt-bck-color;
     border-radius: 3px;
     margin-top: 20px;
 
-    box-shadow: 0px 0px 10px 5px rgb(10, 8, 6);
+    box-shadow: 0px 0px 10px 5px $alt-bck-color;
 
     .post-header-row {
         
@@ -459,60 +526,65 @@ div.nav-wrapper {
     @include std-content-wrapper();
     font-size: 1.1em;
 
-    display: flex;
-
-    button.jtdc-button {
-        @include std-button();
-        margin-bottom: 10px;
-        width: 100%;
-
-        &:hover {
-            @include std-button-hover();
-        }
-
-        &.save, &.delete {
-            margin-top: 15px;
-            width: 250px;
-        }
-    }
-
-    .editor-post-list {
-        flex: 1;
-        max-width: 200px;
-        padding-right: 20px;
-    }
-
-    .editor-post-wrapper {
-        flex: 4;
-    }
-
-    .input-container {
+    
+    .blog-editor-inner-wrapper {
+        @include std-content-inner-wrapper();
         display: flex;
-        margin: 10px 0;
 
-        .input-label {
-            text-align: right;
-            flex: 1;
-            margin: 0;
-            padding: 3px 5px 3px 10px;
-        }
-
-        .input {
+        button.jtdc-button {
+            @include std-button();
+            margin-bottom: 10px;
             width: 100%;
-            background-color: rgb(50, 40, 30);
-            border: none;
-            font-family: inherit;
-            flex: 5;
-            font-size: inherit;
-            color: white;
-            padding: 3px 5px;
-
-            &.dummy-input {
-                background-color: transparent;
+    
+            &:hover {
+                @include std-button-hover();
+            }
+    
+            &.save, &.delete {
+                margin-top: 15px;
+                width: 250px;
             }
         }
-
+    
+        .editor-post-list {
+            flex: 1;
+            max-width: 200px;
+            padding-right: 20px;
+        }
+    
+        .editor-post-wrapper {
+            flex: 4;
+        }
+    
+        .input-container {
+            display: flex;
+            margin: 10px 0;
+    
+            .input-label {
+                text-align: right;
+                flex: 1;
+                margin: 0;
+                padding: 3px 5px 3px 10px;
+            }
+    
+            .input {
+                width: 100%;
+                background-color: $dark-border-color;
+                border: none;
+                font-family: inherit;
+                flex: 5;
+                font-size: inherit;
+                color: white;
+                padding: 3px 5px;
+    
+                &.dummy-input {
+                    background-color: transparent;
+                }
+            }
+    
+        }
     }
+
 }
 
 .video-wrapper {

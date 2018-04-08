@@ -42,7 +42,7 @@ export class EditBlogComponent implements OnInit {
 
         forkJoin(
             idObs,
-            this.blogDataService.posts.pipe(take(1)),
+            this.blogDataService.allPosts.pipe(take(1)),
             (id, posts) => ({ id, posts }),
         )
         .subscribe(

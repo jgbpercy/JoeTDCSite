@@ -3,6 +3,6 @@ import { Component, OnInit } from '@angular/core';
 @Component({
     selector: 'jtdc-root',
     templateUrl: './app.component.html',
-    styleUrls: ['./app.component.scss']
+    styles: [':host { height: 100%}'],
 })
 export class AppComponent { }

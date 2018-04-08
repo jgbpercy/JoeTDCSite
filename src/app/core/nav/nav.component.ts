@@ -38,7 +38,8 @@ import { WindowSizeService } from '../services/window-size.service';
                 )
             ])
         ])
-    ]
+    ],
+    styles: [':host { height: 100% }'],
 })
 export class NavComponent { 
 

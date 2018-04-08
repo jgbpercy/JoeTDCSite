@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
+import { ScrollNotifierDirective } from './scroll-notifier/scroll-notifier.directive';
 import { TinyMceComponent } from './tiny-mce/tiny-mce.component';
 
 @NgModule({
@@ -11,12 +12,14 @@ import { TinyMceComponent } from './tiny-mce/tiny-mce.component';
     ],
     declarations: [
         TinyMceComponent,
+        ScrollNotifierDirective,
     ],
     exports: [
         CommonModule,
         RouterModule,
         ReactiveFormsModule,
         TinyMceComponent,
+        ScrollNotifierDirective,
     ]
 })
 export class SharedModule { }

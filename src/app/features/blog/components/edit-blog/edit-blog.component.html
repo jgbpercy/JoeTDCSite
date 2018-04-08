@@ -1,29 +1,34 @@
 <div class="blog-editor-wrapper">
 
-    <div class="editor-post-list">
-        <button
-            class="jtdc-button"
-            type="button"
-            (click)="newPost()">
-            New Post
-        </button>
-    
-        <div *ngFor="let post of blogDataService.posts | async">
+    <div class="blog-editor-inner-wrapper">
+
+        <div class="editor-post-list">
             <button
                 class="jtdc-button"
-                (click)="openPost(post)">
-                {{post.title}}
+                type="button"
+                (click)="newPost()">
+                New Post
             </button>
+        
+            <div *ngFor="let post of blogDataService.allPosts | async">
+                <button
+                    class="jtdc-button"
+                    (click)="openPost(post)">
+                    {{post.title}}
+                </button>
+            </div>
         </div>
+
+        <div *ngIf="isLoading">Loading...</div>
+
+        <div class="editor-post-wrapper" *ngIf="post && !isLoading">
+            <jtdc-edit-post
+                [post]="post"
+                (addPost)="onAddPost($event)"
+                (deletePost)="onDeletePost()">
+            </jtdc-edit-post>
+        </div>
+
     </div>
 
-    <div *ngIf="isLoading">Loading...</div>
-
-    <div class="editor-post-wrapper" *ngIf="post && !isLoading">
-        <jtdc-edit-post
-            [post]="post"
-            (addPost)="onAddPost($event)"
-            (deletePost)="onDeletePost()">
-        </jtdc-edit-post>
-    </div>
 </div>

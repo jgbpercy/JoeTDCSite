@@ -1,22 +1,39 @@
-<div class="post-list-wrapper">
+<div
+    class="post-list-wrapper"
+    jtdcScrollNotifier
+    (scrolledBottom)="onScrolledBottom()"
+    (hasScroll)="onHasScroll($event)">
 
-    <h1 class="post-list-title">{{title | async}}</h1>
+    <div class="post-list-inner-wrapper">
 
-    <button 
-        [routerLink]="'edit'"
-        class="edit-posts" 
-        *ngIf="authService.isAdminUser | async">
-        Edit
-    </button>
+        <div class="blog-header">
+            <h1 class="post-list-title">{{title | async}}</h1>
 
-    <div [innerHtml]="description | async"></div>
+            <button 
+                [routerLink]="'edit'"
+                class="edit-posts" 
+                *ngIf="authService.isAdminUser | async">
+                Edit
+            </button>
 
-    <div class="posts">
+            <div [innerHtml]="description | async"></div>
 
-        <ng-container *ngFor="let post of blogDataService.posts | async">
-            <jtdc-post [post]="post"></jtdc-post>
-        </ng-container>
+        </div>
+        
+        <div class="posts">
+
+            <ng-container *ngFor="let post of posts">
+                <jtdc-post [post]="post"></jtdc-post>
+            </ng-container>
+        
+        </div>
+
+        <div class="loading" *ngIf="!(isLoaded | async)"><i class="fas fa-spinner fa-spin"></i></div>
+
+        <div class="end-of-posts" *ngIf="loadedAll">
+            <i class="fas fa-thumbs-up"></i> You reached the end. Congrats! <i class="fas fa-thumbs-up"></i>
+        </div>
 
     </div>
 
-</div>
+</div>  

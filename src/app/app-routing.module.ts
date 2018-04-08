@@ -28,7 +28,7 @@ const routes : Routes = [
                         <p>
                             <a href="https://github.com/jgbpercy/GrimoireTD" target="_blank">
                                 <i class="fab fa-sm fa-github"></i> GitHub
-                            </a> 
+                            </a> - 
                             <a href="https://www.youtube.com/playlist?list=PL1BfrVN5gAzy3q54w1CaRPDoZ95iaPMMF" target="_blank">
                                 <i class="fab fa-sm fa-youtube"></i> YouTube
                             </a>
