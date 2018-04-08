@@ -4,7 +4,7 @@ import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firesto
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { combineLatest } from 'rxjs/observable/combineLatest';
-import { delay, map, take } from 'rxjs/operators';
+import { delay, first, map } from 'rxjs/operators';
 
 import { AuthService } from 'app/core/services';
 import { Post } from '../../models';
@@ -34,7 +34,7 @@ export class PostListComponent implements OnInit {
         this.title = this.route.data.pipe(map(routeData => routeData.title));
         this.description = this.route.data.pipe(map(routeData => routeData.description));
 
-        this.route.data.pipe(take(1)).subscribe(
+        this.route.data.pipe(first()).subscribe(
             routeData => {
                 this.blogDataService.postCollectionName.next(routeData.postCollectionName);
             }
@@ -87,7 +87,13 @@ export class PostListComponent implements OnInit {
     }
 
     public onScrolledBottom() : void {
-        this.loadMore();
+        this.isLoaded.pipe(first()).subscribe(
+            isLoaded => {
+                if (isLoaded) {
+                    this.loadMore();
+                }
+            }
+        );
     }
 
     public onHasScroll(event : boolean) : void {
