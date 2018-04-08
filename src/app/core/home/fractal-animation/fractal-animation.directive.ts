@@ -46,6 +46,11 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
     @Input() public mainFractalRadius : number;
     @Input() public mainFractalCenterY : number;
 
+    private slowerFrameTargetThretholdWidth = 1200;
+    private slowerFrameMaxFrameLength = 0.035;
+    private fasterFrameMaxFrameLength = 0.02;
+    private performanceCheckLoopFinalizationIterations = 3;
+
     private timeBeforeSpawningStars = 5;
     private timeBetweenStarSpawns = 0.01;
     private numberOfStarsPerPixel = 0.00025;
@@ -166,15 +171,22 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
                 return;
             }
 
+            let maxFrameLength : number;
+            if (this.canvasWidth > this.slowerFrameMaxFrameLength) {
+                maxFrameLength = this.fasterFrameMaxFrameLength;
+            } else {
+                maxFrameLength = this.slowerFrameMaxFrameLength;
+            }
+
             //Performance check
             if (doingPerformanceCheck) {
                 if (finalizingPerformanceCheck) {
-                    if (deltaTime > 0.035) {
+                    if (deltaTime > maxFrameLength) {
                         this.logger.log(PerfLogChannel, 'Got slow frame during finalization, deltaTime: ' + deltaTime);
                         finalizingCheckFailureCount = 0;
                         finalizingPerformanceCheck = false;
                         finalizingCheckFailure = true;
-                    } else if (finalizingPerformanceCheckCount === 2) {
+                    } else if (finalizingPerformanceCheckCount === this.performanceCheckLoopFinalizationIterations - 1) {
                         finalizingPerformanceCheck = false;
                         doingPerformanceCheck = false;
                         donePerformanceCheck = true;
@@ -185,10 +197,10 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
                         finalizingPerformanceCheckCount += 1;
                     }
                 } else if (finalizingCheckFailure) {
-                    if (deltaTime < 0.035) {
+                    if (deltaTime < maxFrameLength) {
                         this.logger.log(PerfLogChannel, 'Got ok frame while finalizing failure, deltaTime: ' + deltaTime);
                         finalizingCheckFailure = false;
-                    } else if (finalizingCheckFailureCount === 2) {
+                    } else if (finalizingCheckFailureCount === this.performanceCheckLoopFinalizationIterations - 1) {
                         this.logger.log(PerfLogChannel, 'finished finalizing failure, deltaTime: ' + deltaTime);
                         finalizingCheckFailure = false;
                         finalizingPerformanceCheck = true;
@@ -198,7 +210,7 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
                         finalizingCheckFailureCount += 1;
                     }
                 } else {
-                    if (deltaTime < 0.035) {
+                    if (deltaTime < maxFrameLength) {
                         this.logger.log(PerfLogChannel, 'Passed initial check iteration, deltaTime: ' + deltaTime);
                         mainFractal.increaseFractalIterations(this.logger);
                     } else {

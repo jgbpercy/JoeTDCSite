@@ -12,7 +12,7 @@
         "buildprod": "ng build --prod",
         "switchdev": "firebase use joetdc-site-dev",
         "switchprod": "firebase use joetdc-site",
-        "godev": "npm run builddev && npm run switchdev && firebase deploy", 
+        "godev": "npm run builddev && npm run switchdev && firebase deploy",
         "golive": "npm run buildprod && npm run switchprod && firebase deploy"
     },
     "private": true,
