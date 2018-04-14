@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core'
-import { RouterModule, Routes } from '@angular/router'
+import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
-import { MusicComponent } from './music/music.component'
+import { MusicComponent } from './components';
 
 const routes : Routes = [
     {

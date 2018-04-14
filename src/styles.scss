@@ -15,6 +15,8 @@ $std-bck-color: rgb(0, 0, 0);
 $alt-bck-color: rgb(12, 10, 8);
 $dark-border-color: rgb(50, 45, 40);
 
+$deeph-text-color: rgb(120, 110, 105);
+
 $mid-grey: rgb(150, 150, 150);
 
 $fractal-animation-start-bck-color: rgb(210, 200, 195);
@@ -51,6 +53,22 @@ $std-border-radius: 8px;
 @mixin std-content-inner-wrapper() {
     margin: 1em auto 0 auto;
     width: 1024px;
+}
+
+@mixin std-page-title() {
+    font-size: 3em;
+    color: $std-header-text-color;
+}
+
+@mixin std-box() {
+    border: 2px solid $dark-border-color;
+    padding: 0 12px;
+
+    background-color: $alt-bck-color;
+    border-radius: 3px;
+    margin-top: 20px;
+
+    box-shadow: 0px 0px 10px 5px $alt-bck-color;
 }
 
 //main scrollbar
@@ -461,8 +479,7 @@ div.nav-wrapper {
             text-align: center;
 
             h1.post-list-title {
-                font-size: 3em;
-                color: $std-header-text-color;
+                @include std-page-title();
             }
         
             button.edit-posts {
@@ -485,14 +502,7 @@ div.nav-wrapper {
 }
 
 .post {
-    border: 2px solid $dark-border-color;
-    padding: 0 12px;
-
-    background-color: $alt-bck-color;
-    border-radius: 3px;
-    margin-top: 20px;
-
-    box-shadow: 0px 0px 10px 5px $alt-bck-color;
+    @include std-box();
 
     .post-header-row {
         
@@ -526,7 +536,6 @@ div.nav-wrapper {
     @include std-content-wrapper();
     font-size: 1.1em;
 
-    
     .blog-editor-inner-wrapper {
         @include std-content-inner-wrapper();
         display: flex;
@@ -584,7 +593,127 @@ div.nav-wrapper {
     
         }
     }
+}
 
+.music-wrapper {
+    @include std-content-wrapper();
+
+    .music-inner-wrapper {
+        @include std-content-inner-wrapper();
+
+        h1.music-title {
+            @include std-page-title();
+            text-align: center;
+        }
+
+        div.album {
+            @include std-box();
+
+            .album-title {
+                text-align: center;
+                color: $std-header-text-color;
+            }
+
+            .album-info {
+                text-align: center;
+            }
+
+            div.art-and-songs-container {
+                display: flex;
+                margin-bottom: 10px;
+
+                div.album-art-container {
+                    flex: 1;
+                    margin-right: 2%;
+                    max-width: 48%;
+
+                    .album-art {
+                        width: 100%;
+                        height: 100%;
+                    }
+                }
+
+                .track-list-wrapper {
+                    flex: 1;
+                    display: flex;
+                    align-items: center;
+                    margin-right: 2%;
+                    width: 48%;
+
+                    .track-list {
+                        width: 100%;
+
+                        .track {
+                            width: 100%;
+                            height: 35px;
+                            display: flex;
+                            align-items: center;
+                            padding-left: 10px;
+                            margin-bottom: 12px;
+                            border-radius: 12px;
+    
+                            .track-button {
+                                color: $std-link-color;
+                                cursor: pointer;
+                                @include std-transition();
+        
+                                &:hover {
+                                    color: $std-link-hover-color;
+                                }
+                                
+                                svg {
+                                    font-size: 0.85em;
+                                    margin-right: 8px;
+                                }
+                            }
+
+                            .divider-dash {
+                                color: $deeph-text-color;
+                            }
+
+                            .not-playing-times {
+                                color: $deeph-text-color;
+                            }
+                        }
+                    }
+                }
+            }
+
+            .player-controls {
+                text-align: center;
+                margin-bottom: 10px;
+
+                .track-progress {
+                    margin-bottom: 10px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                    font-size: 1.3em;
+                    border-radius: 15px;
+                    height: 42px;
+                    color: $deeph-text-color;
+                    cursor: pointer;
+                }
+
+                .controls-row {
+                    font-size: 2em;
+
+                    span {
+                        margin-right: 10px;
+                        margin-left: 10px;
+                        cursor: pointer;
+                        color: $std-link-color;
+                        @include std-transition();
+    
+                        &:hover {
+                            color: $std-link-hover-color;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 .video-wrapper {

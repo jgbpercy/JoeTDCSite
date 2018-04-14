@@ -1,17 +1,18 @@
 import { NgModule } from '@angular/core';
-
 import { SharedModule } from 'shared/shared.module';
 
+import { AlbumComponent, MusicComponent, TrackComponent } from './components';
 import { MusicRoutingModule } from './music-routing.module';
-import { MusicComponent } from './music/music.component';
 
 @NgModule({
     imports: [
         SharedModule,
-        MusicRoutingModule
+        MusicRoutingModule,
     ],
     declarations: [
-        MusicComponent
+        MusicComponent,
+        AlbumComponent,
+        TrackComponent,
     ]
 })
 export class MusicModule { }

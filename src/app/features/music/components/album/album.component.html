@@ -1,0 +1,50 @@
+<div class="album">
+        <h2 class="album-title">{{album.name}}</h2>
+
+        <p class="album-info">{{album.description}}</p>
+
+        <div class="art-and-songs-container">
+
+            <div class="album-art-container">
+                <img class="album-art" src="https://firebasestorage.googleapis.com/v0/b/joetdc-site-dev.appspot.com/o/image1.JPG?alt=media&token=53843ebe-c6cc-4cac-b7d8-2472b93d70e4" />
+            </div>
+
+            <div class="track-list-wrapper">
+                <div class="track-list">
+                    <jtdc-track
+                        *ngFor="let track of album.tracks; let i = index"
+                        [track]="track"
+                        [commands]="commands[i]"
+                        (playTrack)="onTrackPlaying(i)"
+                        (pauseTrack)="onTrackPaused(i)"
+                        (finishedPlayingTrack)="onTrackFinished(i)"
+                        (playedPercentOfTrack)="onPlayedPercent($event)"
+                        (playedTime)="onPlayedTime($event)"
+                        (loadedDuration)="onLoadedDuration(i, $event)">
+                    </jtdc-track>
+                </div>
+            </div>
+        </div>
+
+        <div class="player-controls">
+            <div class="track-progress" [style.background-image]="'linear-gradient(to right, #231C15, #231C15 ' + playedPercent + '%, #19140F ' + playedPercent + '%,  #19140F)'">
+                <span>{{getTrackProgressMessage()}}</span>
+            </div>
+
+            <div class="controls-row">
+                <span (click)="clickPrevious()">
+                    <i class="fas fa-step-backward"></i>
+                </span>
+                <span [hidden]="currentlyPlaying" (click)="clickPlay()">
+                    <i class="fas fa-play"></i>
+                </span>
+                <span [hidden]="!currentlyPlaying" (click)="clickPause()">
+                    <i class="fas fa-pause"></i>
+                </span>
+                <span (click)="clickNext()">
+                    <i class="fas fa-step-forward"></i>
+                </span>
+            </div>
+        </div>
+
+    </div>

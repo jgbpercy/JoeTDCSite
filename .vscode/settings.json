@@ -1,0 +1,11 @@
+{
+    "typescriptHero.imports.grouping": [
+        "/@angular/",
+        "rxjs",
+        "Plains",
+        "Modules",
+        "/app/",
+        "/environment/",
+        "Workspace"
+    ],
+}
