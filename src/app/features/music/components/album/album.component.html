@@ -14,7 +14,12 @@
                     <jtdc-track
                         *ngFor="let track of album.tracks; let i = index"
                         [track]="track"
-                        [commands]="commands[i]"
+                        [playCommands]="playCommands[i]"
+                        [stopCommands]="stopCommands[i]"
+                        [pauseCommands]="pauseCommands[i]"
+                        [endCommands]="endCommands[i]"
+                        [timeCommands]="timeCommands[i]"
+                        [volumeCommands]="volumeCommands[i]"
                         (playTrack)="onTrackPlaying(i)"
                         (pauseTrack)="onTrackPaused(i)"
                         (finishedPlayingTrack)="onTrackFinished(i)"
@@ -27,7 +32,15 @@
         </div>
 
         <div class="player-controls">
-            <div class="track-progress" [style.background-image]="'linear-gradient(to right, #231C15, #231C15 ' + playedPercent + '%, #19140F ' + playedPercent + '%,  #19140F)'">
+            <div
+                #trackProgress
+                class="track-progress"
+                [style.background-image]="getTrackProgressBackgroundImage()"
+                (mouseover)="onTrackProgressHover($event)"
+                (mousemove)="onTrackProgressHover($event)"
+                (mouseout)="onTrackProgressMouseLeave()"
+                (mousedown)="onTrackProgressMouseDown()"
+                (mouseup)="onTrackProgressMouseUp()">
                 <span>{{getTrackProgressMessage()}}</span>
             </div>
 

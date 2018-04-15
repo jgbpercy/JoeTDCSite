@@ -19,23 +19,67 @@ export class TrackComponent {
 
     @Input() public track : Track;
 
+    @Input() public set playCommands(playCommands : Observable<void>) {
+        playCommands.subscribe(
+            command => {
+                this.audioElement.play();
+            }
+        );
+    }
+
+    @Input() public set stopCommands(stopCommands : Observable<void>) {
+        stopCommands.subscribe(
+            command => {
+                this.audioElement.pause();
+                this.audioElement.currentTime = 0;
+            }
+        );
+    }
+
+    @Input() public set pauseCommands(pauseCommands : Observable<void>) {
+        pauseCommands.subscribe(
+            command => {
+                this.audioElement.pause();
+            }
+        );
+    }
+
+    @Input() public set endCommands(endCommands : Observable<void>) {
+        endCommands.subscribe(
+            command => {
+                this.resetNextClick = true;
+                this.audioElement.pause();
+                this.audioElement.currentTime = this.audioElement.duration - 0.1;
+            }
+        );
+    }
+    
+    @Input() public set timeCommands(timeCommands : Observable<number>) {
+        timeCommands.subscribe(
+            timeInPercent => {
+                this.audioElement.currentTime = (timeInPercent / 100) * this.audioElement.duration;
+            }
+        );
+    }
+    
+    @Input() public set volumeCommands(volumeCommands : Observable<number>) {
+        volumeCommands.subscribe(
+            volume => {
+                this.audioElement.volume = volume;
+            }
+        );
+    }
+
     @Input() public set commands(value : Observable<string>) {
 
         value.subscribe(
             command => {
                 if (command === 'stop') {
-                    this.audioElement.pause();
-                    this.audioElement.currentTime = 0;
                 } else if (command === 'play') {
                     this.audioElement.play();
                 } else if (command === 'pause') {
-                    this.audioElement.pause();
                 } else if (command === 'end') {
-                    this.resetNextClick = true;
-                    this.audioElement.pause();
-                    this.audioElement.currentTime = this.audioElement.duration - 0.1;
                 } else if (command === 'reset') {
-                    this.audioElement.currentTime = 0;
                 }
             }
         );
