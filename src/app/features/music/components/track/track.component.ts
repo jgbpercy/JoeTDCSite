@@ -70,21 +70,6 @@ export class TrackComponent {
         );
     }
 
-    @Input() public set commands(value : Observable<string>) {
-
-        value.subscribe(
-            command => {
-                if (command === 'stop') {
-                } else if (command === 'play') {
-                    this.audioElement.play();
-                } else if (command === 'pause') {
-                } else if (command === 'end') {
-                } else if (command === 'reset') {
-                }
-            }
-        );
-    }
-
     @Output() public playTrack = new EventEmitter();
     @Output() public pauseTrack = new EventEmitter();
     @Output() public finishedPlayingTrack = new EventEmitter();
