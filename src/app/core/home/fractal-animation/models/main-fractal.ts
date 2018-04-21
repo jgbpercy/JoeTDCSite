@@ -1,10 +1,6 @@
 import * as bezier from 'bezier-easing';
+import { LoggerChannel, LoggerService } from 'core/services';
 import * as lodash from 'lodash';
-
-import {
-    LoggerChannel,
-    LoggerService,
-} from 'core/services';
 
 import { Color } from './color';
 import { Fractal } from './fractal';
@@ -61,7 +57,7 @@ export class MainFractal extends Fractal {
 
         this.lineWidthChangePerFractalIteration = 0.4;
 
-        this.alphaChangePerFractalIteration = 0.1;
+        this.alphaChangePerFractalIteration = 0;
 
         this.endAngleChangePerFractalIteration = 2 * Math.PI / lodash.random(3, 7, false);
         
@@ -125,17 +121,22 @@ export class MainFractal extends Fractal {
         }
     }
     
-    public initForPerformanceChecks(canvasWidth : number, canvasHeight : number) : void {
+    public initForPerformanceChecks(color : Color, canvasWidth : number, canvasHeight : number) : void {
         this.drawLinesAtAngles = this.getAnglesAtWhichToDrawLines(this.startAngleChangePerFractalIteration);
+        this.totalTimePassed = this.timeForGrowth;
         this.position.x = canvasWidth / 2;
         this.position.y = canvasHeight / 3;
         this.totalDrawLength = this.lineLength * 2;
         this.fromAngle = -Math.PI;
-        this.color = new Color(211, 201, 196, 1);
+        this.color = new Color(color.r + 1, color.g + 1, color.b + 1, 0.01);
     }
 
     public initAfterPerformanceChecks() : void {
         this.totalDrawLength = 0;
+        this.totalTimePassed = 0;
+        this.rotationTimePassed = 0;
+        this.animationComplete = false;
+        this.initialLineRetractionTimePassed = 0;
         this.color = new Color(115, 60, 45, 0.9);
         if (this.initialLineWidth < this.lineWidthChangePerFractalIteration * 4.5) {
             this.initialLineWidth = this.lineWidthChangePerFractalIteration * 4;
@@ -147,7 +148,7 @@ export class MainFractal extends Fractal {
         logger.log(LoggerChannel.FractalAnimationPerformanceCheck, 'Increased line width to ' + this.initialLineWidth);
     }
     
-    public reduceFractalIterationsForPerformanceCheckFinalization(logger : LoggerService) : void {
+    public reduceFractalIterations(logger : LoggerService) : void {
         this.initialLineWidth -= this.lineWidthChangePerFractalIteration;
         logger.log(LoggerChannel.FractalAnimationPerformanceCheck, 'Decreased line width to ' + this.initialLineWidth);
     }

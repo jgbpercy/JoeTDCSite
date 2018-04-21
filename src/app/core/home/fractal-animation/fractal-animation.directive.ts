@@ -1,29 +1,20 @@
-import {
-    Directive,
-    ElementRef,
-    Input,
-    OnDestroy,
-    OnInit,
-} from '@angular/core';
-import * as lodash from 'lodash';
-
+import { Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
 import {
     EventArgs,
     EventsService,
     LoggerChannel,
     LoggerService,
 } from 'core/services';
+import * as lodash from 'lodash';
 
-import { 
+import {
     Bush,
     Color,
-    Fractal,
     FullTree,
     MainFractal,
     SnowFlake,
     SpawnInterval,
     Star,
-    Tree,
     WindTargetBuffer,
 } from './models';
 
@@ -46,10 +37,10 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
     @Input() public mainFractalRadius : number;
     @Input() public mainFractalCenterY : number;
 
-    private slowerFrameTargetThretholdWidth = 1200;
+    private slowerFrameTargetThresholdWidth = 1200;
     private slowerFrameMaxFrameLength = 0.035;
     private fasterFrameMaxFrameLength = 0.02;
-    private performanceCheckLoopFinalizationIterations = 3;
+    private performanceCheckLoopFinalizationIterations = 8;
 
     private timeBeforeSpawningStars = 5;
     private timeBetweenStarSpawns = 0.01;
@@ -107,10 +98,9 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
 
         let donePerformanceCheck = false;
         let doingPerformanceCheck = false;
-        let finalizingCheckFailure = false;
-        let finalizingCheckFailureCount = 0;
         let finalizingPerformanceCheck = false;
         let finalizingPerformanceCheckCount = 0;
+        let reinitedMainFractal = false;
 
         let totalTimePassed = 0;
         let mainFractalGrowthFinishedEventEmitted = false;
@@ -165,7 +155,7 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
             if (!doingPerformanceCheck && !donePerformanceCheck) {
                 this.logger.log(PerfLogChannel, 'Starting checks, deltaTime: ' + deltaTime);
                 doingPerformanceCheck = true;
-                mainFractal.initForPerformanceChecks(this.canvasWidth, this.canvasHeight);
+                mainFractal.initForPerformanceChecks(this.initialBackgroundColor, this.canvasWidth, this.canvasHeight);
                 mainFractal.draw(context);
                 window.requestAnimationFrame(doFrame);
                 return;
@@ -183,31 +173,16 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
                 if (finalizingPerformanceCheck) {
                     if (deltaTime > maxFrameLength) {
                         this.logger.log(PerfLogChannel, 'Got slow frame during finalization, deltaTime: ' + deltaTime);
-                        finalizingCheckFailureCount = 0;
-                        finalizingPerformanceCheck = false;
-                        finalizingCheckFailure = true;
+                        finalizingPerformanceCheckCount = 0;
+                        mainFractal.reduceFractalIterations(this.logger);
                     } else if (finalizingPerformanceCheckCount === this.performanceCheckLoopFinalizationIterations - 1) {
                         finalizingPerformanceCheck = false;
                         doingPerformanceCheck = false;
                         donePerformanceCheck = true;
                         this.logger.log(PerfLogChannel, 'Passed finalization and finished checks, deltaTime: ' + deltaTime);
-                        mainFractal.initAfterPerformanceChecks();
                     } else {
                         this.logger.log(PerfLogChannel, 'Passed finalization iteration, deltaTime: ' + deltaTime);
                         finalizingPerformanceCheckCount += 1;
-                    }
-                } else if (finalizingCheckFailure) {
-                    if (deltaTime < maxFrameLength) {
-                        this.logger.log(PerfLogChannel, 'Got ok frame while finalizing failure, deltaTime: ' + deltaTime);
-                        finalizingCheckFailure = false;
-                    } else if (finalizingCheckFailureCount === this.performanceCheckLoopFinalizationIterations - 1) {
-                        this.logger.log(PerfLogChannel, 'finished finalizing failure, deltaTime: ' + deltaTime);
-                        finalizingCheckFailure = false;
-                        finalizingPerformanceCheck = true;
-                        mainFractal.reduceFractalIterationsForPerformanceCheckFinalization(this.logger);
-                    } else {
-                        this.logger.log(PerfLogChannel, 'Did failure finalization iteration, deltaTime: ' + deltaTime);
-                        finalizingCheckFailureCount += 1;
                     }
                 } else {
                     if (deltaTime < maxFrameLength) {
@@ -215,20 +190,26 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
                         mainFractal.increaseFractalIterations(this.logger);
                     } else {
                         this.logger.log(PerfLogChannel, 'Failed initial check iteration, deltaTime: ' + deltaTime);
-                        finalizingCheckFailure = true;
-                        finalizingCheckFailureCount = 0;
+                        mainFractal.reduceFractalIterations(this.logger);
+                        finalizingPerformanceCheck = true;
                     }
                 }
 
                 context.fillStyle = this.initialBackgroundColor.toContextStyleString();
                 context.fillRect(0, 0, cachedBackgroundCanvas.width, cachedBackgroundCanvas.height);
+                mainFractal.update(deltaTime);
                 mainFractal.draw(context);
 
             //Normal loop
             } else {
 
+                if (!reinitedMainFractal) {
+                    mainFractal.initAfterPerformanceChecks();
+                    reinitedMainFractal = true;
+                }
+
                 totalTimePassed += deltaTime;
-    
+
                 if (totalTimePassed >= this.timeBeforeSpawningStars && !allStarsSpawned) {
     
                     if (timeSinceLastStarSpawned > this.timeBetweenStarSpawns) {
