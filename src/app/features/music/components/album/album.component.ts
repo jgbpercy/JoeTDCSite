@@ -1,4 +1,13 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import {
+    Component,
+    ElementRef,
+    EventEmitter,
+    Input,
+    OnInit,
+    Output,
+    ViewChild,
+} from '@angular/core';
+import { Observable } from '@firebase/util';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
 
@@ -13,9 +22,38 @@ const defaultTrackProgressMessage = 'Choose a track or click below to play';
 export class AlbumComponent implements OnInit {
 
     @Input() public album : Album;
+    @Input() public set albumStopCommands(stopCommands : Observable<void>) {
+        stopCommands.subscribe(
+            command => {
+                this.stopCommands[this.activeTrackIndex].next();
+                this.currentlyActive = false;
+                this.currentlyPlaying = false;
+            }
+        );
+    } 
+
+    @Output() public playingAlbum = new EventEmitter<void>();
+    @Output() public finishedAlbum = new EventEmitter<void>(); 
 
     public activeTrackIndex : number;
-    public currentlyPlaying = false;
+
+    private _currentlyPlaying = false;
+
+    public set currentlyPlaying(value : boolean) {
+        if (value) {
+            if (!this.currentlyActive) {
+                this.playingAlbum.emit();
+                this.currentlyActive = true;
+            }
+        }
+        this._currentlyPlaying = value;
+    }
+
+    public get currentlyPlaying() : boolean {
+        return this._currentlyPlaying;
+    } 
+
+    public currentlyActive = false;
 
     public playCommands = new Array<Subject<void>>();
     public stopCommands = new Array<Subject<void>>();
@@ -32,7 +70,9 @@ export class AlbumComponent implements OnInit {
     private mouseDownOverTrackProgress = false;
 
     @ViewChild('trackProgress') private set trackProgressElementRef(value : ElementRef) {
-        this.trackProgressElement = value.nativeElement;
+        if (value) {
+            this.trackProgressElement = value.nativeElement;
+        }
     }
     private trackProgressElement : HTMLElement;
 
@@ -63,7 +103,7 @@ export class AlbumComponent implements OnInit {
 
     private readonly playedColour = '#231C15';
     private readonly unplayedColour = '#19140F';
-    private readonly mouseOverColour = '#786450';
+    private readonly mouseOverColour = '#56483A';
 
     public getTrackProgressBackgroundImage() : string {
         
@@ -116,9 +156,7 @@ export class AlbumComponent implements OnInit {
 
         if (this.activeTrackIndex === this.album.tracks.length - 1) {
             
-            this.activeTrackIndex = undefined;
-
-            this.currentlyPlaying = false;
+            this.onAlbumEnd();
             
         } else {
             this.activeTrackIndex += 1;
@@ -158,13 +196,28 @@ export class AlbumComponent implements OnInit {
         if (this.activeTrackIndex !== undefined) {
 
             this.endCommands[this.activeTrackIndex].next();
-    
-            this.activeTrackIndex += 1;
-    
-            if (this.currentlyPlaying) {
-                this.playCommands[this.activeTrackIndex].next();
+
+            if (this.activeTrackIndex === this.album.tracks.length - 1) {
+                
+                this.onAlbumEnd();
+
+            } else {
+
+                this.activeTrackIndex += 1;
+        
+                if (this.currentlyPlaying) {
+                    this.playCommands[this.activeTrackIndex].next();
+                }
             }
         }
+    }
+
+    private onAlbumEnd() {
+        
+        this.activeTrackIndex = undefined;
+        this.currentlyPlaying = false;
+        this.currentlyActive = false;
+        this.finishedAlbum.emit();
     }
 
     public clickPrevious() : void {
@@ -213,6 +266,7 @@ export class AlbumComponent implements OnInit {
 
     public onTrackProgressMouseDown() : void {
         this.mouseDownOverTrackProgress = true;
+        this.timeCommands[this.activeTrackIndex].next(this.mouseOverTrackProgressPercent);
     }
 
     public onTrackProgressMouseUp() : void {

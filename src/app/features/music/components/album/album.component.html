@@ -6,7 +6,7 @@
         <div class="art-and-songs-container">
 
             <div class="album-art-container">
-                <img class="album-art" src="https://firebasestorage.googleapis.com/v0/b/joetdc-site-dev.appspot.com/o/image1.JPG?alt=media&token=53843ebe-c6cc-4cac-b7d8-2472b93d70e4" />
+                <img class="album-art" [src]="album.artSrc" />
             </div>
 
             <div class="track-list-wrapper">
@@ -34,6 +34,7 @@
         <div class="player-controls">
             <div
                 #trackProgress
+                *ngIf="currentlyActive"
                 class="track-progress"
                 [style.background-image]="getTrackProgressBackgroundImage()"
                 (mouseover)="onTrackProgressHover($event)"
@@ -45,16 +46,16 @@
             </div>
 
             <div class="controls-row">
-                <span (click)="clickPrevious()">
+                <span (click)="clickPrevious()" [hidden]="!currentlyActive"> 
                     <i class="fas fa-step-backward"></i>
                 </span>
-                <span [hidden]="currentlyPlaying" (click)="clickPlay()">
+                <span [hidden]="currentlyPlaying" (click)="clickPlay()" [class.inactive-album-play]="!currentlyActive">
                     <i class="fas fa-play"></i>
                 </span>
                 <span [hidden]="!currentlyPlaying" (click)="clickPause()">
                     <i class="fas fa-pause"></i>
                 </span>
-                <span (click)="clickNext()">
+                <span (click)="clickNext()" [hidden]="!currentlyActive">
                     <i class="fas fa-step-forward"></i>
                 </span>
             </div>

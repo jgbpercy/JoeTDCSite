@@ -608,6 +608,7 @@ div.nav-wrapper {
 
         div.album {
             @include std-box();
+            margin-bottom: 60px;
 
             .album-title {
                 text-align: center;
@@ -620,7 +621,7 @@ div.nav-wrapper {
 
             div.art-and-songs-container {
                 display: flex;
-                margin-bottom: 10px;
+                margin-bottom: 20px;
 
                 div.album-art-container {
                     flex: 1;
@@ -698,6 +699,11 @@ div.nav-wrapper {
 
                 .controls-row {
                     font-size: 2em;
+
+                    .inactive-album-play {
+                        font-size: 2em;
+                        @include std-transition();
+                    }
 
                     span {
                         margin-right: 10px;

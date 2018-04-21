@@ -22,6 +22,10 @@ export class TrackComponent {
     @Input() public set playCommands(playCommands : Observable<void>) {
         playCommands.subscribe(
             command => {
+                if (this.resetNextPlay) {
+                    this.audioElement.currentTime = 0;
+                    this.resetNextPlay = false;
+                }
                 this.audioElement.play();
             }
         );
@@ -47,7 +51,7 @@ export class TrackComponent {
     @Input() public set endCommands(endCommands : Observable<void>) {
         endCommands.subscribe(
             command => {
-                this.resetNextClick = true;
+                this.resetNextPlay = true;
                 this.audioElement.pause();
                 this.audioElement.currentTime = this.audioElement.duration - 0.1;
             }
@@ -82,7 +86,7 @@ export class TrackComponent {
     }
     public audioElement : HTMLAudioElement;
 
-    private resetNextClick = false;
+    private resetNextPlay = false;
 
     private set secondsPlayed(value : number) {
         this.timePlayed = moment(new Date(0, 0, 0, 0, 0, value)).format('m:ss');
@@ -99,9 +103,9 @@ export class TrackComponent {
     
         if (this.audioElement.paused) {
 
-            if (this.resetNextClick) {
+            if (this.resetNextPlay) {
                 this.audioElement.currentTime = 0;
-                this.resetNextClick = false;
+                this.resetNextPlay = false;
             }
             
             this.audioElement.play();
@@ -115,7 +119,7 @@ export class TrackComponent {
     }
 
     public onTrackEnded() {
-        this.resetNextClick = true;
+        this.resetNextPlay = true;
         this.finishedPlayingTrack.emit();
     }
 
