@@ -8,6 +8,9 @@ import {
     ViewChild,
 } from '@angular/core';
 import { Observable } from '@firebase/util';
+import {
+    albumAnimations,
+} from 'app/features/music/components/album/album.animations';
 import * as moment from 'moment';
 import { Subject } from 'rxjs';
 
@@ -17,7 +20,8 @@ const defaultTrackProgressMessage = 'Choose a track or click below to play';
 
 @Component({
     selector: 'jtdc-album',
-    templateUrl: './album.component.html'
+    templateUrl: './album.component.html',
+    animations: albumAnimations,
 })
 export class AlbumComponent implements OnInit {
 
@@ -26,7 +30,7 @@ export class AlbumComponent implements OnInit {
         stopCommands.subscribe(
             command => {
                 this.stopCommands[this.activeTrackIndex].next();
-                this.currentlyActive = false;
+                this.isActiveAlbum = false;
                 this.currentlyPlaying = false;
             }
         );
@@ -41,9 +45,9 @@ export class AlbumComponent implements OnInit {
 
     public set currentlyPlaying(value : boolean) {
         if (value) {
-            if (!this.currentlyActive) {
+            if (!this.isActiveAlbum) {
                 this.playingAlbum.emit();
-                this.currentlyActive = true;
+                this.isActiveAlbum = true;
             }
         }
         this._currentlyPlaying = value;
@@ -53,7 +57,22 @@ export class AlbumComponent implements OnInit {
         return this._currentlyPlaying;
     } 
 
-    public currentlyActive = false;
+    public _isActiveAlbum = false;
+    
+    public set isActiveAlbum(value : boolean) {
+        if (value) {
+            this.animShowTrackProgress = true;
+            this.animControlsSize = 'small';
+        } else {
+            this.animShowTrackProgressMessage = false;
+            this.animControlsSize = 'big';
+        }
+        this._isActiveAlbum = value;
+    }
+
+    public get isActiveAlbum() : boolean {
+        return this._isActiveAlbum;
+    }
 
     public playCommands = new Array<Subject<void>>();
     public stopCommands = new Array<Subject<void>>();
@@ -75,6 +94,10 @@ export class AlbumComponent implements OnInit {
         }
     }
     private trackProgressElement : HTMLElement;
+
+    public animShowTrackProgressMessage = false;
+    public animShowTrackProgress = false;
+    public animControlsSize = 'big';
 
     public ngOnInit() : void {
         
@@ -216,7 +239,7 @@ export class AlbumComponent implements OnInit {
         
         this.activeTrackIndex = undefined;
         this.currentlyPlaying = false;
-        this.currentlyActive = false;
+        this.isActiveAlbum = false;
         this.finishedAlbum.emit();
     }
 
@@ -271,5 +294,26 @@ export class AlbumComponent implements OnInit {
 
     public onTrackProgressMouseUp() : void {
         this.mouseDownOverTrackProgress = false;
+    }
+
+    public animHandleTrackProgressStart() : void {
+
+        if (!this.isActiveAlbum) {
+            this.animShowTrackProgressMessage = false;
+        }
+    }
+
+    public animHandleTrackProgressDone() : void {
+        
+        if (this.isActiveAlbum) {
+            this.animShowTrackProgressMessage = true;
+        }
+    }
+
+    public animHandleTrackProgressMessageDone() : void {
+
+        if (!this.isActiveAlbum) {
+            this.animShowTrackProgress = false;
+        }
     }
 }

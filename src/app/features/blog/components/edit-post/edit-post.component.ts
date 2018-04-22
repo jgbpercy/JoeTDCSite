@@ -5,13 +5,9 @@ import {
     OnChanges,
     Output,
     SimpleChanges,
- } from '@angular/core';
-import {
-    FormBuilder,
-    FormGroup,
-} from '@angular/forms';
+} from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
-import { map } from 'rxjs/operators/map';
 
 import { DbPost, Post } from '../../models';
 import { BlogActionsService } from '../../services';
@@ -48,10 +44,10 @@ export class EditPostComponent implements OnChanges {
         this.form.valueChanges.subscribe(
             formValues => {
                 this.previewPost = new Post(
-                    '',
                     formValues.title,
                     formValues.date,
                     formValues.content,
+                    '',
                 );
             }
         );

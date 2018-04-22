@@ -601,6 +601,10 @@ div.nav-wrapper {
     .music-inner-wrapper {
         @include std-content-inner-wrapper();
 
+        &.single-album-page-wrapper {
+            padding-top: 30px;
+        }
+
         h1.music-title {
             @include std-page-title();
             text-align: center;
@@ -700,17 +704,11 @@ div.nav-wrapper {
                 .controls-row {
                     font-size: 2em;
 
-                    .inactive-album-play {
-                        font-size: 2em;
-                        @include std-transition();
-                    }
-
                     span {
                         margin-right: 10px;
                         margin-left: 10px;
                         cursor: pointer;
                         color: $std-link-color;
-                        @include std-transition();
     
                         &:hover {
                             color: $std-link-hover-color;

@@ -1,8 +1,17 @@
 import { Injectable } from '@angular/core';
-import { AngularFirestore, DocumentChangeAction, QueryFn } from 'angularfire2/firestore';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { distinctUntilChanged, map, switchMap, take, tap } from 'rxjs/operators';
+import {
+    AngularFirestore,
+    DocumentChangeAction,
+    QueryFn,
+} from 'angularfire2/firestore';
+import { BehaviorSubject, Observable } from 'rxjs';
+import {
+    distinctUntilChanged,
+    map,
+    switchMap,
+    take,
+    tap,
+} from 'rxjs/operators';
 
 import { DbPost, Post } from '../models';
 
@@ -64,10 +73,10 @@ export class BlogDataService {
         return documentChangeActions.map(changeAction => {
             const dbPost = changeAction.payload.doc.data() as DbPost;
             return new Post(
-                changeAction.payload.doc.id,
                 dbPost.title,
                 dbPost.date,
                 dbPost.content,
+                changeAction.payload.doc.id,
             );
         });
     }

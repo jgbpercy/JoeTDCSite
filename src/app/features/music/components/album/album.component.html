@@ -34,28 +34,36 @@
         <div class="player-controls">
             <div
                 #trackProgress
-                *ngIf="currentlyActive"
+                *ngIf="animShowTrackProgress"
                 class="track-progress"
                 [style.background-image]="getTrackProgressBackgroundImage()"
                 (mouseover)="onTrackProgressHover($event)"
                 (mousemove)="onTrackProgressHover($event)"
                 (mouseout)="onTrackProgressMouseLeave()"
                 (mousedown)="onTrackProgressMouseDown()"
-                (mouseup)="onTrackProgressMouseUp()">
-                <span>{{getTrackProgressMessage()}}</span>
+                (mouseup)="onTrackProgressMouseUp()"
+                [@stretchInHorizontal]="true"
+                (@stretchInHorizontal.start)="animHandleTrackProgressStart()"
+                (@stretchInHorizontal.done)="animHandleTrackProgressDone()">
+                <span
+                    *ngIf="animShowTrackProgressMessage"
+                    [@fadeIn]
+                    (@fadeIn.done)="animHandleTrackProgressMessageDone()">
+                    {{ getTrackProgressMessage() }}
+                </span>
             </div>
 
-            <div class="controls-row">
-                <span (click)="clickPrevious()" [hidden]="!currentlyActive"> 
+            <div class="controls-row" [@controlsSize]="animControlsSize">
+                <span (click)="clickPrevious()" *ngIf="isActiveAlbum" [@fadeIn]> 
                     <i class="fas fa-step-backward"></i>
                 </span>
-                <span [hidden]="currentlyPlaying" (click)="clickPlay()" [class.inactive-album-play]="!currentlyActive">
+                <span *ngIf="!currentlyPlaying" (click)="clickPlay()">
                     <i class="fas fa-play"></i>
                 </span>
-                <span [hidden]="!currentlyPlaying" (click)="clickPause()">
+                <span *ngIf="currentlyPlaying" (click)="clickPause()">
                     <i class="fas fa-pause"></i>
                 </span>
-                <span (click)="clickNext()" [hidden]="!currentlyActive">
+                <span (click)="clickNext()" *ngIf="isActiveAlbum" [@fadeIn]>
                     <i class="fas fa-step-forward"></i>
                 </span>
             </div>

@@ -1,7 +1,6 @@
-import * as moment from 'moment';
-
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { DbEntity } from 'core/models';
+import * as moment from 'moment';
 
 const youTubeMarker = '[YouTube=';
 const youTubeStartAtMarker = ',T=';
@@ -11,10 +10,10 @@ export class Post extends DbEntity {
     private _sanitizedContent : (SafeHtml | string)[];
 
     constructor(
-        id? : string,
         private _title : string = '',
         private _date? : Date,
         private _content : string = '',
+        id? : string,
     ) { 
         super(id);
     }

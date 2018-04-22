@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { forkJoin } from 'rxjs/observable/forkJoin';
-import { take } from 'rxjs/operators';
+import { first } from 'rxjs/operators';
 
 import { Post } from '../../models';
 import { BlogDataService } from '../../services';
@@ -22,7 +22,7 @@ export class EditBlogComponent implements OnInit {
     ) { }
 
     public ngOnInit() : void {
-        this.route.data.pipe(take(1)).subscribe(
+        this.route.data.pipe(first()).subscribe(
             routeData => {
                 this.blogDataService.postCollectionName.next(routeData.postCollectionName);
             }
@@ -38,11 +38,10 @@ export class EditBlogComponent implements OnInit {
     }
 
     private onAddPost(idObs : Observable<string>) : void {
-        this.isLoading = true;
 
         forkJoin(
             idObs,
-            this.blogDataService.allPosts.pipe(take(1)),
+            this.blogDataService.allPosts.pipe(first()),
             (id, posts) => ({ id, posts }),
         )
         .subscribe(

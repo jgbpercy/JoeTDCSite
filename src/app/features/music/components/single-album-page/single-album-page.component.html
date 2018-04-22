@@ -1,0 +1,15 @@
+<div class="music-wrapper">
+    <div class="music-inner-wrapper single-album-page-wrapper">
+
+        <ng-container *ngIf="!isLoading">
+            <jtdc-album
+                [album]="album">
+            </jtdc-album>
+        </ng-container>
+
+        <div class="loading" *ngIf="isLoading"><i class="fas fa-spinner fa-spin"></i></div>
+
+        <a [routerLink]="'/music'"><i class="fas fa-arrow-left"></i> Back to all music</a>
+
+    </div>
+</div>

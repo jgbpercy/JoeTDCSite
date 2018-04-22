@@ -1,13 +1,19 @@
 <div class="music-wrapper">
     <div class="music-inner-wrapper">
+
         <h1 class="music-title">Music</h1>
 
-        <jtdc-album
-            *ngFor="let album of albums; let i = index"
-            [album]="album"
-            [albumStopCommands]="stopCommands[i]"
-            (playingAlbum)="onPlayingAlbum(i)"
-            (finishedAlbum)="onFinishedAlbum()">
-        </jtdc-album>
+        <ng-container *ngIf="!isLoading">
+            <jtdc-album
+                *ngFor="let album of albums; let i = index"
+                [album]="album"
+                [albumStopCommands]="stopCommands[i]"
+                (playingAlbum)="onPlayingAlbum(i)"
+                (finishedAlbum)="onFinishedAlbum()">
+            </jtdc-album>
+        </ng-container>
+
+        <div class="loading" *ngIf="isLoading"><i class="fas fa-spinner fa-spin"></i></div>
+
     </div>
 </div>
