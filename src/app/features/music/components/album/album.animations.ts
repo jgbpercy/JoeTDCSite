@@ -18,33 +18,35 @@ export const albumAnimations = [
                 'margin-bottom': 0,
             }),
             animate('300ms ease-in-out'),
+            query('@fadeIn', [ animateChild() ]),
         ]),
 
         transition(':leave', [
+            query('@fadeIn', [ animateChild() ]),
             animate(
                 '300ms ease-in-out',
                 style({
                     height: 0,
                     'margin-top': 0,
                     'margin-bottom': 0,
-                })
-            )
-        ])
+                }),
+            ),
+        ]),
     ]),
 
     trigger('fadeIn', [
 
         transition(':enter', [ 
             style({ opacity: 0 }),
-            animate('300ms ease-in-out')
+            animate('300ms ease-in-out'),
         ]),
 
         transition(':leave', [
             animate(
                 '50ms ease-in-out',
                 style({ opacity: 0 })
-            )
-        ])
+            ),
+        ]),
     ]),
     
     trigger('controlsSize', [

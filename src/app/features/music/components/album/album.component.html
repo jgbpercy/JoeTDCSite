@@ -34,7 +34,7 @@
         <div class="player-controls">
             <div
                 #trackProgress
-                *ngIf="animShowTrackProgress"
+                *ngIf="isActiveAlbum"
                 class="track-progress"
                 [style.background-image]="getTrackProgressBackgroundImage()"
                 (mouseover)="onTrackProgressHover($event)"
@@ -42,13 +42,9 @@
                 (mouseout)="onTrackProgressMouseLeave()"
                 (mousedown)="onTrackProgressMouseDown()"
                 (mouseup)="onTrackProgressMouseUp()"
-                [@stretchInHorizontal]="true"
-                (@stretchInHorizontal.start)="animHandleTrackProgressStart()"
-                (@stretchInHorizontal.done)="animHandleTrackProgressDone()">
+                [@stretchInHorizontal]="true">
                 <span
-                    *ngIf="animShowTrackProgressMessage"
-                    [@fadeIn]
-                    (@fadeIn.done)="animHandleTrackProgressMessageDone()">
+                    [@fadeIn]>
                     {{ getTrackProgressMessage() }}
                 </span>
             </div>

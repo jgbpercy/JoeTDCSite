@@ -58,10 +58,8 @@ export class AlbumComponent implements OnInit {
     
     public set isActiveAlbum(value : boolean) {
         if (value) {
-            this.animShowTrackProgress = true;
             this.animControlsSize = 'small';
         } else {
-            this.animShowTrackProgressMessage = false;
             this.animControlsSize = 'big';
         }
         this._isActiveAlbum = value;
@@ -92,8 +90,6 @@ export class AlbumComponent implements OnInit {
     }
     private trackProgressElement : HTMLElement;
 
-    public animShowTrackProgressMessage = false;
-    public animShowTrackProgress = false;
     public animControlsSize = 'big';
 
     public ngOnInit() : void {
@@ -291,26 +287,5 @@ export class AlbumComponent implements OnInit {
 
     public onTrackProgressMouseUp() : void {
         this.mouseDownOverTrackProgress = false;
-    }
-
-    public animHandleTrackProgressStart() : void {
-
-        if (!this.isActiveAlbum) {
-            this.animShowTrackProgressMessage = false;
-        }
-    }
-
-    public animHandleTrackProgressDone() : void {
-        
-        if (this.isActiveAlbum) {
-            this.animShowTrackProgressMessage = true;
-        }
-    }
-
-    public animHandleTrackProgressMessageDone() : void {
-
-        if (!this.isActiveAlbum) {
-            this.animShowTrackProgress = false;
-        }
     }
 }
