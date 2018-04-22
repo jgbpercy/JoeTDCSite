@@ -614,9 +614,25 @@ div.nav-wrapper {
             @include std-box();
             margin-bottom: 60px;
 
-            .album-title {
-                text-align: center;
-                color: $std-header-text-color;
+            .album-header-row {
+
+                a {
+                    float: right;
+                    color: $std-link-color;
+                    cursor: pointer;
+                    @include std-transition();
+                    font-size: 1.6em;
+                    margin-right: 8px;
+
+                    &.hover {
+                        color: $std-link-hover-color;
+                    }
+                }
+
+                .album-title {
+                    text-align: center;
+                    color: $std-header-text-color;
+                }
             }
 
             .album-info {
@@ -630,7 +646,7 @@ div.nav-wrapper {
                 div.album-art-container {
                     flex: 1;
                     margin-right: 2%;
-                    max-width: 48%;
+                    max-width: 49%;
 
                     .album-art {
                         width: 100%;
@@ -642,14 +658,14 @@ div.nav-wrapper {
                     flex: 1;
                     display: flex;
                     align-items: center;
-                    margin-right: 2%;
-                    width: 48%;
+                    width: 49%;
 
                     .track-list {
                         width: 100%;
 
                         .track {
                             width: 100%;
+                            box-sizing: border-box;
                             height: 35px;
                             display: flex;
                             align-items: center;

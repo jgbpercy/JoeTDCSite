@@ -14,6 +14,9 @@ import { Album } from '../../models';
 import { albumAnimations } from './album.animations';
 
 const defaultTrackProgressMessage = 'Choose a track or click below to play';
+const playedColour = '#231C15';
+const unplayedColour = '#19140F';
+const mouseOverColour = '#56483A';
 
 @Component({
     selector: 'jtdc-album',
@@ -21,6 +24,8 @@ const defaultTrackProgressMessage = 'Choose a track or click below to play';
     animations: albumAnimations,
 })
 export class AlbumComponent implements OnInit {
+
+    @Input() public showSinglePageLink : boolean;
 
     @Input() public album : Album;
     @Input() public set albumStopCommands(stopCommands : Observable<void>) {
@@ -114,40 +119,38 @@ export class AlbumComponent implements OnInit {
 
         const playedTime = moment(new Date(0, 0, 0, 0, 0, this.playedTime)).format('m:ss');
 
-        return `Now playing: ${playingTrack.name} - ${playedTime} / ${playingTrack.duration} `;
-    }
+        const messageStart = this.currentlyPlaying ? 'Now playing' : 'Paused';
 
-    private readonly playedColour = '#231C15';
-    private readonly unplayedColour = '#19140F';
-    private readonly mouseOverColour = '#56483A';
+        return `${messageStart}: ${playingTrack.name} - ${playedTime} / ${playingTrack.duration} `;
+    }
 
     public getTrackProgressBackgroundImage() : string {
         
         if (!this.mouseOverTrackProgress) {
             return 'linear-gradient(to right,' +
-                this.playedColour + ', ' +
-                this.playedColour + ' ' + this.playedPercent + '%, ' +
-                this.unplayedColour + ' ' + this.playedPercent + '%, ' +
-                this.unplayedColour + ')';
+                playedColour + ', ' +
+                playedColour + ' ' + this.playedPercent + '%, ' +
+                unplayedColour + ' ' + this.playedPercent + '%, ' +
+                unplayedColour + ')';
         } else {
             if (this.mouseOverTrackProgressPercent < this.playedPercent) {
                 return 'linear-gradient(to right,' +
-                    this.playedColour + ', ' +
-                    this.playedColour + ' ' + (this.mouseOverTrackProgressPercent - 0.5) + '%, ' +
-                    this.mouseOverColour + ' ' + this.mouseOverTrackProgressPercent + '%, ' +
-                    this.playedColour + ' ' + (this.mouseOverTrackProgressPercent + 0.5) + '%, ' +
-                    this.playedColour + ' ' + this.playedPercent + '%, ' +
-                    this.unplayedColour + ' ' + this.playedPercent + '%, ' +
-                    this.unplayedColour + ')';
+                    playedColour + ', ' +
+                    playedColour + ' ' + (this.mouseOverTrackProgressPercent - 0.5) + '%, ' +
+                    mouseOverColour + ' ' + this.mouseOverTrackProgressPercent + '%, ' +
+                    playedColour + ' ' + (this.mouseOverTrackProgressPercent + 0.5) + '%, ' +
+                    playedColour + ' ' + this.playedPercent + '%, ' +
+                    unplayedColour + ' ' + this.playedPercent + '%, ' +
+                    unplayedColour + ')';
             } else {
                 return 'linear-gradient(to right,' +
-                    this.playedColour + ', ' +
-                    this.playedColour + ' ' + this.playedPercent + '%, ' +
-                    this.unplayedColour + ' ' + this.playedPercent + '%, ' +
-                    this.unplayedColour + ' ' + (this.mouseOverTrackProgressPercent - 0.5) + '%, ' +
-                    this.mouseOverColour + ' ' + this.mouseOverTrackProgressPercent + '%, ' +
-                    this.unplayedColour + ' ' + (this.mouseOverTrackProgressPercent + 0.5) + '%, ' +
-                    this.unplayedColour + ')';
+                    playedColour + ', ' +
+                    playedColour + ' ' + this.playedPercent + '%, ' +
+                    unplayedColour + ' ' + this.playedPercent + '%, ' +
+                    unplayedColour + ' ' + (this.mouseOverTrackProgressPercent - 0.5) + '%, ' +
+                    mouseOverColour + ' ' + this.mouseOverTrackProgressPercent + '%, ' +
+                    unplayedColour + ' ' + (this.mouseOverTrackProgressPercent + 0.5) + '%, ' +
+                    unplayedColour + ')';
             }
         }
     }

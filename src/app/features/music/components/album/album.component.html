@@ -1,68 +1,77 @@
 <div class="album">
+
+    <div class="album-header-row">
+        <a
+            [routerLink]="[ './album', album.id ]"
+            *ngIf="showSinglePageLink">
+            <i class="fas fa-link"></i>
+        </a>
+
         <h2 class="album-title">{{album.name}}</h2>
-
-        <p class="album-info">{{album.description}}</p>
-
-        <div class="art-and-songs-container">
-
-            <div class="album-art-container">
-                <img class="album-art" [src]="album.artSrc" />
-            </div>
-
-            <div class="track-list-wrapper">
-                <div class="track-list">
-                    <jtdc-track
-                        *ngFor="let track of album.tracks; let i = index"
-                        [track]="track"
-                        [playCommands]="playCommands[i]"
-                        [stopCommands]="stopCommands[i]"
-                        [pauseCommands]="pauseCommands[i]"
-                        [endCommands]="endCommands[i]"
-                        [timeCommands]="timeCommands[i]"
-                        [volumeCommands]="volumeCommands[i]"
-                        (playTrack)="onTrackPlaying(i)"
-                        (pauseTrack)="onTrackPaused(i)"
-                        (finishedPlayingTrack)="onTrackFinished(i)"
-                        (playedPercentOfTrack)="onPlayedPercent($event)"
-                        (playedTime)="onPlayedTime($event)"
-                        (loadedDuration)="onLoadedDuration(i, $event)">
-                    </jtdc-track>
-                </div>
-            </div>
-        </div>
-
-        <div class="player-controls">
-            <div
-                #trackProgress
-                *ngIf="isActiveAlbum"
-                class="track-progress"
-                [style.background-image]="getTrackProgressBackgroundImage()"
-                (mouseover)="onTrackProgressHover($event)"
-                (mousemove)="onTrackProgressHover($event)"
-                (mouseout)="onTrackProgressMouseLeave()"
-                (mousedown)="onTrackProgressMouseDown()"
-                (mouseup)="onTrackProgressMouseUp()"
-                [@stretchInHorizontal]="true">
-                <span
-                    [@fadeIn]>
-                    {{ getTrackProgressMessage() }}
-                </span>
-            </div>
-
-            <div class="controls-row" [@controlsSize]="animControlsSize">
-                <span (click)="clickPrevious()" *ngIf="isActiveAlbum" [@fadeIn]> 
-                    <i class="fas fa-step-backward"></i>
-                </span>
-                <span *ngIf="!currentlyPlaying" (click)="clickPlay()">
-                    <i class="fas fa-play"></i>
-                </span>
-                <span *ngIf="currentlyPlaying" (click)="clickPause()">
-                    <i class="fas fa-pause"></i>
-                </span>
-                <span (click)="clickNext()" *ngIf="isActiveAlbum" [@fadeIn]>
-                    <i class="fas fa-step-forward"></i>
-                </span>
-            </div>
-        </div>
-
     </div>
+
+    <p class="album-info">{{album.description}}</p>
+
+    <div class="art-and-songs-container">
+
+        <div class="album-art-container">
+            <img class="album-art" [src]="album.artSrc" />
+        </div>
+
+        <div class="track-list-wrapper">
+            <div class="track-list">
+                <jtdc-track
+                    *ngFor="let track of album.tracks; let i = index"
+                    [track]="track"
+                    [playCommands]="playCommands[i]"
+                    [stopCommands]="stopCommands[i]"
+                    [pauseCommands]="pauseCommands[i]"
+                    [endCommands]="endCommands[i]"
+                    [timeCommands]="timeCommands[i]"
+                    [volumeCommands]="volumeCommands[i]"
+                    (playTrack)="onTrackPlaying(i)"
+                    (pauseTrack)="onTrackPaused(i)"
+                    (finishedPlayingTrack)="onTrackFinished(i)"
+                    (playedPercentOfTrack)="onPlayedPercent($event)"
+                    (playedTime)="onPlayedTime($event)"
+                    (loadedDuration)="onLoadedDuration(i, $event)">
+                </jtdc-track>
+            </div>
+        </div>
+    </div>
+
+    <div class="player-controls">
+        <div
+            #trackProgress
+            *ngIf="isActiveAlbum"
+            class="track-progress"
+            [style.background-image]="getTrackProgressBackgroundImage()"
+            (mouseover)="onTrackProgressHover($event)"
+            (mousemove)="onTrackProgressHover($event)"
+            (mouseout)="onTrackProgressMouseLeave()"
+            (mousedown)="onTrackProgressMouseDown()"
+            (mouseup)="onTrackProgressMouseUp()"
+            [@stretchInHorizontal]="true">
+            <span
+                [@fadeIn]>
+                {{ getTrackProgressMessage() }}
+            </span>
+        </div>
+
+        <div class="controls-row" [@controlsSize]="animControlsSize">
+            <span (click)="clickPrevious()" *ngIf="isActiveAlbum" [@fadeIn]> 
+                <i class="fas fa-step-backward"></i>
+            </span>
+            <span *ngIf="!currentlyPlaying" (click)="clickPlay()">
+                <i class="fas fa-play"></i>
+            </span>
+            <span *ngIf="currentlyPlaying" (click)="clickPause()">
+                <i class="fas fa-pause"></i>
+            </span>
+            <span (click)="clickNext()" *ngIf="isActiveAlbum" [@fadeIn]>
+                <i class="fas fa-step-forward"></i>
+            </span>
+        </div>
+    </div>
+
+</div>

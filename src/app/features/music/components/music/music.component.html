@@ -8,6 +8,7 @@
                 *ngFor="let album of albums; let i = index"
                 [album]="album"
                 [albumStopCommands]="stopCommands[i]"
+                [showSinglePageLink]="true"
                 (playingAlbum)="onPlayingAlbum(i)"
                 (finishedAlbum)="onFinishedAlbum()">
             </jtdc-album>
