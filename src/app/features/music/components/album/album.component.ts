@@ -7,14 +7,11 @@ import {
     Output,
     ViewChild,
 } from '@angular/core';
-import { Observable } from '@firebase/util';
-import {
-    albumAnimations,
-} from 'app/features/music/components/album/album.animations';
 import * as moment from 'moment';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { Album } from '../../models';
+import { albumAnimations } from './album.animations';
 
 const defaultTrackProgressMessage = 'Choose a track or click below to play';
 
