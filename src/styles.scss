@@ -613,16 +613,18 @@ div.nav-wrapper {
         div.album {
             @include std-box();
             margin-bottom: 60px;
+            position: relative;
 
             .album-header-row {
 
                 a {
-                    float: right;
                     color: $std-link-color;
                     cursor: pointer;
                     @include std-transition();
                     font-size: 1.6em;
-                    margin-right: 8px;
+                    right: 16px;
+                    top: 16px;
+                    position: absolute;
 
                     &.hover {
                         color: $std-link-hover-color;

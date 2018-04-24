@@ -269,9 +269,11 @@ export class AlbumComponent implements OnInit {
     public onTrackProgressHover(event : MouseEvent) : void {
 
         this.mouseOverTrackProgress = true;
+        
+        const trackProgressBoundingRect = this.trackProgressElement.getBoundingClientRect();
 
-        const withinTrackProgressX = event.clientX - this.trackProgressElement.offsetLeft;
-        this.mouseOverTrackProgressPercent = (withinTrackProgressX / this.trackProgressElement.clientWidth) * 100;
+        const withinTrackProgressX = event.clientX - trackProgressBoundingRect.left;
+        this.mouseOverTrackProgressPercent = (withinTrackProgressX / trackProgressBoundingRect.width) * 100;
 
         if (this.mouseDownOverTrackProgress) {
             this.timeCommands[this.activeTrackIndex].next(this.mouseOverTrackProgressPercent);
