@@ -7,6 +7,7 @@ import {
     Output,
     ViewChild,
 } from '@angular/core';
+import { VolumeService } from 'app/features/music/services/volume.service';
 import * as moment from 'moment';
 import { Observable, Subject } from 'rxjs';
 
@@ -79,7 +80,6 @@ export class AlbumComponent implements OnInit {
     public pauseCommands = new Array<Subject<void>>();
     public endCommands = new Array<Subject<void>>();
     public timeCommands = new Array<Subject<number>>();
-    public volumeCommands = new Array<Subject<number>>();
 
     public playedPercent = 0;
     public playedTime = 0;
@@ -97,6 +97,10 @@ export class AlbumComponent implements OnInit {
 
     public animControlsSize = 'big';
 
+    public volumeHovered = 0;
+
+    constructor(public volumeService : VolumeService) { }
+
     public ngOnInit() : void {
         
         this.album.tracks.forEach(track => {
@@ -105,7 +109,6 @@ export class AlbumComponent implements OnInit {
             this.pauseCommands.push(new Subject<void>());
             this.endCommands.push(new Subject<void>());
             this.timeCommands.push(new Subject<number>());
-            this.volumeCommands.push(new Subject<number>());
         });
     }
 
@@ -292,5 +295,13 @@ export class AlbumComponent implements OnInit {
 
     public onTrackProgressMouseUp() : void {
         this.mouseDownOverTrackProgress = false;
+    }
+
+    public onVolumeMouseOver(volume : number) : void {
+        this.volumeHovered = volume;
+    }
+
+    public onVolumeMouseOut() : void {
+        this.volumeHovered = 0;
     }
 }

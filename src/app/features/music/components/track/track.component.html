@@ -14,6 +14,9 @@
         <span class="divider-dash"> - </span>
         <span [class.not-playing-times]="audioElement.paused">{{timePlayed}} / {{track.duration}}</span>
     </span>
+    <a class="download-link" [href]="track.downloadUrl" download>
+        <i class="fas fa-download"></i>
+    </a>
     <audio
         #audioElem
         (ended)="onTrackEnded()"

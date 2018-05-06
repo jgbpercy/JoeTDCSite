@@ -8,7 +8,7 @@ import {
     TrackComponent,
 } from './components';
 import { MusicRoutingModule } from './music-routing.module';
-import { MusicDataService } from './services';
+import { MusicDataService, VolumeService } from './services';
 
 @NgModule({
     imports: [
@@ -23,6 +23,7 @@ import { MusicDataService } from './services';
     ],
     providers: [
         MusicDataService,
+        VolumeService,
     ]
 })
 export class MusicModule { }

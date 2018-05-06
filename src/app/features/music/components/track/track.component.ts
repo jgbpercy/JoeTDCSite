@@ -6,8 +6,10 @@ import {
     Output,
     ViewChild,
 } from '@angular/core';
+import { VolumeService } from 'app/features/music/services';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
+import { first } from 'rxjs/operators';
 
 import { Track } from '../../models';
 
@@ -65,14 +67,6 @@ export class TrackComponent {
             }
         );
     }
-    
-    @Input() public set volumeCommands(volumeCommands : Observable<number>) {
-        volumeCommands.subscribe(
-            volume => {
-                this.audioElement.volume = volume;
-            }
-        );
-    }
 
     @Output() public playTrack = new EventEmitter();
     @Output() public pauseTrack = new EventEmitter();
@@ -83,6 +77,11 @@ export class TrackComponent {
 
     @ViewChild('audioElem') private set audioElementRef(value : ElementRef) {
         this.audioElement = value.nativeElement;
+        this.volumeService.volume.pipe(first()).subscribe(
+            volume => {
+                this.audioElement.volume = volume;
+            }
+        );
     }
     public audioElement : HTMLAudioElement;
 
@@ -98,6 +97,16 @@ export class TrackComponent {
     public timePlayed = '0:00';
     public trackTime = '0:00';
     public playedPercent = 0;
+
+    constructor(private volumeService : VolumeService) { 
+        this.volumeService.volume.subscribe(
+            volume => {
+                if (this.audioElement) {
+                    this.audioElement.volume = volume;
+                }
+            }
+        );
+    }
 
     public clicked() {
     

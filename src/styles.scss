@@ -626,7 +626,7 @@ div.nav-wrapper {
                     top: 16px;
                     position: absolute;
 
-                    &.hover {
+                    &:hover {
                         color: $std-link-hover-color;
                     }
                 }
@@ -653,6 +653,7 @@ div.nav-wrapper {
                     .album-art {
                         width: 100%;
                         height: 100%;
+                        border-radius: 15px;
                     }
                 }
 
@@ -671,6 +672,7 @@ div.nav-wrapper {
                             height: 35px;
                             display: flex;
                             align-items: center;
+                            justify-content: space-between;
                             padding-left: 10px;
                             margin-bottom: 12px;
                             border-radius: 12px;
@@ -697,6 +699,17 @@ div.nav-wrapper {
                             .not-playing-times {
                                 color: $deeph-text-color;
                             }
+
+                            .download-link {
+                                color: $std-link-color;
+                                cursor: pointer;
+                                @include std-transition();
+                                margin-right: 10px;
+
+                                &:hover {
+                                    color: $std-link-hover-color;
+                                }
+                            }
                         }
                     }
                 }
@@ -720,16 +733,84 @@ div.nav-wrapper {
                 }
 
                 .controls-row {
-                    font-size: 2em;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: flex-end;
+                    flex-direction: row;
+                    color: $std-link-color;
 
-                    span {
-                        margin-right: 10px;
-                        margin-left: 10px;
+                    .volume-controls {
+                        flex: 1;
+                        text-align: left;
+                        font-size: 2em;
+                        display: flex;
+                        align-items: center;
+                        flex-direction: row;
+
+                        span {
+                            cursor: pointer;
+                            display: flex;
+                            flex-direction: row;
+                            align-items: center;
+                            @include std-transition();                            
+                            
+                            svg {
+                                margin-right: 6px;
+                            }
+
+                            &.hovered {
+                                color: $std-link-hover-color;
+                            }
+                        }
+
+                        .vol-end {
+                            cursor: pointer;
+                            @include std-transition();                                                    
+
+                            &:hover {
+                                color: $std-link-hover-color;
+                            }
+                        }
+
+                        .vol-min {
+                            font-size: 0.7em;
+                            margin-right: 6px;
+
+                            .hovered {
+                                color: $std-link-hover-color;
+                            }
+                        }
+
+                        .vol-max {
+                            font-size: 0.85em;
+                        }
+                    }
+
+                    .play-controls {
+                        font-size: 2em;
+                        flex: 1;
+
+                        span {
+                            margin-right: 10px;
+                            margin-left: 10px;
+                            cursor: pointer;
+                            color: $std-link-color;
+                            @include std-transition();                            
+        
+                            &:hover {
+                                color: $std-link-hover-color;
+                            }
+                        }
+                    }
+
+                    .download-controls {
+                        flex: 1;
+                        text-align: right;
+                        font-size: 2em;
                         cursor: pointer;
-                        color: $std-link-color;
-    
+                        
                         &:hover {
-                            color: $std-link-hover-color;
+                            color: $std-link-hover-color;    
                         }
                     }
                 }

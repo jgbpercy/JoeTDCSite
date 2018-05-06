@@ -74,6 +74,7 @@ export class MusicDataService {
                 dbAlbum.description,
                 dbAlbum.artSrc,
                 MusicDataService.mapDCAsToTracks(trackDcasArray[index]),
+                dbAlbum.downloadUrl,
                 albumDca.payload.doc.id,
             );
         });
@@ -86,6 +87,7 @@ export class MusicDataService {
             return new Track(
                 dbTrack.name,
                 dbTrack.src,
+                dbTrack.downloadUrl,
                 trackDca.payload.doc.id,
             );
         });

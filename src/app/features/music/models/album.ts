@@ -9,6 +9,7 @@ export class Album extends DbEntity {
         private _description : string,
         private _artSrc : string,
         private _tracks : Track[],
+        private _downloadUrl : string,
         id? : string,
     ) {
         super(id);
@@ -29,6 +30,10 @@ export class Album extends DbEntity {
     public get tracks() : Track[] {
         return this._tracks;
     }
+
+    public get downloadUrl() : string {
+        return this._downloadUrl;
+    }
 }
 
 export interface DbAlbum {
@@ -36,4 +41,5 @@ export interface DbAlbum {
     name : string;
     description : string;
     artSrc : string;
+    downloadUrl : string;
 }
