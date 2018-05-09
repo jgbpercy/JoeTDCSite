@@ -9,7 +9,7 @@ import {
 } from '@angular/animations';
 
 export const albumAnimations = [
-    trigger('stretchInHorizontal', [
+    trigger('trackProgressStretchIn', [
 
         transition(':enter', [
             style({
@@ -18,11 +18,11 @@ export const albumAnimations = [
                 'margin-bottom': 0,
             }),
             animate('300ms ease-in-out'),
-            query('@fadeIn', [ animateChild() ]),
+            query('@trackProgressMessageFade', [ animateChild() ]),
         ]),
 
         transition(':leave', [
-            query('@fadeIn', [ animateChild() ]),
+            query('@trackProgressMessageFade', [ animateChild() ]),
             animate(
                 '300ms ease-in-out',
                 style({
@@ -34,7 +34,7 @@ export const albumAnimations = [
         ]),
     ]),
 
-    trigger('fadeIn', [
+    trigger('trackProgressMessageFade', [
 
         transition(':enter', [ 
             style({ opacity: 0 }),
@@ -48,8 +48,43 @@ export const albumAnimations = [
             ),
         ]),
     ]),
+
+    trigger('playControlsFade', [
+
+        transition(':enter', [ 
+            style({ opacity: 0 }),
+            animate('300ms ease-in-out'),
+        ]),
+
+        transition(':leave', [
+            animate(
+                '50ms ease-in-out',
+                style({ opacity: 0 })
+            ),
+        ]),
+    ]),
+
+    trigger('volumeControlsFade', [
+        transition(':enter', [ 
+            style({ 
+                opacity: 0,
+                width: 0,
+            }),
+            animate('300ms 200ms ease-in-out'),
+        ]),
+
+        transition(':leave', [
+            animate(
+                '200ms ease-in-out',
+                style({
+                    opacity: 0,
+                    width: 0,
+                })
+            ),
+        ]),
+    ]),
     
-    trigger('controlsSize', [
+    trigger('playControlsSize', [
 
         state('big', style({ 'font-size': '4em' })),
 
@@ -57,11 +92,11 @@ export const albumAnimations = [
 
         transition('big => small', [
             animate('350ms ease-in-out'),
-            query('@fadeIn', [ animateChild() ]),
+            query('@playControlsFade', [ animateChild() ]),
         ]),
 
         transition('small => big', [
-            query('@fadeIn', [ animateChild() ]),
+            query('@playControlsFade', [ animateChild() ]),
             animate('350ms ease-in-out'),
         ]),
     ]),

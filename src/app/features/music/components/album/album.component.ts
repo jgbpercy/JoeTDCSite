@@ -98,6 +98,7 @@ export class AlbumComponent implements OnInit {
     public animControlsSize = 'big';
 
     public volumeHovered = 0;
+    public volumeControlsExpanded = false;
 
     constructor(public volumeService : VolumeService) { }
 
@@ -303,5 +304,17 @@ export class AlbumComponent implements OnInit {
 
     public onVolumeMouseOut() : void {
         this.volumeHovered = 0;
+    }
+
+    public toggleVolumeControls() : void {
+        this.volumeControlsExpanded = !this.volumeControlsExpanded;
+    }
+
+    public onVolMinClick() : void {
+        if (!this.volumeControlsExpanded) {
+            this.toggleVolumeControls();
+        } else {
+            this.volumeService.setVolume(this.volumeService.volumes[0]);
+        }
     }
 }

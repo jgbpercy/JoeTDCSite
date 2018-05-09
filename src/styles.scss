@@ -747,6 +747,12 @@ div.nav-wrapper {
                         align-items: center;
                         flex-direction: row;
 
+                        div.volume-increments-container {
+                            display: flex;
+                            align-items: center;
+                            flex-direction: row;
+                        }
+
                         span {
                             cursor: pointer;
                             display: flex;
@@ -773,7 +779,7 @@ div.nav-wrapper {
                         }
 
                         .vol-min {
-                            font-size: 0.7em;
+                            font-size: 0.85em;
                             margin-right: 6px;
 
                             .hovered {
@@ -783,6 +789,10 @@ div.nav-wrapper {
 
                         .vol-max {
                             font-size: 0.85em;
+                        }
+
+                        .vol-expander {
+                            font-size: 0.6em;
                         }
                     }
 
