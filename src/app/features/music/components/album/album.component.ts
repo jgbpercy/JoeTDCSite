@@ -97,8 +97,9 @@ export class AlbumComponent implements OnInit {
 
     public animControlsSize = 'big';
 
-    public volumeHovered = 0;
-    public volumeControlsExpanded = false;
+    public volumeLevelHovered = 0;
+    public volumeControlsOpened = false;
+    public volumeControlsHovered = false;
 
     constructor(public volumeService : VolumeService) { }
 
@@ -298,20 +299,25 @@ export class AlbumComponent implements OnInit {
         this.mouseDownOverTrackProgress = false;
     }
 
-    public onVolumeMouseOver(volume : number) : void {
-        this.volumeHovered = volume;
+    public onVolLevelMouseOver(volume : number) : void {
+        this.volumeLevelHovered = volume;
     }
 
-    public onVolumeMouseOut() : void {
-        this.volumeHovered = 0;
+    public onVolumeMouseOver() : void {
+        this.volumeControlsHovered = true;
+    }
+
+    public onVolumeMouseLeave() : void {
+        this.volumeLevelHovered = 0;
+        this.volumeControlsHovered = false;
     }
 
     public toggleVolumeControls() : void {
-        this.volumeControlsExpanded = !this.volumeControlsExpanded;
+        this.volumeControlsOpened = !this.volumeControlsOpened;
     }
 
     public onVolMinClick() : void {
-        if (!this.volumeControlsExpanded) {
+        if (!this.volumeControlsOpened) {
             this.toggleVolumeControls();
         } else {
             this.volumeService.setVolume(this.volumeService.volumes[0]);

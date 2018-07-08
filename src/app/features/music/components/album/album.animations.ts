@@ -70,12 +70,12 @@ export const albumAnimations = [
                 opacity: 0,
                 width: 0,
             }),
-            animate('300ms 200ms ease-in-out'),
+            animate('200ms 150ms ease-in-out'),
         ]),
 
         transition(':leave', [
             animate(
-                '200ms ease-in-out',
+                '150ms ease-in-out',
                 style({
                     opacity: 0,
                     width: 0,
