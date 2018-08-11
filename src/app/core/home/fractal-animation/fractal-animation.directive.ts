@@ -162,7 +162,7 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
             }
 
             let maxFrameLength : number;
-            if (this.canvasWidth > this.slowerFrameMaxFrameLength) {
+            if (this.canvasWidth > this.slowerFrameTargetThresholdWidth) {
                 maxFrameLength = this.fasterFrameMaxFrameLength;
             } else {
                 maxFrameLength = this.slowerFrameMaxFrameLength;

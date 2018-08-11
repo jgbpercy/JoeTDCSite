@@ -59,7 +59,9 @@ export class MainFractal extends Fractal {
 
         this.alphaChangePerFractalIteration = 0;
 
-        this.endAngleChangePerFractalIteration = 2 * Math.PI / lodash.random(3, 7, false);
+        let endAngleChangesDivisor : number;
+
+        this.endAngleChangePerFractalIteration = 2 * Math.PI / 5; // lodash.random(3, 7, false);
         
         this.growthEasing = bezier(0.25, 0.75, 0.55, 1);
         this.rotationEasing = bezier(0.8, 0.05, 0.5, 0.95);
@@ -67,6 +69,8 @@ export class MainFractal extends Fractal {
         const branches = lodash.random(3, 6, false);
 
         if (branches === 3) {
+
+            endAngleChangesDivisor = 3;
 
             this.initialLineWidth = this.lineWidthChangePerFractalIteration * 4;
 
@@ -78,6 +82,8 @@ export class MainFractal extends Fractal {
             ];
 
         } else if (branches === 4) {
+
+            endAngleChangesDivisor =  lodash.random(3, 4, false);
 
             this.initialLineWidth = this.lineWidthChangePerFractalIteration * 4;
 
@@ -91,6 +97,8 @@ export class MainFractal extends Fractal {
 
         } else if (branches === 5) {
 
+            endAngleChangesDivisor = lodash.random(3, 5, false);
+
             this.initialLineWidth = this.lineWidthChangePerFractalIteration * 3;
 
             this.startAngleChangePerFractalIteration = Math.PI / lodash.random(5.5, 8, true);
@@ -103,6 +111,8 @@ export class MainFractal extends Fractal {
             ];
 
         } else if (branches === 6) {
+
+            endAngleChangesDivisor = lodash.random(3, 6, false);
 
             this.initialLineWidth = this.lineWidthChangePerFractalIteration * 3;
 
@@ -119,6 +129,8 @@ export class MainFractal extends Fractal {
         } else {
             console.error('mainTreeBranches was an unexpected number: ' + branches);
         }
+
+        this.endAngleChangePerFractalIteration = 2 * Math.PI / endAngleChangesDivisor;
     }
     
     public initForPerformanceChecks(color : Color, canvasWidth : number, canvasHeight : number) : void {
