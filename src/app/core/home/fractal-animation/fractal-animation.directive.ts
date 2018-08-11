@@ -29,7 +29,7 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
 
     private continueAnimation = true;
 
-    private currentTimeStamp = 0;
+    private currentTimeStamp = 0; 
 
     @Input() public canvasWidth : number;
     @Input() public canvasHeight : number;

@@ -7,7 +7,7 @@ import {
     SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { DbPost, Post } from '../../models';
 import { BlogActionsService } from '../../services';

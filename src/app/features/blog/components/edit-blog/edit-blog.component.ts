@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Observable } from 'rxjs/Observable';
-import { forkJoin } from 'rxjs/observable/forkJoin';
+import { forkJoin, Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
 
 import { Post } from '../../models';
@@ -42,12 +41,12 @@ export class EditBlogComponent implements OnInit {
         forkJoin(
             idObs,
             this.blogDataService.allPosts.pipe(first()),
-            (id, posts) => ({ id, posts }),
         )
         .subscribe(
             stream => {
+                const [id, posts] = stream;
                 this.isLoading = false;
-                this.openPost(stream.posts.find(x => x.id === stream.id));
+                this.openPost(posts.find(x => x.id === id));
             }
         );
     }

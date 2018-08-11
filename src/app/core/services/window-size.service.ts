@@ -1,11 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { combineLatest } from 'rxjs/observable/combineLatest';
-import { fromEvent } from 'rxjs/observable/fromEvent';
-import { debounceTime } from 'rxjs/operators/debounceTime';
-import { distinctUntilChanged } from 'rxjs/operators/distinctUntilChanged';
-import { map } from 'rxjs/operators/map';
+import { BehaviorSubject, combineLatest, fromEvent, Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map } from 'rxjs/operators';
 
 interface WindowSize {
     width : number;
@@ -62,13 +57,13 @@ export class WindowSizeService {
         combineLatest(
             widthStream,
             heightStream,
-            (width, height) => ({ width, height }),
         )
         .pipe(
             debounceTime(100),
         )
         .subscribe(res => {
-            this._windowSizeChange.next(res);
+            const [width, height] = res;
+            this._windowSizeChange.next({ width, height });
         });
     }
 }

@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore } from 'angularfire2/firestore';
-import { Observable } from 'rxjs/Observable';
-import { fromPromise } from 'rxjs/observable/fromPromise';
+import { from, Observable } from 'rxjs';
 import { map, switchMap, take } from 'rxjs/operators';
 
-import { DbPost, Post } from '../models';
+import { DbPost } from '../models';
 import { BlogDataService } from './blog-data.service';
 
 @Injectable()
@@ -27,7 +26,7 @@ export class BlogActionsService {
         return this.dataService.postCollectionName.pipe(
             take(1),
             switchMap(postCollectionName => {
-                return fromPromise(this.afdb.collection(postCollectionName).add(post));
+                return from(this.afdb.collection(postCollectionName).add(post));
             }),
             map(documentRef => {
                 return documentRef.id;

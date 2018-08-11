@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { AngularFirestore, DocumentChangeAction } from 'angularfire2/firestore';
-import { Observable } from 'rxjs';
-import { forkJoin } from 'rxjs/observable/forkJoin';
-import { first, map } from 'rxjs/operators';
-import { switchMap } from 'rxjs/operators/switchMap';
+import { forkJoin, Observable } from 'rxjs';
+import { first, map, switchMap } from 'rxjs/operators';
 
 import { Album, DbAlbum, DbTrack, Track } from '../models';
 
@@ -39,23 +37,25 @@ export class MusicDataService {
     public getAlbum(albumId : string) : Observable<Album> {
 
         return forkJoin(
-            this.afdb.collection<DbAlbum>('albums')
-                .doc(albumId)
+            this.afdb.collection('albums')
+                .doc<DbAlbum>(albumId)
                 .snapshotChanges()
                 .pipe(first()),
             this.afdb.collection('albums')
                 .doc(albumId)
                 .collection<DbTrack>('tracks', tracks => tracks.orderBy('order'))
-                .snapshotChanges().pipe(first()),
+                .snapshotChanges()
+                .pipe(first()),
         )
         .pipe(
-            map(albumData => {
-                const dbAlbum = albumData[0].payload.data() as DbAlbum;
+            map(stream => {
+                const [albumDS, trackDCAs] = stream;
+                const dbAlbum = albumDS.payload.data();
                 return new Album(
                     dbAlbum.name,
                     dbAlbum.description,
                     dbAlbum.artSrc,
-                    MusicDataService.mapDCAsToTracks(albumData[1]),
+                    MusicDataService.mapDCAsToTracks(trackDCAs),
                     albumId,
                 );
             })

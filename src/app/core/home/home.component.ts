@@ -1,21 +1,7 @@
-import { 
-    animate, 
-    state, 
-    style, 
-    transition, 
-    trigger 
-} from '@angular/animations';
+import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
-import { delay } from 'rxjs/operators/delay';
-import { filter } from 'rxjs/operators/filter';
-import { tap } from 'rxjs/operators/tap';
-
-import {
-    EventsService,
-    LoggerChannel,
-    LoggerService,
-    WindowSizeService,
-} from 'core/services';
+import { EventsService, LoggerService, WindowSizeService } from 'core/services';
+import { delay, filter, tap } from 'rxjs/operators';
 
 @Component({
     templateUrl: './home.component.html',

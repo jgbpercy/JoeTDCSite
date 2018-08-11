@@ -1,12 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import { combineLatest } from 'rxjs/observable/combineLatest';
+import { AuthService } from 'app/core/services';
+import { BehaviorSubject, combineLatest, Observable } from 'rxjs';
 import { delay, first, map } from 'rxjs/operators';
 
-import { AuthService } from 'app/core/services';
 import { Post } from '../../models';
 import { BlogDataService } from '../../services';
 
@@ -55,11 +52,11 @@ export class PostListComponent implements OnInit {
         combineLatest(
             this.isLoaded.pipe(delay(50)),
             this.hasScroll,
-            (isLoaded, hasScroll) => ({ isLoaded, hasScroll}),
         )
         .subscribe(
             values => {
-                if (values.isLoaded && !values.hasScroll) {
+                const [isLoaded, hasScroll] = values;
+                if (isLoaded && !hasScroll) {
                     this.loadMore();
                 }
             }

@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { ActivationEnd, Router } from '@angular/router';
 import { AngularFireAuth } from 'angularfire2/auth';
 import * as fb from 'firebase/app';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
 
 import { WindowSizeService } from '../services/window-size.service';

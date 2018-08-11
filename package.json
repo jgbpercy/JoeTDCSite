@@ -8,8 +8,8 @@
     "start": "ng serve",
     "build": "ng build",
     "lint": "ng lint",
-    "builddev": "ng build --prod --env=dev",
-    "buildprod": "ng build --prod",
+    "builddev": "ng build --prod -c=staging",
+    "buildprod": "ng build --prod -c=production",
     "switchdev": "firebase use joetdc-site-dev",
     "switchprod": "firebase use joetdc-site",
     "godev": "npm run builddev && npm run switchdev && firebase deploy",
@@ -33,7 +33,6 @@
     "lodash": "4.17.10",
     "moment": "2.22.2",
     "rxjs": "6.2.2",
-    "rxjs-compat": "^6.0.0-rc.0",
     "tinymce": "4.7.4",
     "zone.js": "0.8.26"
   },
