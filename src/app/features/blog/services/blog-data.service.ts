@@ -22,7 +22,7 @@ export class BlogDataService {
 
     public postCollectionName = new BehaviorSubject<string>('');
 
-    public lastLoaded; //type = DocumentSnapshot but firestore-types is playing up
+    public lastLoaded; //type = DocumentSnapshot but firestore-types is playing up - TODO: can this be resolved now packages are updated?
     
     constructor(
         private afdb : AngularFirestore,
@@ -69,9 +69,9 @@ export class BlogDataService {
         );
     }
 
-    private static mapDocumentChangeActionsToPosts(documentChangeActions : DocumentChangeAction[]) : Post[] {
+    private static mapDocumentChangeActionsToPosts(documentChangeActions : DocumentChangeAction<DbPost>[]) : Post[] {
         return documentChangeActions.map(changeAction => {
-            const dbPost = changeAction.payload.doc.data() as DbPost;
+            const dbPost = changeAction.payload.doc.data();
             return new Post(
                 dbPost.title,
                 dbPost.date,

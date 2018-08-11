@@ -39,13 +39,13 @@ export class MusicDataService {
     public getAlbum(albumId : string) : Observable<Album> {
 
         return forkJoin(
-            this.afdb.collection('albums')
+            this.afdb.collection<DbAlbum>('albums')
                 .doc(albumId)
                 .snapshotChanges()
                 .pipe(first()),
             this.afdb.collection('albums')
                 .doc(albumId)
-                .collection('tracks', tracks => tracks.orderBy('order'))
+                .collection<DbTrack>('tracks', tracks => tracks.orderBy('order'))
                 .snapshotChanges().pipe(first()),
         )
         .pipe(
@@ -63,12 +63,12 @@ export class MusicDataService {
     }
 
     private static mapDCAsToAlbums(
-        albumDcas : DocumentChangeAction[],
-        trackDcasArray : DocumentChangeAction[][]
+        albumDcas : DocumentChangeAction<DbAlbum>[],
+        trackDcasArray : DocumentChangeAction<DbTrack>[][]
     ) : Album[] {
 
         return albumDcas.map((albumDca, index) => {
-            const dbAlbum = albumDca.payload.doc.data() as DbAlbum;
+            const dbAlbum = albumDca.payload.doc.data();
             return new Album(
                 dbAlbum.name,
                 dbAlbum.description,
@@ -80,10 +80,10 @@ export class MusicDataService {
         });
     }
 
-    private static mapDCAsToTracks(trackDcas : DocumentChangeAction[]) : Track[]  {
+    private static mapDCAsToTracks(trackDcas : DocumentChangeAction<DbTrack>[]) : Track[]  {
 
         return trackDcas.map(trackDca => {
-            const dbTrack = trackDca.payload.doc.data() as DbTrack;
+            const dbTrack = trackDca.payload.doc.data();
             return new Track(
                 dbTrack.name,
                 dbTrack.src,

@@ -162,7 +162,7 @@ export class AlbumComponent implements OnInit {
 
     public onTrackPlaying(index : number) : void {
 
-        if (this.activeTrackIndex !== undefined) {
+        if (this.activeTrackIndex !== undefined && this.activeTrackIndex !== index) {
             this.stopCommands[this.activeTrackIndex].next();
         }
 
