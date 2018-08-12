@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { DialogService } from 'app/core/services';
 
+import { Dialog } from './dialog';
 import {
     ScrollNotifierDirective,
 } from './scroll-notifier/scroll-notifier.directive';
@@ -31,7 +31,7 @@ import { TinyMceComponent } from './tiny-mce/tiny-mce.component';
         PortalModule,
     ],
     providers: [
-        DialogService,
+        Dialog,
     ]
 })
 export class SharedModule { }
