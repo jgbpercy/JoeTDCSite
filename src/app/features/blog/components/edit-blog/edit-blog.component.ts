@@ -36,7 +36,7 @@ export class EditBlogComponent implements OnInit {
         this.post = new Post();
     }
 
-    private onAddPost(idObs : Observable<string>) : void {
+    public onAddPost(idObs : Observable<string>) : void {
 
         forkJoin(
             idObs,
@@ -51,7 +51,7 @@ export class EditBlogComponent implements OnInit {
         );
     }
 
-    private onDeletePost() : void {
+    public onDeletePost() : void {
         this.post = undefined;
     }
 }

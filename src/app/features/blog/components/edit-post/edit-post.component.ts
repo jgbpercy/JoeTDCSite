@@ -7,6 +7,10 @@ import {
     SimpleChanges,
 } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { DialogService } from 'app/core/services';
+import {
+    ConfirmDeleteDialogComponent,
+} from 'app/features/blog/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import { Observable } from 'rxjs';
 
 import { DbPost, Post } from '../../models';
@@ -30,6 +34,7 @@ export class EditPostComponent implements OnChanges {
     constructor(
         private fb : FormBuilder,
         private blogActionService : BlogActionsService,
+        private dialogService : DialogService,
     ) { }
 
     public ngOnChanges(changes : SimpleChanges) : void {
@@ -74,7 +79,8 @@ export class EditPostComponent implements OnChanges {
     }
 
     public delete() {
-        this.deletePost.emit();
-        this.blogActionService.deletePost(this.post.id);
+        this.dialogService.open(ConfirmDeleteDialogComponent);
+        // this.deletePost.emit();
+        // this.blogActionService.deletePost(this.post.id);
     }
 }

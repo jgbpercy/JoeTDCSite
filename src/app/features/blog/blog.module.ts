@@ -1,18 +1,16 @@
 import { NgModule } from '@angular/core';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { ReactiveFormsModule } from '@angular/forms';
 import { SharedModule } from 'shared/shared.module';
+
 import { BlogRoutingModule } from './blog-routing.module';
-import { 
+import {
+    ConfirmDeleteDialogComponent,
     EditBlogComponent,
     EditPostComponent,
     PostComponent,
     PostListComponent,
 } from './components';
-import {
-    BlogActionsService,
-    BlogDataService,
-} from './services';
+import { BlogActionsService, BlogDataService } from './services';
 
 @NgModule({
     imports: [
@@ -25,10 +23,14 @@ import {
         PostComponent,
         EditBlogComponent,
         EditPostComponent,
+        ConfirmDeleteDialogComponent,
     ],
     providers: [
         BlogDataService,
         BlogActionsService,
+    ],
+    entryComponents:  [
+        ConfirmDeleteDialogComponent,
     ]
 })
 export class BlogModule { }
