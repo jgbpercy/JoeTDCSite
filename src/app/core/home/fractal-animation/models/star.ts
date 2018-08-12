@@ -11,9 +11,9 @@ export class Star extends Fractal {
         return this.fadeInTimePassed >= this.timeToFadeIn;
     }
 
-    public drawCachedToBackground = false;
+    public drawIsCachedToBackground = false;
 
-    private timeToTwinkle = 0.45;
+    private timeToTwinkle = 0.5;
     private twinkleTimePassed = 0;
 
     public twinkling = false;
@@ -105,11 +105,10 @@ export class Star extends Fractal {
                 }
             } else {
 
-                this.color.a = this.normalAlpha;
-
-                const twinkleChangeInDeltaTime = 1 - Math.pow(1 - this.twinkleChancePerSecond, deltaTime);
+                const twinkleChanceInDeltaTime = 1 - Math.pow(1 - this.twinkleChancePerSecond, Math.min(deltaTime, 0.07));
     
-                if (lodash.random(0, 1, true) < twinkleChangeInDeltaTime) {
+                if (lodash.random(0, 1, true) < twinkleChanceInDeltaTime) {
+                    this.color.a = 0;
                     this.twinkling = true;
                 }
             }

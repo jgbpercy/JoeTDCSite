@@ -95,6 +95,8 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
 
         context.lineCap = 'round';
         context.lineJoin = 'round';
+        cachedBackgroundContext.lineCap = 'round';
+        cachedBackgroundContext.lineJoin = 'round';
 
         let donePerformanceCheck = false;
         let doingPerformanceCheck = false;
@@ -299,6 +301,9 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
     
                     cachedBackgroundContext.fillStyle = currentBackgroundColor.toContextStyleString();
                     cachedBackgroundContext.fillRect(0, 0, cachedBackgroundCanvas.width, cachedBackgroundCanvas.height);    
+                } else if (!mainFractalCompleteAndCachedToBackground) {
+                    cachedBackgroundContext.fillStyle = (new Color(0, 0, 0, 1)).toContextStyleString();
+                    cachedBackgroundContext.fillRect(0, 0, cachedBackgroundCanvas.width, cachedBackgroundCanvas.height);
                 }
     
                 if (mainFractal.animationComplete && !mainFractalCompleteAndCachedToBackground) {
@@ -307,19 +312,21 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
                     this.eventsService.emit('Main Fractal Animation Done', new EventArgs(this));
                 }
     
-                this.stars.filter(star => star.fadedIn && !star.drawCachedToBackground).forEach(star => {
-                    star.drawNonTwinkling(cachedBackgroundContext);
-                    star.drawCachedToBackground = true;
-                });
-    
-                this.trees.filter(tree => tree.growthDone && !tree.drawCachedToBackground).forEach(tree => {
+                if (mainFractalCompleteAndCachedToBackground) {
+                    this.stars.filter(star => star.fadedIn && !star.drawIsCachedToBackground).forEach(star => {
+                        star.drawNonTwinkling(cachedBackgroundContext);
+                        star.drawIsCachedToBackground = true;
+                    });
+                }
+                
+                this.trees.filter(tree => tree.growthDone && !tree.drawIsCachedToBackground).forEach(tree => {
                     tree.draw(cachedBackgroundContext);
-                    tree.drawCachedToBackground = true;
+                    tree.drawIsCachedToBackground = true;
                 });
     
-                this.bushes.filter(bush => bush.growthDone && !bush.drawCachedToBackground).forEach(bush => {
+                this.bushes.filter(bush => bush.growthDone && !bush.drawIsCachedToBackground).forEach(bush => {
                     bush.draw(cachedBackgroundContext);
-                    bush.drawCachedToBackground = true;
+                    bush.drawIsCachedToBackground = true;
                 });
     
                 context.drawImage(cachedBackgroundCanvas, 0, 0);
@@ -333,7 +340,7 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
                     mainFractal.draw(context);
                 }
     
-                this.stars.filter(star => !star.drawCachedToBackground || star.twinkling).forEach(star => {
+                this.stars.filter(star => !star.drawIsCachedToBackground || star.twinkling).forEach(star => {
                     star.draw(context);
                 });
     
@@ -371,7 +378,7 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
             });
 
             currentIntervalBoundary += spawnIntervalWidth;
-        } while ( currentIntervalBoundary < width);
+        } while ( currentIntervalBoundary + spawnIntervalWidth <= width);
 
         return spawnIntervals;
     }

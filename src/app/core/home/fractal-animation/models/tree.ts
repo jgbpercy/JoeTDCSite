@@ -2,8 +2,6 @@ import * as bezier from 'bezier-easing';
 import * as lodash from 'lodash';
 
 import { Fractal } from './fractal';
-import { Vector2 } from './vector-2';
-import { WindTargetBuffer } from './wind-target-buffer';
 
 export class SpawnInterval {
     public min : number;
@@ -17,7 +15,7 @@ export class Tree extends Fractal {
     protected fractionGrowthDone = 0;
     public growthDone = false;
 
-    public drawCachedToBackground = false;
+    public drawIsCachedToBackground = false;
 
     protected growthEasing : (fraction : number) => number;
     
