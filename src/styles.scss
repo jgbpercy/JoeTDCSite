@@ -4,6 +4,7 @@
 
 $nav-height: 46px;
 $nav-background-height: 76px;
+$nav-background-height-mobile: 40px;
 $mobile-nav-height: 30px;
 
 $std-text-color: rgb(170, 155, 150);
@@ -190,6 +191,10 @@ div.nav-wrapper {
     z-index: 1;
     border-bottom-width: 20px;
     height: $nav-background-height;
+
+    @media only screen and (max-width: 700px) {
+        height: $nav-background-height-mobile;
+    }
 
     &.transparent-nav-wrapper {
         background: transparent;
@@ -859,8 +864,10 @@ div.nav-wrapper {
                             align-items: center;
                             @include std-transition();                            
                             
-                            &.even {
-                                display: none;
+                            @media only screen and (max-width: 700px) {
+                                &.even {
+                                    display: none;
+                                }
                             }
 
                             svg {
