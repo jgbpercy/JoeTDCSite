@@ -54,7 +54,11 @@ $std-border-radius: 8px;
 
 @mixin std-content-inner-wrapper() {
     margin: 1em auto 0 auto;
-    max-width: 1024px;
+    max-width: 1012px;
+
+    @media only screen and (max-width: 1024px) {
+        padding: 0 12px;
+    }
 }
 
 @mixin std-page-title() {
@@ -288,6 +292,10 @@ div.nav-wrapper {
     border-bottom-right-radius: 0px;
     border-top-right-radius: 0px;
     border: none;
+
+    @media only screen and (max-width: 700px) {
+        font-size: 0.9em;
+    }
 
     &:hover {
         @include std-button-hover();
@@ -554,6 +562,11 @@ div.nav-wrapper {
             max-width: 85%;
             flex: 1;
 
+            @media only screen and (max-width: 700px) {
+                font-size: 1.2em;
+                max-width: 70%;
+            }
+
             &:hover {
                 color: $std-header-hover-color;
             }
@@ -564,6 +577,11 @@ div.nav-wrapper {
             margin: 0.6em 0;
             min-width: 15%;
             flex: 0;
+
+            @media only screen and (max-width: 700px) {
+                min-width: 30%;
+                font-size: 0.8em;
+            }
 
             a {
                 margin-right: 10px;
@@ -680,11 +698,20 @@ div.nav-wrapper {
                     &:hover {
                         color: $std-link-hover-color;
                     }
+
+                    @media only screen and (max-width: 700px) {
+                        font-size: 1.2em;
+                    }
+
                 }
 
                 .album-title {
                     text-align: center;
                     color: $std-header-text-color;
+
+                    @media only screen and (max-width: 700px) {
+                        font-size: 1.2em;
+                    }
                 }
             }
 
@@ -696,10 +723,19 @@ div.nav-wrapper {
                 display: flex;
                 margin-bottom: 20px;
 
+                @media only screen and (max-width: 700px) {
+                    flex-direction: column; 
+                }
+
                 div.album-art-container {
                     flex: 1;
                     margin-right: 2%;
                     max-width: 49%;
+
+                    @media only screen and (max-width: 700px) {
+                        max-width: 100%;
+                        margin: 12px 15%;
+                    }
 
                     .album-art {
                         width: 100%;
@@ -713,6 +749,10 @@ div.nav-wrapper {
                     display: flex;
                     align-items: center;
                     width: 49%;
+
+                    @media only screen and (max-width: 700px) {
+                        width: 100%;
+                    }
 
                     .track-list {
                         width: 100%;
@@ -781,6 +821,10 @@ div.nav-wrapper {
                     height: 42px;
                     color: $deeph-text-color;
                     cursor: pointer;
+
+                    @media only screen and (max-width: 700px) {
+                        font-size: 1em;
+                    }
                 }
 
                 .controls-row {
@@ -789,6 +833,10 @@ div.nav-wrapper {
                     align-items: flex-end;
                     flex-direction: row;
                     color: $std-link-color;
+
+                    @media only screen and (max-width: 700px) {
+                        font-size: 0.7em;
+                    }
 
                     .volume-controls {
                         flex: 1;
@@ -811,8 +859,17 @@ div.nav-wrapper {
                             align-items: center;
                             @include std-transition();                            
                             
+                            &.even {
+                                display: none;
+                            }
+
                             svg {
                                 margin-right: 6px;
+
+                                @media only screen and (max-width: 700px) {
+                                    margin-right: 3px;
+                                }
+
                             }
 
                             &.hovered {
@@ -833,6 +890,10 @@ div.nav-wrapper {
                             font-size: 0.85em;
                             margin-right: 6px;
 
+                            @media only screen and (max-width: 700px) {
+                                margin-right: 3px;
+                            }
+
                             .hovered {
                                 color: $std-link-hover-color;
                             }
@@ -847,17 +908,21 @@ div.nav-wrapper {
                         }
                     }
 
+                        
                     .play-controls {
-                        font-size: 2em;
                         flex: 1;
+                        font-size: 2em;
 
                         span {
-                            margin-right: 10px;
-                            margin-left: 10px;
+                            margin: 0 10px;
                             cursor: pointer;
                             color: $std-link-color;
-                            @include std-transition();                            
-        
+                            @include std-transition();       
+                            
+                            @media only screen and (max-width: 700px) {
+                                margin: 0 2px;
+                            }
+
                             &:hover {
                                 color: $std-link-hover-color;
                             }

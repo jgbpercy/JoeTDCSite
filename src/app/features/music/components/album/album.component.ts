@@ -303,8 +303,11 @@ export class AlbumComponent implements OnInit {
         this.volumeLevelHovered = volume;
     }
 
-    public onVolumeMouseOver() : void {
-        this.volumeControlsHovered = true;
+    // tslint:disable-next-line:no-any
+    public onVolumeMouseEnter(event : any) : void {
+        if (!event || !event.sourceCapabilities || !event.sourceCapabilities.firesTouchEvents) {
+            this.volumeControlsHovered = true;
+        }
     }
 
     public onVolumeMouseLeave() : void {
