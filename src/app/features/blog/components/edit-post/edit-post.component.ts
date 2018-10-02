@@ -1,20 +1,13 @@
-import {
-    Component,
-    EventEmitter,
-    Input,
-    OnChanges,
-    Output,
-    SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import {
-    ConfirmDeleteDialogComponent,
-} from 'app/features/blog/components/confirm-delete-dialog/confirm-delete-dialog.component';
 import { Dialog } from 'app/shared/dialog';
 import { Observable } from 'rxjs';
 
 import { DbPost, Post } from '../../models';
 import { BlogActionsService } from '../../services';
+import {
+    ConfirmDeleteDialogComponent,
+} from '../confirm-delete-dialog/confirm-delete-dialog.component';
 
 @Component({
     selector: 'jtdc-edit-post',

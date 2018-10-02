@@ -54,7 +54,7 @@ $std-border-radius: 8px;
 
 @mixin std-content-inner-wrapper() {
     margin: 1em auto 0 auto;
-    width: 1024px;
+    max-width: 1024px;
 }
 
 @mixin std-page-title() {
@@ -498,8 +498,17 @@ div.nav-wrapper {
     overflow-y: scroll;
     max-height: 100%;
 
+
     .post-list-inner-wrapper {
         @include std-content-inner-wrapper();
+
+        &.single-post-page-wrapper {
+            padding-top: 60px;
+
+            a {
+                cursor: pointer;
+            }
+        }
         
         .blog-header {
             text-align: center;
@@ -555,6 +564,10 @@ div.nav-wrapper {
             margin: 0.6em 0;
             min-width: 15%;
             flex: 0;
+
+            a {
+                margin-right: 10px;
+            }
         }
     }
 }
@@ -636,6 +649,11 @@ div.nav-wrapper {
 
         &.single-album-page-wrapper {
             padding-top: 30px;
+
+            a {
+                cursor: pointer;
+                font-size: 1.1em;
+            }
         }
 
         h1.music-title {

@@ -11,6 +11,8 @@ export class PostComponent {
 
     @Input() public post : Post;
 
+    @Input() public showSinglePageLink : boolean;
+
     public showContent = true;
 
     constructor(

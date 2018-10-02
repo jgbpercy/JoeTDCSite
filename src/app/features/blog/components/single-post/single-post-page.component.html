@@ -1,0 +1,9 @@
+<div class="post-list-wrapper">
+    <div class="post-list-inner-wrapper single-post-page-wrapper">
+        <jtdc-post *ngIf="!isLoading" [post]="post" [showSinglePageLink]="false"></jtdc-post>
+
+        <div class="loading" *ngIf="isLoading"><i class="fas fa-spinner fa-spin"></i></div>
+
+        <a (click)="back()"><i class="fas fa-arrow-left"></i> Back to all posts</a>
+    </div>
+</div>

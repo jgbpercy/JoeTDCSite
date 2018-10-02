@@ -9,6 +9,7 @@ import {
     EditPostComponent,
     PostComponent,
     PostListComponent,
+    SinglePostPageComponent,
 } from './components';
 import { BlogActionsService, BlogDataService } from './services';
 
@@ -24,6 +25,7 @@ import { BlogActionsService, BlogDataService } from './services';
         EditBlogComponent,
         EditPostComponent,
         ConfirmDeleteDialogComponent,
+        SinglePostPageComponent,
     ],
     providers: [
         BlogDataService,

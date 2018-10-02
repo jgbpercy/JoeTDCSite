@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { EditBlogComponent, PostListComponent } from './components';
+import { EditBlogComponent, PostListComponent, SinglePostPageComponent } from './components';
 
 const routes : Routes = [
     {
@@ -11,6 +11,10 @@ const routes : Routes = [
     {
         path: 'edit',
         component: EditBlogComponent,
+    },
+    {
+        path: ':postId',
+        component: SinglePostPageComponent,
     }
 ];
 

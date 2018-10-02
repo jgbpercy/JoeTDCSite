@@ -1,10 +1,5 @@
-import { Directive, ElementRef, Input, OnDestroy, OnInit } from '@angular/core';
-import {
-    EventArgs,
-    EventsService,
-    LoggerChannel,
-    LoggerService,
-} from 'core/services';
+import { Directive, ElementRef, Input, NgZone, OnDestroy, OnInit } from '@angular/core';
+import { EventArgs, EventsService, LoggerChannel, LoggerService } from 'core/services';
 import * as lodash from 'lodash';
 
 import {
@@ -70,6 +65,7 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
         private element : ElementRef,
         private eventsService : EventsService,
         private logger : LoggerService,
+        private ngZone : NgZone,
     ) {
         this.canvas = this.element.nativeElement as HTMLCanvasElement;
     }
@@ -149,6 +145,7 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
             // Clear initial slow frames
             if (!donePerformanceCheck && !doingPerformanceCheck && deltaTime > 0.035) {
                 this.logger.log(PerfLogChannel, 'Pre perf check, clearing slow frames, deltaTime: ' + deltaTime);
+                // this.ngZone.runOutsideAngular(() => requestAnimationFrame(doFrame));
                 window.requestAnimationFrame(doFrame);
                 return;
             }
@@ -159,6 +156,7 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
                 doingPerformanceCheck = true;
                 mainFractal.initForPerformanceChecks(this.initialBackgroundColor, this.canvasWidth, this.canvasHeight);
                 mainFractal.draw(context);
+                // this.ngZone.runOutsideAngular(() => requestAnimationFrame(doFrame));
                 window.requestAnimationFrame(doFrame);
                 return;
             }
@@ -357,10 +355,12 @@ export class FractalAnimationDirective implements OnInit, OnDestroy {
             }
 
             if (this.continueAnimation) {
+                // this.ngZone.runOutsideAngular(() => requestAnimationFrame(doFrame));
                 window.requestAnimationFrame(doFrame);
             }
         };
-
+        
+        // this.ngZone.runOutsideAngular(() => requestAnimationFrame(doFrame));
         window.requestAnimationFrame(doFrame);
     }
 

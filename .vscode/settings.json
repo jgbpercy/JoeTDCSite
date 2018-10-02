@@ -1,11 +1,13 @@
 {
-    "typescriptHero.imports.grouping": [
-        "/@angular/",
-        "rxjs",
-        "Plains",
-        "Modules",
-        "/app/",
-        "/environment/",
-        "Workspace"
-    ],
+  "typescriptHero.imports.grouping": [
+    "/@angular/",
+    "rxjs",
+    "Plains",
+    "Modules",
+    "/app/",
+    "/environment/",
+    "Workspace"
+  ],
+  "typescriptHero.imports.organizeOnSave": true,
+  "editor.formatOnSave": false
 }

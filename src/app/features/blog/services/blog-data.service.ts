@@ -1,17 +1,7 @@
 import { Injectable } from '@angular/core';
-import {
-    AngularFirestore,
-    DocumentChangeAction,
-    QueryFn,
-} from 'angularfire2/firestore';
+import { AngularFirestore, DocumentChangeAction, QueryFn } from 'angularfire2/firestore';
 import { BehaviorSubject, Observable } from 'rxjs';
-import {
-    distinctUntilChanged,
-    map,
-    switchMap,
-    take,
-    tap,
-} from 'rxjs/operators';
+import { distinctUntilChanged, map, switchMap, take, tap } from 'rxjs/operators';
 
 import { DbPost, Post } from '../models';
 
@@ -69,15 +59,33 @@ export class BlogDataService {
         );
     }
 
+    public getPost(id : string) : Observable<Post> {
+        return this.postCollectionName.pipe(
+            switchMap(postCollectionName => {
+                return this.afdb.collection(postCollectionName).doc<DbPost>(id).snapshotChanges();
+            }),
+            map(ds => {
+                const dbPost = ds.payload.data();
+                return new Post(
+                    dbPost.title,
+                    dbPost.date,
+                    dbPost.content,
+                    ds.payload.id,
+                );
+            }),
+            take(1),
+        );
+    }
+
     private static mapDocumentChangeActionsToPosts(documentChangeActions : DocumentChangeAction<DbPost>[]) : Post[] {
-        return documentChangeActions.map(changeAction => {
-            const dbPost = changeAction.payload.doc.data();
+        return documentChangeActions.map(dca => {
+            const dbPost = dca.payload.doc.data();
             return new Post(
                 dbPost.title,
                 dbPost.date,
                 dbPost.content,
-                changeAction.payload.doc.id,
+                dca.payload.doc.id,
             );
         });
     }
-}
+ }
