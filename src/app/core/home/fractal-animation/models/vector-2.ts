@@ -1,4 +1,4 @@
-export class Vector2 {
-    public x : number;
-    public y : number;
+export interface Vector2 {
+  x: number;
+  y: number;
 }

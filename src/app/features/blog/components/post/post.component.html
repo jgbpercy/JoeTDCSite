@@ -1,17 +1,18 @@
 <div class="post">
-    <div class="post-header-row">
-        <h2 class="post-header" (click)="toggleShow()">{{post.title}}</h2>
-        <div class="post-header-date-container">
-            <a [routerLink]="[ './', post.id ]"
-                *ngIf="showSinglePageLink">
-                <i class="fas fa-link"></i>
-            </a>
-            {{post.viewFormattedDate}}
-        </div>
+  <div class="post-header-row">
+    <h2 class="post-header"
+        (click)="toggleShow()">{{post.title}}</h2>
+    <div class="post-header-date-container">
+      <a [routerLink]="[ './', post.id ]"
+         *ngIf="showSinglePageLink">
+        <i class="fas fa-link"></i>
+      </a>
+      {{post.viewFormattedDate}}
     </div>
-    <ng-container *ngIf="showContent">
-        <ng-container *ngFor="let contentChunk of post.getSanitizedContentWithVideos(domSanitizer)">
-            <div [innerHTML]="contentChunk"></div>
-        </ng-container>
+  </div>
+  <ng-container *ngIf="showContent">
+    <ng-container *ngFor="let contentChunk of post.getSanitizedContentWithVideos(domSanitizer)">
+      <div [innerHTML]="contentChunk"></div>
     </ng-container>
+  </ng-container>
 </div>

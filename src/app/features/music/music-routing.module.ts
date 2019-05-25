@@ -3,19 +3,19 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { MusicComponent, SingleAlbumPageComponent } from './components';
 
-const routes : Routes = [
-    {
-        path: '',
-        component: MusicComponent,
-    },
-    {
-        path: 'album/:albumId',
-        component: SingleAlbumPageComponent,
-    }
+const routes: Routes = [
+  {
+    path: '',
+    component: MusicComponent,
+  },
+  {
+    path: 'album/:albumId',
+    component: SingleAlbumPageComponent,
+  },
 ];
 
 @NgModule({
-    imports: [RouterModule.forChild(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class MusicRoutingModule { }
+export class MusicRoutingModule {}

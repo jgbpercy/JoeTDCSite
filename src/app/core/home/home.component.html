@@ -1,70 +1,70 @@
 <div class="home-heading-section">
-    <h1 *ngIf="showTitleAndWhoButton" class="home-title">JoeTDC</h1>
+  <h1 *ngIf="showTitleAndWhoButton"
+      class="home-title">JoeTDC</h1>
 
-    <div *ngIf="showTitleAndWhoButton" class="who-button-container">
-        <button 
-            class="who-button"
+  <div *ngIf="showTitleAndWhoButton"
+       class="who-button-container">
+    <button class="who-button"
             (click)="toggleWhoContent()">
-            Who?
-        </button>
-    </div>
+      Who?
+    </button>
+  </div>
 </div>
 
-<canvas
-    *ngIf="showAnimation"
-    class="fractal-animation"
-    jtdcFractalAnimation
-    [canvasWidth]="canvasWidth"
-    [canvasHeight]="canvasHeight"
-    [mainFractalRadius]="mainFractalRadius"
-    [mainFractalCenterY]="mainFractalCenterY">
+<canvas *ngIf="showAnimation"
+        class="fractal-animation"
+        jtdcFractalAnimation
+        [canvasWidth]="canvasWidth"
+        [canvasHeight]="canvasHeight"
+        [mainFractalRadius]="mainFractalRadius"
+        [mainFractalCenterY]="mainFractalCenterY">
 </canvas>
 
-<div 
-    *ngIf="showWotButton" 
-    class="wot-button-container"
-    [style.top.px]="mainFractalCenterY - wotButtonRadius">
-    <button 
-        class="wot-button"
-        [style.border-radius.px]="wotButtonRadius"
-        [style.width.px]="wotButtonRadius * 2"
-        [style.height.px]="wotButtonRadius * 2"
-        (click)="toggleWotContent()">
-        ?
-    </button>
+<div *ngIf="showWotButton"
+     class="wot-button-container"
+     [style.top.px]="mainFractalCenterY - wotButtonRadius">
+  <button class="wot-button"
+          [style.border-radius.px]="wotButtonRadius"
+          [style.width.px]="wotButtonRadius * 2"
+          [style.height.px]="wotButtonRadius * 2"
+          (click)="toggleWotContent()">
+    ?
+  </button>
 </div>
 
-<div
-    *ngIf="showWhoContent"
-    class="who-content-wrapper"
-    [@whoContentIsShown]="true"
-    [style.left.px]="whoContentLeft"
-    [style.width.px]="whoContentWidth">
-    <div 
-        class="who-content"
-        [style.top.px]="canvasHeight / 2">
-        <p>Hello, I'm Joseph, aka Joe. I write code, make websites, sometimes create music. Some things that I have made or am making:</p>
-        <ul>
-            <li>This website - <a href="https://github.com/jgbpercy/JoeTDCSite" target="_blank"><i class="fab fa-sm fa-github"></i> source</a></li>
-            <li>A video game - <a routerLink="/video-gaem"><i class="fas fa-sm fa-align-justify"></i> blog</a> / <a href="https://github.com/jgbpercy/GrimoireTD" target="_blank"><i class="fab fa-sm fa-github"></i> source</a> / <a href="https://www.youtube.com/playlist?list=PL1BfrVN5gAzy3q54w1CaRPDoZ95iaPMMF" target="_blank"><i class="fab fa-sm fa-youtube"></i> videos</a></li>
-            <li>Two sucessful websites with revision materials for surgical trainees - <a href="https://orthopaedicprep.com/question-bank-free/" target="_blank"><i class="fas fa-sm fa-external-link-alt"></i> OrthoPrep</a> and <a href="https://coresurgicalprep.com/question-bank-free/" target="_blank"><i class="fas fa-sm fa-external-link-alt"></i> CorePrep</a> (closed source)</li>
-            <li>Some electronic <a routerLink="/music"> music</a></li>
-        </ul>
-        <p>The Technicolour Death Cult, aka the TDC, is everyone else in the world, especially those that make it possible or easier to make things. They don't know they are the Technicolour Death Cult, but they are.</p>
-    </div>
+<div *ngIf="showWhoContent"
+     class="who-content-wrapper"
+     [@whoContentIsShown]="true"
+     [style.left.px]="whoContentLeft"
+     [style.width.px]="whoContentWidth">
+  <div class="who-content"
+       [style.top.px]="canvasHeight / 2">
+    <p>Hello, I'm Joseph, aka Joe. I write code, make websites, sometimes create music. Some things that I have made or am making:</p>
+    <ul>
+      <li>This website - <a href="https://github.com/jgbpercy/JoeTDCSite"
+           target="_blank"><i class="fab fa-sm fa-github"></i> source</a></li>
+      <li>A video game - <a routerLink="/video-gaem"><i class="fas fa-sm fa-align-justify"></i> blog</a> / <a href="https://github.com/jgbpercy/GrimoireTD"
+           target="_blank"><i class="fab fa-sm fa-github"></i> source</a> / <a href="https://www.youtube.com/playlist?list=PL1BfrVN5gAzy3q54w1CaRPDoZ95iaPMMF"
+           target="_blank"><i class="fab fa-sm fa-youtube"></i> videos</a></li>
+      <li>Two sucessful websites with revision materials for surgical trainees - <a href="https://orthopaedicprep.com/question-bank-free/"
+           target="_blank"><i class="fas fa-sm fa-external-link-alt"></i> OrthoPrep</a> and <a href="https://coresurgicalprep.com/question-bank-free/"
+           target="_blank"><i class="fas fa-sm fa-external-link-alt"></i> CorePrep</a> (closed source)</li>
+      <li>Some electronic <a routerLink="/music"> music</a></li>
+    </ul>
+    <p>The Technicolour Death Cult, aka the TDC, is everyone else in the world, especially those that make it possible or easier to make things. They don't know they are the Technicolour Death Cult, but they are.</p>
+  </div>
 </div>
 
-<div
-    *ngIf="showWotContent"
-    class="wot-content-wrapper"
-    [@wotContentIsShown]="true"
-    [style.left.px]="wotContentLeft"
-    [style.width.px]="wotContentWidth">
-    <div 
-        class="wot-content"
-        [style.top.px]="canvasHeight / 2">
-        <p><span class="wot-heading">WOT?</span> Procedural fractal animation on HTML5 canvas.</p>
-        <p><span class="wot-heading">WAI?</span> I like fractals; they are terribly profound.</p>
-        <p><span class="wot-heading">HAO?</span> The source for this site is on <a href="https://github.com/jgbpercy/JoeTDCSite" target="_blank"><i class="fab fa-sm fa-github"></i> GitHub</a>.</p>
-    </div>
+<div *ngIf="showWotContent"
+     class="wot-content-wrapper"
+     [@wotContentIsShown]="true"
+     [style.left.px]="wotContentLeft"
+     [style.width.px]="wotContentWidth">
+  <div class="wot-content"
+       [style.top.px]="canvasHeight / 2">
+    <p><span class="wot-heading">WOT?</span> Procedural fractal animation on HTML5 canvas.</p>
+    <p><span class="wot-heading">WAI?</span> I like fractals; they are terribly profound.</p>
+    <p><span class="wot-heading">HAO?</span> The source for this site is on <a href="https://github.com/jgbpercy/JoeTDCSite"
+         target="_blank"><i class="fab fa-sm fa-github"></i> GitHub</a>.</p>
+  </div>
 </div>

@@ -1,13 +1,14 @@
 <div class="music-wrapper">
-    <div class="music-inner-wrapper single-album-page-wrapper">
+  <div class="music-inner-wrapper single-album-page-wrapper">
 
-        <jtdc-album *ngIf="!isLoading"
-            [album]="album"
-            [showSinglePageLink]="false">
-        </jtdc-album>
+    <jtdc-album *ngIf="!isLoading"
+                [album]="album"
+                [showSinglePageLink]="false">
+    </jtdc-album>
 
-        <div class="loading" *ngIf="isLoading"><i class="fas fa-spinner fa-spin"></i></div>
+    <div class="loading"
+         *ngIf="isLoading"><i class="fas fa-spinner fa-spin"></i></div>
 
-        <a [routerLink]="'/music'"><i class="fas fa-arrow-left"></i> Back to all music</a>
-    </div>
+    <a [routerLink]="'/music'"><i class="fas fa-arrow-left"></i> Back to all music</a>
+  </div>
 </div>

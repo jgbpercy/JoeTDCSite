@@ -2,54 +2,43 @@ import { Component, OnInit } from '@angular/core';
 import { MusicDataService } from 'app/features/music/services';
 import { Subject } from 'rxjs';
 import { first } from 'rxjs/operators';
-
 import { Album } from '../../models';
 
 @Component({
-    templateUrl: './music.component.html',
-    styleUrls: ['./music.component.css']
+  templateUrl: './music.component.html',
 })
-export class MusicComponent implements OnInit { 
+export class MusicComponent implements OnInit {
+  isLoading = true;
 
-    public isLoading = true;
+  stopCommands = new Array<Subject<void>>();
 
-    public stopCommands = new Array<Subject<void>>();
+  private currentlyPlayingAlbumIndex?: number;
 
-    private currentlyPlayingAlbumIndex : number;
+  constructor(private dataService: MusicDataService) {}
 
-    constructor(
-        private dataService : MusicDataService,
-    ) { }
+  albums?: Album[];
 
-    public albums : Album[];
+  ngOnInit(): void {
+    this.dataService.allAlbums.pipe(first()).subscribe(albums => {
+      this.albums = albums;
 
-    public ngOnInit() : void {
+      albums.forEach(album => {
+        this.stopCommands.push(new Subject<void>());
+      });
 
-        this.dataService.allAlbums.pipe(first()).subscribe(
-            albums => {
+      this.isLoading = false;
+    });
+  }
 
-                this.albums = albums;
-
-                albums.forEach(album => {
-                    this.stopCommands.push(new Subject<void>());
-                });
-
-                this.isLoading = false;
-            }
-        );
+  onPlayingAlbum(index: number): void {
+    if (this.currentlyPlayingAlbumIndex !== undefined) {
+      this.stopCommands[this.currentlyPlayingAlbumIndex].next();
     }
 
-    public onPlayingAlbum(index : number) {
+    this.currentlyPlayingAlbumIndex = index;
+  }
 
-        if (this.currentlyPlayingAlbumIndex !== undefined) {
-            this.stopCommands[this.currentlyPlayingAlbumIndex].next();
-        }
-
-        this.currentlyPlayingAlbumIndex = index;
-    }
-
-    public onFinishedAlbum() {
-
-        this.currentlyPlayingAlbumIndex = undefined;
-    }
+  onFinishedAlbum(): void {
+    this.currentlyPlayingAlbumIndex = undefined;
+  }
 }

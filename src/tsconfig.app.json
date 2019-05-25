@@ -1,18 +1,18 @@
 {
-    "extends": "../tsconfig.json",
-    "compilerOptions": {
-        "outDir": "../out-tsc/app",
-        "module": "es2015",
-        "types": [],
-        "paths": {
-            "app/*": ["src/app/*"],
-            "core/*": ["src/app/core/*"],
-            "shared/*": ["src/app/shared/*"],
-            "environment": ["src/environments/environment"]
-        }
-    },
-    "exclude": [
-        "test.ts",
-        "**/*.spec.ts"
-    ]
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../out-tsc/app",
+    "module": "es2015",
+    "types": [],
+    "paths": {
+      "app/*": ["src/app/*"],
+      "core/*": ["src/app/core/*"],
+      "shared/*": ["src/app/shared/*"],
+      "environment": ["src/environments/environment"]
+    }
+  },
+  "exclude": [
+    "test.ts",
+    "**/*.spec.ts"
+  ]
 }

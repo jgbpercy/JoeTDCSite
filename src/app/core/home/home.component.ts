@@ -1,154 +1,110 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { Component, OnInit } from '@angular/core';
-import { EventsService, LoggerService, WindowSizeService } from 'core/services';
+import { EventsService, WindowSizeService } from 'core/services';
 import { delay, filter, tap } from 'rxjs/operators';
+import { homeAnimations } from './home.component.anim';
 
 @Component({
-    templateUrl: './home.component.html',
-    styleUrls: ['./home.component.css'],
-    animations: [
-        trigger('wotContentIsShown', [
-            transition(':enter', [
-                style({
-                    left: 'calc(50% + 80px)',
-                    opacity: 0,
-                }),
-                animate('0.2s 0.25s ease-in-out')
-            ]),
-            transition(':leave', [
-                animate('0.2s 0s ease-in-out',
-                    // tslint:disable-next-line:align
-                    style({
-                        left: 'calc(50% + 80px)',
-                        opacity: 0,
-                    })
-                )
-            ])
-        ]),        
-        trigger('whoContentIsShown', [
-            transition(':enter', [
-                style({
-                    left: 'calc(50% - 380px)',
-                    opacity: 0,
-                }),
-                animate('0.2s 0.25s ease-in-out')
-            ]),
-            transition(':leave', [
-                animate('0.2s 0s ease-in-out',
-                    // tslint:disable-next-line:align
-                    style({
-                        left: 'calc(50% - 380px)',
-                        opacity: 0,
-                    })
-                )
-            ])
-        ]),
-    ],
+  templateUrl: './home.component.html',
+  animations: homeAnimations,
 })
-export class HomeComponent implements OnInit { 
+export class HomeComponent implements OnInit {
+  showTitleAndWhoButton = false;
+  showWotButton = false;
+  showWotContent = false;
+  showWhoContent = false;
 
-    public showTitleAndWhoButton = false;
-    public showWotButton = false;
-    public showWotContent = false;
-    public showWhoContent = false;
+  showAnimation = false;
 
-    public showAnimation = false;
+  canvasHeight = 1;
+  canvasWidth = 1;
+  mainFractalRadius = 1;
+  mainFractalCenterY = 1;
 
-    public canvasHeight = 1;
-    public canvasWidth = 1;
-    public mainFractalRadius = 1;
-    public mainFractalCenterY = 1;
+  wotButtonRadius?: number;
 
-    public wotButtonRadius : number;
+  contentOffsetFromCenter?: number;
+  contentEdgeMargin = 10;
 
-    public contentOffsetFromCenter : number;
-    public contentEdgeMargin = 10;
+  whoContentMaxWidth = 300;
+  whoContentWidth?: number;
+  whoContentLeft?: number;
 
-    public whoContentMaxWidth = 300;
-    public whoContentWidth : number;
-    public whoContentLeft : number;
+  wotContentLeft?: number;
+  wotContentWidth?: number;
 
-    public wotContentLeft : number;
-    public wotContentWidth : number;
-    
-    constructor(
-        private eventsService : EventsService,
-        private windowResizeService : WindowSizeService,
-        private loggerService : LoggerService,
-    ) { }
-    
-    public ngOnInit() : void {
-        this.eventsService.events.pipe(
-            filter(event => event.type === 'Main Fractal Animation Done')
-        )
-        .subscribe(
-            event => {
-                this.showWotButton = true;
-            }
-        );
+  constructor(
+    private eventsService: EventsService,
+    private windowResizeService: WindowSizeService,
+  ) {}
 
-        this.eventsService.events.pipe(
-            filter(event => event.type === 'Main Fractal Growth Done')
-        )
-        .subscribe(
-            event => { 
-                this.showTitleAndWhoButton = true;
-            }
-        );
+  ngOnInit(): void {
+    this.eventsService.events
+      .pipe(filter(event => event.type === 'Main Fractal Animation Done'))
+      .subscribe(event => {
+        this.showWotButton = true;
+      });
 
-        this.windowResizeService.windowSizeChange
-        .pipe(
-            tap(size => this.showAnimation = false),
-            delay(3),
-        )
-        .subscribe(size => {
+    this.eventsService.events
+      .pipe(filter(event => event.type === 'Main Fractal Growth Done'))
+      .subscribe(event => {
+        this.showTitleAndWhoButton = true;
+      });
 
-            this.showAnimation = true;
+    this.windowResizeService.windowSizeChange
+      .pipe(
+        tap(size => (this.showAnimation = false)),
+        delay(3),
+      )
+      .subscribe(size => {
+        this.showAnimation = true;
 
-            this.canvasHeight = size.height;
-            this.canvasWidth = size.width;
+        this.canvasHeight = size.height;
+        this.canvasWidth = size.width;
 
-            this.mainFractalRadius = Math.min(size.height / 4, size.width / 3);
-            this.mainFractalCenterY = size.height / 2;
+        this.mainFractalRadius = Math.min(size.height / 4, size.width / 3);
+        this.mainFractalCenterY = size.height / 2;
 
-            if (size.width <= 812) {
-                this.wotButtonRadius = 30;
-                if (size.width < size.height) {
-                    this.contentOffsetFromCenter = this.mainFractalRadius / 4;
-                } else {
-                    this.contentOffsetFromCenter = this.mainFractalRadius;
-                }
-            } else if (size.width <= 1024) {
-                this.wotButtonRadius = 40;
-                if (size.width < size.height) {
-                    this.contentOffsetFromCenter = this.mainFractalRadius / 2;
-                } else {
-                    this.contentOffsetFromCenter = this.mainFractalRadius;
-                }
-            } else {
-                this.wotButtonRadius = 50;
-                this.contentOffsetFromCenter = this.mainFractalRadius;
-            }
+        if (size.width <= 812) {
+          this.wotButtonRadius = 30;
+          if (size.width < size.height) {
+            this.contentOffsetFromCenter = this.mainFractalRadius / 4;
+          } else {
+            this.contentOffsetFromCenter = this.mainFractalRadius;
+          }
+        } else if (size.width <= 1024) {
+          this.wotButtonRadius = 40;
+          if (size.width < size.height) {
+            this.contentOffsetFromCenter = this.mainFractalRadius / 2;
+          } else {
+            this.contentOffsetFromCenter = this.mainFractalRadius;
+          }
+        } else {
+          this.wotButtonRadius = 50;
+          this.contentOffsetFromCenter = this.mainFractalRadius;
+        }
 
-            this.wotContentLeft = (size.width / 2) + this.contentOffsetFromCenter;
-            this.wotContentWidth = (size.width / 2) - this.contentOffsetFromCenter - this.contentEdgeMargin;
+        this.wotContentLeft = size.width / 2 + this.contentOffsetFromCenter;
+        this.wotContentWidth =
+          size.width / 2 - this.contentOffsetFromCenter - this.contentEdgeMargin;
 
-            const whoContentUnrestrictedLeft = (size.width / 2) - this.contentOffsetFromCenter - this.whoContentMaxWidth;
-            if (whoContentUnrestrictedLeft < this.contentEdgeMargin) {
-                this.whoContentWidth = (size.width / 2) - this.contentEdgeMargin - this.contentOffsetFromCenter;
-                this.whoContentLeft = this.contentEdgeMargin;
-            } else {
-                this.whoContentWidth = this.whoContentMaxWidth;
-                this.whoContentLeft = whoContentUnrestrictedLeft;
-            }
-        });
-    }
+        const whoContentUnrestrictedLeft =
+          size.width / 2 - this.contentOffsetFromCenter - this.whoContentMaxWidth;
+        if (whoContentUnrestrictedLeft < this.contentEdgeMargin) {
+          this.whoContentWidth =
+            size.width / 2 - this.contentEdgeMargin - this.contentOffsetFromCenter;
+          this.whoContentLeft = this.contentEdgeMargin;
+        } else {
+          this.whoContentWidth = this.whoContentMaxWidth;
+          this.whoContentLeft = whoContentUnrestrictedLeft;
+        }
+      });
+  }
 
-    public toggleWotContent() : void {
-        this.showWotContent = !this.showWotContent;
-    }
+  toggleWotContent(): void {
+    this.showWotContent = !this.showWotContent;
+  }
 
-    public toggleWhoContent() : void {
-        this.showWhoContent = !this.showWhoContent;
-    }
+  toggleWhoContent(): void {
+    this.showWhoContent = !this.showWhoContent;
+  }
 }

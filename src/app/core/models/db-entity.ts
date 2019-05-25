@@ -1,8 +1,9 @@
+import { getDefined } from 'app/shared/utils';
+
 export class DbEntity {
+  constructor(private _id?: string) {}
 
-    constructor(private _id? : string) { }
-
-    public get id() : string {
-        return this._id;
-    }
+  get id(): string {
+    return getDefined(this._id);
+  }
 }

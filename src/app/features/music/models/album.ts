@@ -1,45 +1,43 @@
 import { DbEntity } from 'app/core/models';
-
 import { Track } from './';
 
 export class Album extends DbEntity {
+  constructor(
+    private _name: string,
+    private _description: string,
+    private _artSrc: string,
+    private _tracks: Track[],
+    private _downloadUrl: string,
+    id?: string,
+  ) {
+    super(id);
+  }
 
-    constructor(
-        private _name : string,
-        private _description : string,
-        private _artSrc : string,
-        private _tracks : Track[],
-        private _downloadUrl : string,
-        id? : string,
-    ) {
-        super(id);
-    }
+  get name(): string {
+    return this._name;
+  }
 
-    public get name() : string {
-        return this._name;
-    }
+  get description(): string {
+    return this._description;
+  }
 
-    public get description() : string {
-        return this._description;
-    }
+  get artSrc(): string {
+    return this._artSrc;
+  }
 
-    public get artSrc() : string {
-        return this._artSrc;
-    }
+  get tracks(): Track[] {
+    return this._tracks;
+  }
 
-    public get tracks() : Track[] {
-        return this._tracks;
-    }
-
-    public get downloadUrl() : string {
-        return this._downloadUrl;
-    }
+  get downloadUrl(): string {
+    return this._downloadUrl;
+  }
 }
 
 export interface DbAlbum {
-    date : Date;
-    name : string;
-    description : string;
-    artSrc : string;
-    downloadUrl : string;
+  date: Date;
+  name: string;
+  description: string;
+  artSrc: string;
+  downloadUrl: string;
 }

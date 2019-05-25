@@ -1,82 +1,49 @@
-import { animate, style, transition, trigger } from '@angular/animations';
 import { Component } from '@angular/core';
+import { AngularFireAuth } from '@angular/fire/auth';
 import { ActivationEnd, Router } from '@angular/router';
-import { AngularFireAuth } from 'angularfire2/auth';
 import * as fb from 'firebase/app';
 import { Observable } from 'rxjs';
 import { filter, map } from 'rxjs/operators';
-
 import { WindowSizeService } from '../services/window-size.service';
+import { navAnimations } from './nav.anim';
 
 @Component({
-    templateUrl: './nav.component.html',
-    animations: [
-        trigger('mobileContentHide', [
-            transition(':leave', [
-                animate('0.2s 0s ease-in-out',
-                    // tslint:disable-next-line:align
-                    style({
-                        transform: 'translateY(100%)',
-                        opacity: 0,
-                    })
-                )
-            ])
-        ]),
-        trigger('mobileMenuFadeInOut', [
-            transition(':enter', [
-                style({
-                    opacity: 0,
-                }),
-                animate('0.5s 0.25s ease-in-out')
-            ]),
-            transition(':leave', [
-                animate('0.5s 0s ease-in-out',
-                    // tslint:disable-next-line:align
-                    style({
-                        opacity: 0,
-                    })
-                )
-            ])
-        ])
-    ],
-    styles: [':host { height: 100% }'],
+  templateUrl: './nav.component.html',
+  animations: navAnimations,
+  styles: [':host { height: 100% }'],
 })
-export class NavComponent { 
+export class NavComponent {
+  showMobileNav = false;
+  isMobileWidth: Observable<boolean>;
+  navTransparent?: boolean;
 
-    public showMobileNav = false;
-    public isMobileWidth : Observable<boolean>;
-    public navTransparent : boolean;
-    
-    constructor(
-        private windowResizeService : WindowSizeService,
-        public afAuth : AngularFireAuth,
-        public router : Router,
-    ) {
-        this.isMobileWidth = this.windowResizeService.isMobileWidth;
+  constructor(
+    private windowResizeService: WindowSizeService,
+    public afAuth: AngularFireAuth,
+    public router: Router,
+  ) {
+    this.isMobileWidth = this.windowResizeService.isMobileWidth;
 
-        this.router.events.pipe(
-            filter<ActivationEnd>(event => event instanceof ActivationEnd),
-            filter(event => event.snapshot.url.length > 0),
-            map(routerEvent => {
-                return routerEvent.snapshot.data.navTransparent;
-            }),
-        )
-        .subscribe(
-            navTransparent => {
-                this.navTransparent = navTransparent;
-            }
-        );
-    }
+    this.router.events
+      .pipe(
+        filter((event): event is ActivationEnd => event instanceof ActivationEnd),
+        filter(event => event.snapshot.url.length > 0),
+        map((routerEvent: ActivationEnd) => routerEvent.snapshot.data.navTransparent),
+      )
+      .subscribe(navTransparent => {
+        this.navTransparent = navTransparent;
+      });
+  }
 
-    public closeMobileNav() : void {
-        this.showMobileNav = false;
-    }
+  closeMobileNav(): void {
+    this.showMobileNav = false;
+  }
 
-    public login() {
-        this.afAuth.auth.signInWithRedirect(new fb.auth.GoogleAuthProvider());
-    }
+  login(): void {
+    this.afAuth.auth.signInWithRedirect(new fb.auth.GoogleAuthProvider());
+  }
 
-    public logout() {
-        this.afAuth.auth.signOut();
-    }
+  logout(): void {
+    this.afAuth.auth.signOut();
+  }
 }

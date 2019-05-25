@@ -27,943 +27,945 @@ $fractal-animation-start-bck-color: rgb(210, 200, 195);
 $std-border-radius: 8px;
 
 @mixin std-transition {
-    transition: all 0.6s;
+  transition: all 0.6s;
 }
 
 @mixin std-button {
-    @include std-transition;
-    border-radius: $std-border-radius;
-    background-color: transparent;
-    border: 3px solid $std-text-color;
-    color: $std-text-color;
-    line-height: 1.8em;
-    padding: 0 1.2em;
+  @include std-transition;
+  border-radius: $std-border-radius;
+  background-color: transparent;
+  border: 3px solid $std-text-color;
+  color: $std-text-color;
+  line-height: 1.8em;
+  padding: 0 1.2em;
 }
 
 @mixin std-button-hover {
-    color: $std-text-hover-color;
-    background-color: $std-text-color;
+  color: $std-text-hover-color;
+  background-color: $std-text-color;
 }
 
 @mixin home-fade-in($seconds) {
-    animation: home-fade-in $seconds;
+  animation: home-fade-in $seconds;
 }
 
 @mixin std-content-wrapper() {
-    width: 100%;
+  width: 100%;
 }
 
 @mixin std-content-inner-wrapper() {
-    margin: 1em auto 0 auto;
-    max-width: 1012px;
+  margin: 1em auto 0 auto;
+  max-width: 1012px;
 
-    @media only screen and (max-width: 1024px) {
-        padding: 0 12px;
-    }
+  @media only screen and (max-width: 1024px) {
+    padding: 0 12px;
+  }
 }
 
 @mixin std-page-title() {
-    font-size: 3em;
-    color: $std-header-text-color;
+  font-size: 3em;
+  color: $std-header-text-color;
 }
 
 @mixin std-box() {
-    border: 2px solid $dark-border-color;
-    padding: 0 12px;
+  border: 2px solid $dark-border-color;
+  padding: 0 12px;
 
-    background-color: $alt-bck-color;
-    border-radius: 3px;
-    margin-top: 20px;
+  background-color: $alt-bck-color;
+  border-radius: 3px;
+  margin-top: 20px;
 
-    box-shadow: 0px 0px 10px 5px $alt-bck-color;
+  box-shadow: 0px 0px 10px 5px $alt-bck-color;
 }
 
 //main scrollbar
 ::-webkit-scrollbar {
-    background-color: $std-bck-color;
+  background-color: $std-bck-color;
 }
 
 //top and bottom buttons
 ::-webkit-scrollbar-button {
-    background-color: transparent;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background-color: $dark-border-color;
-    width: 14px;
-    border-radius: 5px;
+  background-color: $dark-border-color;
+  width: 14px;
+  border-radius: 5px;
 }
 
 //main-track-background
 ::-webkit-scrollbar-track {
-    background-color: transparent;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-track-piece {
-    background-color: transparent;
+  background-color: transparent;
 }
 
 html {
-    height: 100%;
+  height: 100%;
 }
 
 body {
-    font-family: 'Barlow Semi Condensed', sans-serif;
-    margin: 0;
-    padding: 0;
-    color: $std-text-color;
-    background-color: $std-bck-color;
-    height: 100%;
+  font-family: 'Barlow Semi Condensed', sans-serif;
+  margin: 0;
+  padding: 0;
+  color: $std-text-color;
+  background-color: $std-bck-color;
+  height: 100%;
 }
 
 .dialog-backdrop {
-    background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 .dialog-panel {
-    @include std-box;
+  @include std-box;
 
-    .dialog-title {
-        color: $std-header-text-color;
-        font-size: 1.4em;
-        text-align: center;
-        width: 500px;
+  .dialog-title {
+    color: $std-header-text-color;
+    font-size: 1.4em;
+    text-align: center;
+    width: 500px;
+  }
+
+  button {
+    @include std-button;
+
+    &:hover {
+      @include std-button-hover;
     }
-
-    button {
-        @include std-button;
-
-        &:hover {
-            @include std-button-hover;
-        }
-    }
+  }
 }
 
 
 a {
-    @include std-transition;
-    text-decoration: none;
-    color: $std-link-color;
+  @include std-transition;
+  text-decoration: none;
+  color: $std-link-color;
 }
 
 a:hover {
-    color: $std-link-hover-color;
+  color: $std-link-hover-color;
 }
 
 a:visited {
-    color: $std-link-color;
+  color: $std-link-color;
 }
 
 a:visited:hover {
-    color: $std-link-hover-color;
+  color: $std-link-hover-color;
 }
 
 button {
-    font-family: inherit;
-    cursor: pointer;
-    font-size: inherit;
+  font-family: inherit;
+  cursor: pointer;
+  font-size: inherit;
 }
 
 button:focus {
-    outline: none;
+  outline: none;
 }
 
 ul {
-    @media only screen and (max-width: 700px) {
-        padding-left: 15px;
-    }
+  @media only screen and (max-width: 700px) {
+    padding-left: 15px;
+  }
 }
 
 .loading {
-    text-align: center;
-    font-size: 5em;
-    color: $dark-border-color;
-    padding: 0.5em 0;
+  text-align: center;
+  font-size: 5em;
+  color: $dark-border-color;
+  padding: 0.5em 0;
 }
 
 div.nav-wrapper {
 
-    text-align: center;
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: linear-gradient($std-bck-color 60%, transparent);
-    z-index: 1;
-    border-bottom-width: 20px;
-    height: $nav-background-height;
+  text-align: center;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: linear-gradient($std-bck-color 60%, transparent);
+  z-index: 1;
+  border-bottom-width: 20px;
+  height: $nav-background-height;
+
+  @media only screen and (max-width: 700px) {
+    height: $nav-background-height-mobile;
+  }
+
+  &.transparent-nav-wrapper {
+    background: transparent;
+  }
+
+  nav {
+
+    a {
+      @include std-transition;
+      width: 150px;
+      font-size: 1.15em;
+      text-align: center;
+      display: inline-block;
+      height: 100%;
+      line-height: $nav-height;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      color: $std-text-color;
+
+      span {
+        display: inline-block;
+        line-height: normal;
+      }
+
+      @media only screen and (max-width: 700px) {
+        @include std-button();
+        display: block;
+        margin: 10px 0;
+      }
+
+      &:visited {
+        color: $std-text-color;
+      }
+
+      &:hover {
+        background-color: $std-text-color;
+        color: $std-text-hover-color;
+
+        @media only screen and (max-width: 700px) {
+          @include std-button-hover();
+        }
+      }
+
+      &:visited:hover {
+        background-color: $std-text-color;
+        color: $std-text-hover-color;
+
+        @media only screen and (max-width: 700px) {
+          @include std-button-hover();
+        }
+      }
+
+      &.active-nav-link {
+        color: white;
+
+        @media only screen and (min-width: 700px) {
+          border-bottom: 1px solid $mid-grey;
+        }
+      }
+    }
+
 
     @media only screen and (max-width: 700px) {
-        height: $nav-background-height-mobile;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  .mobile-nav-button {
+
+    display: none;
+    border-bottom-left-radius: 0px;
+    cursor: pointer;
+    font-size: 0.9em;
+    line-height: $mobile-nav-height;
+    text-align: left;
+    padding-left: 8px;
+
+    svg {
+      margin-right: 5px;
     }
 
-    &.transparent-nav-wrapper {
-        background: transparent;
+    @media only screen and (max-width: 700px) {
+      display: block;
     }
-    
-    nav {
-
-        a {
-            @include std-transition;
-            width: 150px;
-            font-size: 1.15em;
-            text-align: center;
-            display: inline-block;
-            height: 100%;
-            line-height: $nav-height;
-            border-bottom-left-radius: 5px;
-            border-bottom-right-radius: 5px;
-            color: $std-text-color;
-        
-            span {
-                display: inline-block;
-                line-height: normal;
-            }
-    
-            @media only screen and (max-width: 700px) {
-                @include std-button();
-                display: block;
-                margin: 10px 0;
-            }
-
-            &:visited {
-                color: $std-text-color;
-            } 
-
-            &:hover {
-                background-color: $std-text-color;
-                color: $std-text-hover-color;
-    
-                @media only screen and (max-width: 700px) {
-                    @include std-button-hover();
-                }
-            }
-
-            &:visited:hover {
-                background-color: $std-text-color;
-                color: $std-text-hover-color;
-
-                @media only screen and (max-width: 700px) {
-                    @include std-button-hover();
-                }
-            }
-
-            &.active-nav-link {
-                color: white;
-                
-                @media only screen and (min-width: 700px) {
-                    border-bottom: 1px solid $mid-grey;
-                }
-            }
-        }
-        
-
-        @media only screen and (max-width: 700px) {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-    }
-
-    .mobile-nav-button {
-
-        display: none;
-        border-bottom-left-radius: 0px;
-        cursor: pointer;
-        font-size: 0.9em;
-        line-height: $mobile-nav-height;
-        text-align: left;
-        padding-left: 8px;
-
-        svg {
-            margin-right: 5px;
-        }
-    
-        @media only screen and (max-width: 700px) {
-            display: block;
-        }
-    }    
+  }
 
 }
 
 .auth-button {
-    @include std-button();
-    position: fixed;
-    font-size: 1.1em;
-    top: 0;
-    right: 0;
-    padding: 3px 12px;
-    border-top-left-radius: 0px;
-    border-bottom-right-radius: 0px;
-    border-top-right-radius: 0px;
-    border: none;
+  @include std-button();
+  position: fixed;
+  font-size: 1.1em;
+  top: 0;
+  right: 0;
+  padding: 3px 12px;
+  border-top-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+  border-top-right-radius: 0px;
+  border: none;
 
-    @media only screen and (max-width: 700px) {
-        font-size: 0.9em;
-    }
+  @media only screen and (max-width: 700px) {
+    font-size: 0.9em;
+  }
 
-    &:hover {
-        @include std-button-hover();
-    }
+  &:hover {
+    @include std-button-hover();
+  }
 }
 
 .content {
-    padding-top: $nav-height;
-    box-sizing: border-box;
-    height: 100%;
+  padding-top: $nav-height;
+  box-sizing: border-box;
+  height: 100%;
 
-    @media only screen and (max-width: 700px) {
-        padding-top: $mobile-nav-height;
-    }
+  @media only screen and (max-width: 700px) {
+    padding-top: $mobile-nav-height;
+  }
 }
 
 @keyframes home-fade-in {
-    from { 
-        color: transparent;
-        border-color: transparent;
-    }
-    to { 
-        color: $std-text-color;
-        border-color: $std-text-color;
-    }
+  from {
+    color: transparent;
+    border-color: transparent;
+  }
+
+  to {
+    color: $std-text-color;
+    border-color: $std-text-color;
+  }
 }
 
 .home-heading-section {
 
-    text-align: center;
+  text-align: center;
 
-    .home-title {
+  .home-title {
 
-        @include home-fade-in(3s);    
-        font-size: 5em;
-        margin-top: 0.3em;
-        margin-bottom: 0.2em;
-    
-        @media only screen and (max-width: 1024px) {
-            font-size: 4em;
-        }
-        
-        @media only screen and (max-width: 700px) {
-            font-size: 3em;
-            margin-top: 0;
-        }
-        
-        @media only screen and (max-width: 400px) {
-            font-size: 2.3em;
-            display: inline;
-        }
+    @include home-fade-in(3s);
+    font-size: 5em;
+    margin-top: 0.3em;
+    margin-bottom: 0.2em;
 
-        @media only screen and (max-width: 1024px) and (orientation: landscape) {
-            font-size: 3em;
-            margin-top: 0;
-        }
-
-        @media only screen and (max-width: 700px) and (orientation: landscape) {
-            font-size: 2.3em;
-        }
+    @media only screen and (max-width: 1024px) {
+      font-size: 4em;
     }
 
-    .who-button-container {
-
-        display: block;
-        text-align: center;
-    
-        @media only screen and (max-width: 400px) {
-            display: inline-block;
-            margin-left: 12px;
-        }
-
-        .who-button {
-            @include home-fade-in(2s);
-            @include std-button;
-            font-size: 1.3em;
-            width: 100px;
-                
-            @media only screen and (max-width: 1024px) {
-                font-size: 1em;
-            }
-        
-            @media only screen and (max-width: 700px) {
-                font-size: 0.9em;
-            }
-            
-            @media only screen and (max-width: 1024px) and (orientation: landscape) {
-                font-size: 0.9em;
-            }
-        }
-
-        .who-button:hover {
-            @include std-button-hover;
-        }
+    @media only screen and (max-width: 700px) {
+      font-size: 3em;
+      margin-top: 0;
     }
 
     @media only screen and (max-width: 400px) {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      font-size: 2.3em;
+      display: inline;
     }
+
+    @media only screen and (max-width: 1024px) and (orientation: landscape) {
+      font-size: 3em;
+      margin-top: 0;
+    }
+
+    @media only screen and (max-width: 700px) and (orientation: landscape) {
+      font-size: 2.3em;
+    }
+  }
+
+  .who-button-container {
+
+    display: block;
+    text-align: center;
+
+    @media only screen and (max-width: 400px) {
+      display: inline-block;
+      margin-left: 12px;
+    }
+
+    .who-button {
+      @include home-fade-in(2s);
+      @include std-button;
+      font-size: 1.3em;
+      width: 100px;
+
+      @media only screen and (max-width: 1024px) {
+        font-size: 1em;
+      }
+
+      @media only screen and (max-width: 700px) {
+        font-size: 0.9em;
+      }
+
+      @media only screen and (max-width: 1024px) and (orientation: landscape) {
+        font-size: 0.9em;
+      }
+    }
+
+    .who-button:hover {
+      @include std-button-hover;
+    }
+  }
+
+  @media only screen and (max-width: 400px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 }
 
 @mixin home-content-wrapper {
-    position: fixed;
-    opacity: 1;
-    top: 0;
-    height: 100%;
-    z-index: 2;
+  position: fixed;
+  opacity: 1;
+  top: 0;
+  height: 100%;
+  z-index: 2;
 }
 
 .who-content-wrapper {
-    @include home-content-wrapper;
+  @include home-content-wrapper;
 }
 
 .who-content {
-    position: absolute;
-    transform: translate(0, -50%); 
-    font-size: 1.1em;
-    
-    @media only screen and (max-width: 1024px) {
-        font-size: 0.9em;
-    }
+  position: absolute;
+  transform: translate(0, -50%);
+  font-size: 1.1em;
 
-    @media only screen and (max-width: 812px) and (orientation: landscape) {
-        font-size: 0.7em;
-    }
+  @media only screen and (max-width: 1024px) {
+    font-size: 0.9em;
+  }
 
-    @media only screen and (max-width: 700px) {
-        font-size: 0.7em;
-    }
+  @media only screen and (max-width: 812px) and (orientation: landscape) {
+    font-size: 0.7em;
+  }
+
+  @media only screen and (max-width: 700px) {
+    font-size: 0.7em;
+  }
 }
 
 .wot-button-container {
-    position: fixed;
-    left: 0;
-    text-align: center;
-    width: 100%;
-    z-index: 1;
+  position: fixed;
+  left: 0;
+  text-align: center;
+  width: 100%;
+  z-index: 1;
 }
 
 .wot-button {
-    @include std-transition;
-    @include home-fade-in(3s);
-    color: $std-text-color;
-    background-color: transparent;
-    display: inline-block;
-    font-size: 5em;
-    border-style: none;
-    cursor: pointer;
-    
-    @media only screen and (max-width: 1024px) {
-        font-size: 4em;
-    }
+  @include std-transition;
+  @include home-fade-in(3s);
+  color: $std-text-color;
+  background-color: transparent;
+  display: inline-block;
+  font-size: 5em;
+  border-style: none;
+  cursor: pointer;
 
-    @media only screen and (max-width: 812px) and (orientation: landscape) {
-        font-size: 3em;
-    }
+  @media only screen and (max-width: 1024px) {
+    font-size: 4em;
+  }
 
-    @media only screen and (max-width: 700px) {
-        font-size: 3em;
-    }
+  @media only screen and (max-width: 812px) and (orientation: landscape) {
+    font-size: 3em;
+  }
+
+  @media only screen and (max-width: 700px) {
+    font-size: 3em;
+  }
 }
 
 .wot-button:hover {
-    background-color: rgba(200, 150, 150, 0.1);
+  background-color: rgba(200, 150, 150, 0.1);
 }
 
 .wot-content-wrapper {
-    @include home-content-wrapper;
-    width: 100%;
+  @include home-content-wrapper;
+  width: 100%;
 }
 
 .wot-content {
-    position: absolute;
-    transform: translate(0, -50%); 
-    font-size: 1.2em;
+  position: absolute;
+  transform: translate(0, -50%);
+  font-size: 1.2em;
 
-    @media only screen and (max-width: 1024px) {
-        font-size: 1em;
-    }
+  @media only screen and (max-width: 1024px) {
+    font-size: 1em;
+  }
 
-    @media only screen and (max-width: 812px) and (orientation: landscape) {
-        font-size: 0.8em
-    }
+  @media only screen and (max-width: 812px) and (orientation: landscape) {
+    font-size: 0.8em
+  }
 
-    @media only screen and (max-width: 700px) {
-        font-size: 0.8em
-    }
+  @media only screen and (max-width: 700px) {
+    font-size: 0.8em
+  }
 }
 
 .wot-heading {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .fractal-animation {
-    height: 100%;
-    width: 100%;
-    position: fixed;
-    top: 0;
-    z-index: -10;
-    background-color: $fractal-animation-start-bck-color;
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  z-index: -10;
+  background-color: $fractal-animation-start-bck-color;
 }
 
 .post-list-wrapper {
-    @include std-content-wrapper();
-    font-size: 1.1em;
-    overflow-y: scroll;
-    max-height: 100%;
+  @include std-content-wrapper();
+  font-size: 1.1em;
+  overflow-y: scroll;
+  max-height: 100%;
 
 
-    .post-list-inner-wrapper {
-        @include std-content-inner-wrapper();
+  .post-list-inner-wrapper {
+    @include std-content-inner-wrapper();
 
-        &.single-post-page-wrapper {
-            padding-top: 60px;
+    &.single-post-page-wrapper {
+      padding-top: 60px;
 
-            a {
-                cursor: pointer;
-            }
-        }
-        
-        .blog-header {
-            text-align: center;
-
-            h1.post-list-title {
-                @include std-page-title();
-            }
-        
-            button.edit-posts {
-                @include std-button();
-        
-                &:hover {
-                    @include std-button-hover();
-                }
-            }
-        }
-
-
-        .end-of-posts {
-            text-align: center;
-            font-size: 1.5em;
-            padding: 2em 0;
-        }
+      a {
+        cursor: pointer;
+      }
     }
-    
+
+    .blog-header {
+      text-align: center;
+
+      h1.post-list-title {
+        @include std-page-title();
+      }
+
+      button.edit-posts {
+        @include std-button();
+
+        &:hover {
+          @include std-button-hover();
+        }
+      }
+    }
+
+
+    .end-of-posts {
+      text-align: center;
+      font-size: 1.5em;
+      padding: 2em 0;
+    }
+  }
+
 }
 
 .post {
-    margin-bottom: 40px;
-    @include std-box();
+  margin-bottom: 40px;
+  @include std-box();
 
-    .post-header-row {
-        
-        display: flex;
-        justify-content: space-between;
-        color: $std-header-text-color;
+  .post-header-row {
 
-        .post-header {
-            @include std-transition();
-            margin: 0.4em 0;
-            font-weight: normal;
-            cursor: pointer;
-            max-width: 85%;
-            flex: 1;
+    display: flex;
+    justify-content: space-between;
+    color: $std-header-text-color;
 
-            @media only screen and (max-width: 700px) {
-                font-size: 1.2em;
-                max-width: 70%;
-            }
+    .post-header {
+      @include std-transition();
+      margin: 0.4em 0;
+      font-weight: normal;
+      cursor: pointer;
+      max-width: 85%;
+      flex: 1;
 
-            &:hover {
-                color: $std-header-hover-color;
-            }
-        }
+      @media only screen and (max-width: 700px) {
+        font-size: 1.2em;
+        max-width: 70%;
+      }
 
-        .post-header-date-container {
-            text-align: right;
-            margin: 0.6em 0;
-            min-width: 15%;
-            flex: 0;
-
-            @media only screen and (max-width: 700px) {
-                min-width: 30%;
-                font-size: 0.8em;
-            }
-
-            a {
-                margin-right: 10px;
-            }
-        }
+      &:hover {
+        color: $std-header-hover-color;
+      }
     }
+
+    .post-header-date-container {
+      text-align: right;
+      margin: 0.6em 0;
+      min-width: 15%;
+      flex: 0;
+
+      @media only screen and (max-width: 700px) {
+        min-width: 30%;
+        font-size: 0.8em;
+      }
+
+      a {
+        margin-right: 10px;
+      }
+    }
+  }
 }
 
 .blog-editor-wrapper {
-    @include std-content-wrapper();
-    font-size: 1.1em;
+  @include std-content-wrapper();
+  font-size: 1.1em;
 
-    .blog-editor-inner-wrapper {
-        @include std-content-inner-wrapper();
-        display: flex;
+  .blog-editor-inner-wrapper {
+    @include std-content-inner-wrapper();
+    display: flex;
 
-        button.jtdc-button {
-            @include std-button();
-            margin-bottom: 10px;
-            width: 100%;
-    
-            &:hover {
-                @include std-button-hover();
-            }
-    
-            &.save, &.delete {
-                margin-top: 15px;
-                width: 250px;
-            }
-        }
-    
-        .editor-post-list {
-            flex: 1;
-            max-width: 200px;
-            padding-right: 20px;
-        }
-    
-        .editor-post-wrapper {
-            flex: 4;
-        }
-    
-        .input-container {
-            display: flex;
-            margin: 10px 0;
-    
-            .input-label {
-                text-align: right;
-                flex: 1;
-                margin: 0;
-                padding: 3px 5px 3px 10px;
-            }
-    
-            .input {
-                width: 100%;
-                background-color: $dark-border-color;
-                border: none;
-                font-family: inherit;
-                flex: 5;
-                font-size: inherit;
-                color: white;
-                padding: 3px 5px;
-    
-                &.dummy-input {
-                    background-color: transparent;
-                }
-            }
-    
-        }
+    button.jtdc-button {
+      @include std-button();
+      margin-bottom: 10px;
+      width: 100%;
+
+      &:hover {
+        @include std-button-hover();
+      }
+
+      &.save,
+      &.delete {
+        margin-top: 15px;
+        width: 250px;
+      }
     }
+
+    .editor-post-list {
+      flex: 1;
+      max-width: 200px;
+      padding-right: 20px;
+    }
+
+    .editor-post-wrapper {
+      flex: 4;
+    }
+
+    .input-container {
+      display: flex;
+      margin: 10px 0;
+
+      .input-label {
+        text-align: right;
+        flex: 1;
+        margin: 0;
+        padding: 3px 5px 3px 10px;
+      }
+
+      .input {
+        width: 100%;
+        background-color: $dark-border-color;
+        border: none;
+        font-family: inherit;
+        flex: 5;
+        font-size: inherit;
+        color: white;
+        padding: 3px 5px;
+
+        &.dummy-input {
+          background-color: transparent;
+        }
+      }
+
+    }
+  }
 }
 
 .music-wrapper {
-    @include std-content-wrapper();
+  @include std-content-wrapper();
 
-    .music-inner-wrapper {
-        @include std-content-inner-wrapper();
+  .music-inner-wrapper {
+    @include std-content-inner-wrapper();
 
-        .music-spiel {
-            font-size: 1.1em;
-            text-align: center;
-            margin-bottom: 35px;
+    .music-spiel {
+      font-size: 1.1em;
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    &.single-album-page-wrapper {
+      padding-top: 30px;
+
+      a {
+        cursor: pointer;
+        font-size: 1.1em;
+      }
+    }
+
+    h1.music-title {
+      @include std-page-title();
+      text-align: center;
+    }
+
+    div.album {
+      @include std-box();
+      margin-bottom: 60px;
+      position: relative;
+
+      .album-header-row {
+
+        a {
+          color: $std-link-color;
+          cursor: pointer;
+          @include std-transition();
+          font-size: 1.6em;
+          right: 16px;
+          top: 16px;
+          position: absolute;
+
+          &:hover {
+            color: $std-link-hover-color;
+          }
+
+          @media only screen and (max-width: 700px) {
+            font-size: 1.2em;
+          }
+
         }
 
-        &.single-album-page-wrapper {
-            padding-top: 30px;
+        .album-title {
+          text-align: center;
+          color: $std-header-text-color;
 
-            a {
+          @media only screen and (max-width: 700px) {
+            font-size: 1.2em;
+          }
+        }
+      }
+
+      .album-info {
+        text-align: center;
+      }
+
+      div.art-and-songs-container {
+        display: flex;
+        margin-bottom: 20px;
+
+        @media only screen and (max-width: 700px) {
+          flex-direction: column;
+        }
+
+        div.album-art-container {
+          flex: 1;
+          margin-right: 2%;
+          max-width: 49%;
+
+          @media only screen and (max-width: 700px) {
+            max-width: 100%;
+            margin: 12px 15%;
+          }
+
+          .album-art {
+            width: 100%;
+            height: 100%;
+            border-radius: 15px;
+          }
+        }
+
+        .track-list-wrapper {
+          flex: 1;
+          display: flex;
+          align-items: center;
+          width: 49%;
+
+          @media only screen and (max-width: 700px) {
+            width: 100%;
+          }
+
+          .track-list {
+            width: 100%;
+
+            .track {
+              width: 100%;
+              box-sizing: border-box;
+              height: 35px;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              padding-left: 10px;
+              margin-bottom: 12px;
+              border-radius: 12px;
+
+              .track-button {
+                color: $std-link-color;
                 cursor: pointer;
-                font-size: 1.1em;
-            }
-        }
+                @include std-transition();
 
-        h1.music-title {
-            @include std-page-title();
-            text-align: center;
-        }
-
-        div.album {
-            @include std-box();
-            margin-bottom: 60px;
-            position: relative;
-
-            .album-header-row {
-
-                a {
-                    color: $std-link-color;
-                    cursor: pointer;
-                    @include std-transition();
-                    font-size: 1.6em;
-                    right: 16px;
-                    top: 16px;
-                    position: absolute;
-
-                    &:hover {
-                        color: $std-link-hover-color;
-                    }
-
-                    @media only screen and (max-width: 700px) {
-                        font-size: 1.2em;
-                    }
-
+                &:hover {
+                  color: $std-link-hover-color;
                 }
 
-                .album-title {
-                    text-align: center;
-                    color: $std-header-text-color;
-
-                    @media only screen and (max-width: 700px) {
-                        font-size: 1.2em;
-                    }
+                svg {
+                  font-size: 0.85em;
+                  margin-right: 8px;
                 }
+              }
+
+              .divider-dash {
+                color: $deeph-text-color;
+              }
+
+              .not-playing-times {
+                color: $deeph-text-color;
+              }
+
+              .download-link {
+                color: $std-link-color;
+                cursor: pointer;
+                @include std-transition();
+                margin-right: 10px;
+
+                &:hover {
+                  color: $std-link-hover-color;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .player-controls {
+        text-align: center;
+        margin-bottom: 10px;
+
+        .track-progress {
+          margin-bottom: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          font-size: 1.3em;
+          border-radius: 15px;
+          height: 42px;
+          color: $deeph-text-color;
+          cursor: pointer;
+
+          @media only screen and (max-width: 700px) {
+            font-size: 1em;
+          }
+        }
+
+        .controls-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-end;
+          flex-direction: row;
+          color: $std-link-color;
+
+          @media only screen and (max-width: 700px) {
+            font-size: 0.7em;
+          }
+
+          .volume-controls {
+            flex: 1;
+            text-align: left;
+            font-size: 2em;
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+
+            div.volume-increments-container {
+              display: flex;
+              align-items: center;
+              flex-direction: row;
             }
 
-            .album-info {
-                text-align: center;
-            }
+            span {
+              cursor: pointer;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
+              @include std-transition();
 
-            div.art-and-songs-container {
-                display: flex;
-                margin-bottom: 20px;
+              @media only screen and (max-width: 700px) {
+                &.even {
+                  display: none;
+                }
+              }
+
+              svg {
+                margin-right: 6px;
 
                 @media only screen and (max-width: 700px) {
-                    flex-direction: column; 
+                  margin-right: 3px;
                 }
 
-                div.album-art-container {
-                    flex: 1;
-                    margin-right: 2%;
-                    max-width: 49%;
+              }
 
-                    @media only screen and (max-width: 700px) {
-                        max-width: 100%;
-                        margin: 12px 15%;
-                    }
-
-                    .album-art {
-                        width: 100%;
-                        height: 100%;
-                        border-radius: 15px;
-                    }
-                }
-
-                .track-list-wrapper {
-                    flex: 1;
-                    display: flex;
-                    align-items: center;
-                    width: 49%;
-
-                    @media only screen and (max-width: 700px) {
-                        width: 100%;
-                    }
-
-                    .track-list {
-                        width: 100%;
-
-                        .track {
-                            width: 100%;
-                            box-sizing: border-box;
-                            height: 35px;
-                            display: flex;
-                            align-items: center;
-                            justify-content: space-between;
-                            padding-left: 10px;
-                            margin-bottom: 12px;
-                            border-radius: 12px;
-    
-                            .track-button {
-                                color: $std-link-color;
-                                cursor: pointer;
-                                @include std-transition();
-        
-                                &:hover {
-                                    color: $std-link-hover-color;
-                                }
-                                
-                                svg {
-                                    font-size: 0.85em;
-                                    margin-right: 8px;
-                                }
-                            }
-
-                            .divider-dash {
-                                color: $deeph-text-color;
-                            }
-
-                            .not-playing-times {
-                                color: $deeph-text-color;
-                            }
-
-                            .download-link {
-                                color: $std-link-color;
-                                cursor: pointer;
-                                @include std-transition();
-                                margin-right: 10px;
-
-                                &:hover {
-                                    color: $std-link-hover-color;
-                                }
-                            }
-                        }
-                    }
-                }
+              &.hovered {
+                color: $std-link-hover-color;
+              }
             }
 
-            .player-controls {
-                text-align: center;
-                margin-bottom: 10px;
+            .vol-end {
+              cursor: pointer;
+              @include std-transition();
 
-                .track-progress {
-                    margin-bottom: 10px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 100%;
-                    font-size: 1.3em;
-                    border-radius: 15px;
-                    height: 42px;
-                    color: $deeph-text-color;
-                    cursor: pointer;
-
-                    @media only screen and (max-width: 700px) {
-                        font-size: 1em;
-                    }
-                }
-
-                .controls-row {
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-end;
-                    flex-direction: row;
-                    color: $std-link-color;
-
-                    @media only screen and (max-width: 700px) {
-                        font-size: 0.7em;
-                    }
-
-                    .volume-controls {
-                        flex: 1;
-                        text-align: left;
-                        font-size: 2em;
-                        display: flex;
-                        align-items: center;
-                        flex-direction: row;
-
-                        div.volume-increments-container {
-                            display: flex;
-                            align-items: center;
-                            flex-direction: row;
-                        }
-
-                        span {
-                            cursor: pointer;
-                            display: flex;
-                            flex-direction: row;
-                            align-items: center;
-                            @include std-transition();                            
-                            
-                            @media only screen and (max-width: 700px) {
-                                &.even {
-                                    display: none;
-                                }
-                            }
-
-                            svg {
-                                margin-right: 6px;
-
-                                @media only screen and (max-width: 700px) {
-                                    margin-right: 3px;
-                                }
-
-                            }
-
-                            &.hovered {
-                                color: $std-link-hover-color;
-                            }
-                        }
-
-                        .vol-end {
-                            cursor: pointer;
-                            @include std-transition();                                                    
-
-                            &:hover {
-                                color: $std-link-hover-color;
-                            }
-                        }
-
-                        .vol-min {
-                            font-size: 0.85em;
-                            margin-right: 6px;
-
-                            @media only screen and (max-width: 700px) {
-                                margin-right: 3px;
-                            }
-
-                            .hovered {
-                                color: $std-link-hover-color;
-                            }
-                        }
-
-                        .vol-max {
-                            font-size: 0.85em;
-                        }
-
-                        .vol-expander {
-                            font-size: 0.6em;
-                        }
-                    }
-
-                        
-                    .play-controls {
-                        flex: 1;
-                        font-size: 2em;
-
-                        span {
-                            margin: 0 10px;
-                            cursor: pointer;
-                            color: $std-link-color;
-                            @include std-transition();       
-                            
-                            @media only screen and (max-width: 700px) {
-                                margin: 0 2px;
-                            }
-
-                            &:hover {
-                                color: $std-link-hover-color;
-                            }
-                        }
-                    }
-
-                    .download-controls {
-                        flex: 1;
-                        text-align: right;
-                        font-size: 2em;
-                        cursor: pointer;
-                        
-                        &:hover {
-                            color: $std-link-hover-color;    
-                        }
-                    }
-                }
+              &:hover {
+                color: $std-link-hover-color;
+              }
             }
+
+            .vol-min {
+              font-size: 0.85em;
+              margin-right: 6px;
+
+              @media only screen and (max-width: 700px) {
+                margin-right: 3px;
+              }
+
+              .hovered {
+                color: $std-link-hover-color;
+              }
+            }
+
+            .vol-max {
+              font-size: 0.85em;
+            }
+
+            .vol-expander {
+              font-size: 0.6em;
+            }
+          }
+
+
+          .play-controls {
+            flex: 1;
+            font-size: 2em;
+
+            span {
+              margin: 0 10px;
+              cursor: pointer;
+              color: $std-link-color;
+              @include std-transition();
+
+              @media only screen and (max-width: 700px) {
+                margin: 0 2px;
+              }
+
+              &:hover {
+                color: $std-link-hover-color;
+              }
+            }
+          }
+
+          .download-controls {
+            flex: 1;
+            text-align: right;
+            font-size: 2em;
+            cursor: pointer;
+
+            &:hover {
+              color: $std-link-hover-color;
+            }
+          }
         }
+      }
     }
+  }
 }
 
 .video-wrapper {
-	position: relative;
-	padding-bottom: 56.25%;
-	padding-top: 25px;
-    height: 0;
-    margin: 1em 0;
+  position: relative;
+  padding-bottom: 56.25%;
+  padding-top: 25px;
+  height: 0;
+  margin: 1em 0;
 }
 
 .video-wrapper iframe {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }

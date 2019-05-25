@@ -1,84 +1,77 @@
 import * as bezier from 'bezier-easing';
 import * as lodash from 'lodash';
-
 import { Fractal } from './fractal';
 
-export class SpawnInterval {
-    public min : number;
-    public max : number;
+export interface SpawnInterval {
+  min: number;
+  max: number;
 }
 
 export class Tree extends Fractal {
+  private timeForGrowth: number;
+  private timeGrowing = 0;
+  protected fractionGrowthDone = 0;
+  growthDone = false;
 
-    private timeForGrowth : number;
-    private timeGrowing = 0;
-    protected fractionGrowthDone = 0;
-    public growthDone = false;
+  drawIsCachedToBackground = false;
 
-    public drawIsCachedToBackground = false;
+  protected growthEasing: (fraction: number) => number;
 
-    protected growthEasing : (fraction : number) => number;
-    
-    public constructor(
-        spawnInterval : SpawnInterval,
-        canvasHeight : number,
-    ) {
-        super();
+  constructor(spawnInterval: SpawnInterval, canvasHeight: number) {
+    super();
 
-        this.totalDrawLength = 0;
+    this._totalDrawLength = 0;
 
-        this.position.y = canvasHeight;
+    this.position.y = canvasHeight;
 
-        this.position.x = lodash.random(spawnInterval.min, spawnInterval.max, true);
+    this.position.x = lodash.random(spawnInterval.min, spawnInterval.max, true);
 
-        this.alphaChangePerFractalIteration = 0.05;
+    this._alphaChangePerFractalIteration = 0.05;
 
-        this.lineWidthChangePerFractalIteration  = 0.5;
+    this._lineWidthChangePerFractalIteration = 0.5;
 
-        this.fromAngle = Math.PI;
+    this._fromAngle = Math.PI;
 
-        this.removeThisFrame = false;
-        
-        const branches = lodash.random(3, 5, false);
+    this.removeThisFrame = false;
 
-        if (branches === 3) {
-            this.drawLinesAtAngles = [
-                lodash.random(-5 * Math.PI / 16, -2 * Math.PI / 16, true),
-                lodash.random(-2 * Math.PI / 16, 2 * Math.PI / 16, true),
-                lodash.random(2 * Math.PI / 16, 5 * Math.PI / 16, true),
-            ];
-        } else if (branches === 4) {
-            this.drawLinesAtAngles = [
-                lodash.random(-6 * Math.PI / 16, -3 * Math.PI / 16, true),
-                lodash.random(-3 * Math.PI / 16, 0 * Math.PI / 16, true),
-                lodash.random(0 * Math.PI / 16, 3 * Math.PI / 16, true),
-                lodash.random(3 * Math.PI / 16, 6 * Math.PI / 16, true),
-            ];
-        } else if (branches === 5) {
-            this.drawLinesAtAngles = [
-                lodash.random(-7 * Math.PI / 16, -4 * Math.PI / 16, true),
-                lodash.random(-4 * Math.PI / 16, -1 * Math.PI / 16, true),
-                lodash.random(-1 * Math.PI / 16, 1 * Math.PI / 16, true),
-                lodash.random(1 * Math.PI / 16, 4 * Math.PI / 16, true),
-                lodash.random(4 * Math.PI / 16, 7 * Math.PI / 16, true),
-            ];
-        }
+    const branches = lodash.random(3, 5, false);
 
-        this.timeForGrowth = lodash.random(1.5, 2.5, true);
-
-        this.growthEasing = bezier(0.25, 0.75, 0.55, 1);
+    if (branches === 3) {
+      this._drawLinesAtAngles = [
+        lodash.random((-5 * Math.PI) / 16, (-2 * Math.PI) / 16, true),
+        lodash.random((-2 * Math.PI) / 16, (2 * Math.PI) / 16, true),
+        lodash.random((2 * Math.PI) / 16, (5 * Math.PI) / 16, true),
+      ];
+    } else if (branches === 4) {
+      this._drawLinesAtAngles = [
+        lodash.random((-6 * Math.PI) / 16, (-3 * Math.PI) / 16, true),
+        lodash.random((-3 * Math.PI) / 16, (0 * Math.PI) / 16, true),
+        lodash.random((0 * Math.PI) / 16, (3 * Math.PI) / 16, true),
+        lodash.random((3 * Math.PI) / 16, (6 * Math.PI) / 16, true),
+      ];
+    } else if (branches === 5) {
+      this._drawLinesAtAngles = [
+        lodash.random((-7 * Math.PI) / 16, (-4 * Math.PI) / 16, true),
+        lodash.random((-4 * Math.PI) / 16, (-1 * Math.PI) / 16, true),
+        lodash.random((-1 * Math.PI) / 16, (1 * Math.PI) / 16, true),
+        lodash.random((1 * Math.PI) / 16, (4 * Math.PI) / 16, true),
+        lodash.random((4 * Math.PI) / 16, (7 * Math.PI) / 16, true),
+      ];
     }
 
-    public update(deltaTime : number) : void {
+    this.timeForGrowth = lodash.random(1.5, 2.5, true);
 
-        if (!this.growthDone) {
+    this.growthEasing = bezier(0.25, 0.75, 0.55, 1);
+  }
 
-            //TODO: factor this with stuff in mainFractal?
-            this.timeGrowing += deltaTime;
-    
-            const unboundedFractionGrowthDone = this.timeGrowing / this.timeForGrowth;
-            this.fractionGrowthDone = unboundedFractionGrowthDone > 1 ? 1 : unboundedFractionGrowthDone;
-            this.growthDone = this.fractionGrowthDone === 1;
-        }        
+  update(deltaTime: number): void {
+    if (!this.growthDone) {
+      //TODO: factor this with stuff in mainFractal?
+      this.timeGrowing += deltaTime;
+
+      const unboundedFractionGrowthDone = this.timeGrowing / this.timeForGrowth;
+      this.fractionGrowthDone = unboundedFractionGrowthDone > 1 ? 1 : unboundedFractionGrowthDone;
+      this.growthDone = this.fractionGrowthDone === 1;
     }
+  }
 }

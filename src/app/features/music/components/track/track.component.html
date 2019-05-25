@@ -1,27 +1,29 @@
-<div
-    class="track"
-    [style.background-image]="'linear-gradient(to right, #231C15, #231C15 ' + playedPercent + '%, #19140F ' + playedPercent + '%,  #19140F)'">
-    <span>
-        <span class="track-button" (click)="clicked()">
-            <span [hidden]="!audioElement.paused">
-                <i class="fas fa-play"></i>
-            </span>
-            <span [hidden]="audioElement.paused">
-                <i class="fas fa-pause"></i>
-            </span>
-            {{track.name}} 
-        </span>
-        <span class="divider-dash"> - </span>
-        <span [class.not-playing-times]="audioElement.paused">{{timePlayed}} / {{track.duration}}</span>
+<div class="track"
+     [style.background-image]="'linear-gradient(to right, #231C15, #231C15 ' + playedPercent + '%, #19140F ' + playedPercent + '%,  #19140F)'">
+  <span>
+    <span class="track-button"
+          (click)="clicked()">
+      <span [hidden]="!audioElement.paused">
+        <i class="fas fa-play"></i>
+      </span>
+      <span [hidden]="audioElement.paused">
+        <i class="fas fa-pause"></i>
+      </span>
+      {{track.name}}
     </span>
-    <a class="download-link" [href]="track.downloadUrl" download>
-        <i class="fas fa-download"></i>
-    </a>
-    <audio
-        #audioElem
-        (ended)="onTrackEnded()"
-        (timeupdate)="onTimeUpdate()"
-        (loadedmetadata)="onAudioMetadataLoaded()">
-        <source [src]="track.src" type="audio/mpeg" />
-    </audio>
+    <span class="divider-dash"> - </span>
+    <span [class.not-playing-times]="audioElement.paused">{{timePlayed}} / {{track.duration}}</span>
+  </span>
+  <a class="download-link"
+     [href]="track.downloadUrl"
+     download>
+    <i class="fas fa-download"></i>
+  </a>
+  <audio #audioElem
+         (ended)="onTrackEnded()"
+         (timeupdate)="onTimeUpdate()"
+         (loadedmetadata)="onAudioMetadataLoaded()">
+    <source [src]="track.src"
+            type="audio/mpeg" />
+  </audio>
 </div>

@@ -1,69 +1,76 @@
 import { Overlay, OverlayConfig } from '@angular/cdk/overlay';
 import { ComponentPortal, PortalInjector } from '@angular/cdk/portal';
 import { Injectable, InjectionToken, Injector, Type } from '@angular/core';
-
 import { DialogRef } from './dialog-ref';
 
 interface OpenDialogOptions<TData, TCloseData> {
-    width? : string;
-    height? : string;
-    closeOnBackdropClick? : boolean;
-    data? : TData;
-    defaultCloseData? : TCloseData;
+  width?: string;
+  height?: string;
+  closeOnBackdropClick?: boolean;
+  data?: TData;
+  defaultCloseData?: TCloseData;
 }
 
-// tslint:disable-next-line:no-any
-export const DIALOG_DATA = new InjectionToken<any>('DIALOG_DATA');
+export const DIALOG_DATA = new InjectionToken<unknown>('DIALOG_DATA');
 
 @Injectable()
 export class Dialog {
-    constructor(private overlay : Overlay, private injector : Injector) { }
+  constructor(private overlay: Overlay, private injector: Injector) {}
 
-    public open<TData, TCloseData, TComponent>(
-        component : Type<TComponent>,
-        options : OpenDialogOptions<TData, TCloseData> = {}
-    ) : DialogRef<TCloseData> {
-        const overlayRef = this.overlay.create(this.getConfig(options));
-    
-        const dialogRef = new DialogRef<TCloseData>(overlayRef);
-        
-        const componentPortal = new ComponentPortal(component, null, this.createInjector(dialogRef, options.data));
-    
-        overlayRef.attach(componentPortal);
-        
-        if (options.closeOnBackdropClick) {
-            overlayRef.backdropClick().subscribe(() => dialogRef.close(options.defaultCloseData));
-        }
+  open<TData, TCloseData, TComponent>(
+    component: Type<TComponent>,
+    options: OpenDialogOptions<TData, TCloseData> = {},
+  ): DialogRef<TCloseData> {
+    const overlayRef = this.overlay.create(this.getConfig(options));
 
-        return dialogRef;
+    const dialogRef = new DialogRef<TCloseData>(overlayRef);
+
+    const componentPortal = new ComponentPortal(
+      component,
+      null,
+      this.createInjector(dialogRef, options.data),
+    );
+
+    overlayRef.attach(componentPortal);
+
+    if (options.closeOnBackdropClick) {
+      overlayRef.backdropClick().subscribe(() => dialogRef.close(options.defaultCloseData));
     }
 
-    private getConfig<TData, TCloseData>(options : OpenDialogOptions<TData, TCloseData>) {
-        const positionStrategy = this.overlay.position()
-            .global()
-            .centerHorizontally()
-            .centerVertically();
+    return dialogRef;
+  }
 
-        const overlayConfig = new OverlayConfig({
-            hasBackdrop: true,
-            backdropClass: 'dialog-backdrop',
-            scrollStrategy: this.overlay.scrollStrategies.block(),
-            positionStrategy,
-            panelClass: 'dialog-panel',
-            width: options.width,
-            height: options.height,
-        });
+  private getConfig<TData, TCloseData>(
+    options: OpenDialogOptions<TData, TCloseData>,
+  ): OverlayConfig {
+    const positionStrategy = this.overlay
+      .position()
+      .global()
+      .centerHorizontally()
+      .centerVertically();
 
-        return overlayConfig;
-    }
+    const overlayConfig = new OverlayConfig({
+      hasBackdrop: true,
+      backdropClass: 'dialog-backdrop',
+      scrollStrategy: this.overlay.scrollStrategies.block(),
+      positionStrategy,
+      panelClass: 'dialog-panel',
+      width: options.width,
+      height: options.height,
+    });
 
-    private createInjector<TData, TCloseData>(dialogRef : DialogRef<TCloseData>, data? : TData) : PortalInjector {
+    return overlayConfig;
+  }
 
-        const injectionTokens = new WeakMap();
+  private createInjector<TData, TCloseData>(
+    dialogRef: DialogRef<TCloseData>,
+    data?: TData,
+  ): PortalInjector {
+    const injectionTokens = new WeakMap();
 
-        injectionTokens.set(DialogRef, dialogRef);
-        injectionTokens.set(DIALOG_DATA, data);
+    injectionTokens.set(DialogRef, dialogRef);
+    injectionTokens.set(DIALOG_DATA, data);
 
-        return new PortalInjector(this.injector, injectionTokens);
-    }
+    return new PortalInjector(this.injector, injectionTokens);
+  }
 }

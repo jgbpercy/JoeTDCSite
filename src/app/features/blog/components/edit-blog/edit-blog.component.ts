@@ -2,56 +2,42 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin, Observable } from 'rxjs';
 import { first } from 'rxjs/operators';
-
 import { Post } from '../../models';
 import { BlogDataService } from '../../services';
 
 @Component({
-    templateUrl: './edit-blog.component.html'
+  templateUrl: './edit-blog.component.html',
 })
 export class EditBlogComponent implements OnInit {
+  isLoading = false;
 
-    public isLoading = false;
+  post?: Post;
 
-    public post : Post;
+  constructor(public blogDataService: BlogDataService, private route: ActivatedRoute) {}
 
-    constructor(
-        public blogDataService : BlogDataService,
-        private route : ActivatedRoute,
-    ) { }
+  ngOnInit(): void {
+    this.route.data.pipe(first()).subscribe(routeData => {
+      this.blogDataService.postCollectionName.next(routeData.postCollectionName);
+    });
+  }
 
-    public ngOnInit() : void {
-        this.route.data.pipe(first()).subscribe(
-            routeData => {
-                this.blogDataService.postCollectionName.next(routeData.postCollectionName);
-            }
-        );
-    }
+  openPost(post?: Post): void {
+    this.post = post;
+  }
 
-    public openPost(post : Post) : void {
-        this.post = post;
-    }
+  newPost(): void {
+    this.post = new Post();
+  }
 
-    public newPost() : void {
-        this.post = new Post();
-    }
+  onAddPost(idObs: Observable<string>): void {
+    forkJoin(idObs, this.blogDataService.allPosts.pipe(first())).subscribe(stream => {
+      const [id, posts] = stream;
+      this.isLoading = false;
+      this.openPost(posts.find(x => x.id === id));
+    });
+  }
 
-    public onAddPost(idObs : Observable<string>) : void {
-
-        forkJoin(
-            idObs,
-            this.blogDataService.allPosts.pipe(first()),
-        )
-        .subscribe(
-            stream => {
-                const [id, posts] = stream;
-                this.isLoading = false;
-                this.openPost(posts.find(x => x.id === id));
-            }
-        );
-    }
-
-    public onDeletePost() : void {
-        this.post = undefined;
-    }
+  onDeletePost(): void {
+    this.post = undefined;
+  }
 }

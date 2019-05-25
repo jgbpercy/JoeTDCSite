@@ -6,6 +6,6 @@ export * from './main-fractal';
 export * from './snow-flake';
 export * from './star';
 export * from './tree';
-export * from './vector-2-with-cached-angle';
 export * from './vector-2';
+export * from './vector-2-with-cached-angle';
 export * from './wind-target-buffer';

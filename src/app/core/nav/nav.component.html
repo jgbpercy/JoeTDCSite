@@ -1,28 +1,38 @@
-<div
-    class="nav-wrapper"
-    [class.transparent-nav-wrapper]="navTransparent">
-    <a class="mobile-nav-button" (click)="showMobileNav = !showMobileNav">
-        <i class="fas fa-bars"></i> Navigation
-    </a>
-    
-    <nav 
-        *ngIf="showMobileNav || !(isMobileWidth | async)"
-        [@mobileMenuFadeInOut]="true">
-        <a routerLink="/home" routerLinkActive="active-nav-link" (click)="closeMobileNav()"><span>Home</span></a>
-        <a routerLink="/video-gaem" routerLinkActive="active-nav-link" (click)="closeMobileNav()"><span>Video Gaem</span></a>
-        <a routerLink="/music" routerLinkActive="active-nav-link" (click)="closeMobileNav()"><span>Music</span></a>
-        <a routerLink="/notepad-txt" routerLinkActive="active-nav-link" (click)="closeMobileNav()"><span>notepad.txt</span></a>
-    </nav>
+<div class="nav-wrapper"
+     [class.transparent-nav-wrapper]="navTransparent">
+  <a class="mobile-nav-button"
+     (click)="showMobileNav = !showMobileNav">
+    <i class="fas fa-bars"></i> Navigation
+  </a>
 
-    <button *ngIf="!(afAuth.authState | async)" type="button" class="auth-button login" (click)="login()">Log In</button>
-    
-    <button *ngIf="afAuth.authState | async" type="button" class="auth-button logout" (click)="logout()">Log Out</button>
+  <nav *ngIf="showMobileNav || !(isMobileWidth | async)"
+       [@mobileMenuFadeInOut]="true">
+    <a routerLink="/home"
+       routerLinkActive="active-nav-link"
+       (click)="closeMobileNav()"><span>Home</span></a>
+    <a routerLink="/video-gaem"
+       routerLinkActive="active-nav-link"
+       (click)="closeMobileNav()"><span>Video Gaem</span></a>
+    <a routerLink="/music"
+       routerLinkActive="active-nav-link"
+       (click)="closeMobileNav()"><span>Music</span></a>
+    <a routerLink="/notepad-txt"
+       routerLinkActive="active-nav-link"
+       (click)="closeMobileNav()"><span>notepad.txt</span></a>
+  </nav>
+
+  <button *ngIf="!(afAuth.authState | async)"
+          type="button"
+          class="auth-button login"
+          (click)="login()">Log In</button>
+  <button *ngIf="afAuth.authState | async"
+          type="button"
+          class="auth-button logout"
+          (click)="logout()">Log Out</button>
 </div>
 
-
-<div 
-    *ngIf="!showMobileNav || !(isMobileWidth | async)"
-    class="content"
-    [@mobileContentHide]="true">
-    <router-outlet></router-outlet>
+<div *ngIf="!showMobileNav || !(isMobileWidth | async)"
+     class="content"
+     [@mobileContentHide]="true">
+  <router-outlet></router-outlet>
 </div>
